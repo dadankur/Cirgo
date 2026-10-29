@@ -1,0 +1,649 @@
+<title>Cirgo Pemesanan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: aplikasi satu kolom ala ponsel (maks 520px) dengan navigasi bawah. Gerbang masuk/daftar (kode dari admin) di depan; WhatsApp selalu terbuka. Navy + emas dari profil merek Cirgo. */
+:root{
+  --bg:#F3F5FA; --surface:#FFFFFF; --ink:#0F1B33; --muted:#566282; --line:#D8DEEA;
+  --panel-bg:#14284B; --panel-fg:#F3F5FA; --panel-muted:#B6C2DD;
+  --gold:#D6A33A; --gold-ink:#7C5710; --on-gold:#14284B;
+  --wa:#1E8F4E; --on-wa:#FFFFFF;
+  --ok:#1D7449; --ok-bg:#E4F3EB; --warn:#9A5806; --warn-bg:#FBF0DC;
+  --focus:#2D5BD1;
+  --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A1325; --surface:#121E37; --ink:#EDF1FA; --muted:#9DAAC8; --line:#243452;
+  --panel-bg:#0E1B35; --panel-fg:#EDF1FA; --panel-muted:#9DAAC8;
+  --gold:#E3B04B; --gold-ink:#E3B04B; --on-gold:#14284B;
+  --wa:#2FB36A; --on-wa:#06210F;
+  --ok:#5CC592; --ok-bg:#123023; --warn:#EBB158; --warn-bg:#33270F;
+  --focus:#7FA2FF; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A1325; --surface:#121E37; --ink:#EDF1FA; --muted:#9DAAC8; --line:#243452;
+  --panel-bg:#0E1B35; --panel-fg:#EDF1FA; --panel-muted:#9DAAC8;
+  --gold:#E3B04B; --gold-ink:#E3B04B; --on-gold:#14284B;
+  --wa:#2FB36A; --on-wa:#06210F;
+  --ok:#5CC592; --ok-bg:#123023; --warn:#EBB158; --warn-bg:#33270F;
+  --focus:#7FA2FF; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.55 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+.app{max-width:520px;margin:0 auto;min-height:100vh;min-width:0}
+h1,h2,h3{margin:0}
+.mark{font:800 30px/1 var(--f-display);letter-spacing:-.02em}
+.mark i{font-style:normal;color:var(--gold)}
+.tag{margin:6px 0 0;font:600 12px/1.3 var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+
+.authhead{background:var(--panel-bg);color:var(--panel-fg);margin-inline:-16px;padding:28px 16px 26px}
+.authhead p.lead{margin:14px 0 0;color:var(--panel-muted);max-width:36ch}
+.proto{display:inline-block;margin-top:14px;padding:4px 10px;border:1px dashed var(--gold);color:var(--gold);font:600 11px/1.4 var(--f-body);letter-spacing:.08em;text-transform:uppercase;border-radius:4px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;margin:22px 0 18px;border-bottom:2px solid var(--line)}
+.tab{min-height:46px;border:0;background:transparent;color:var(--muted);font:700 15px var(--f-body);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+.wa-card{margin:22px 0 28px;padding:16px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);display:grid;gap:10px}
+.wa-card h3{font:800 17px/1.25 var(--f-display)}
+.wa-card p{margin:0;color:var(--muted);font-size:14px}
+
+fieldset{border:0;padding:0;margin:0 0 22px;min-width:0}
+legend{padding:0;margin-bottom:10px;font:700 12px/1 var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.field{display:grid;gap:6px;margin-bottom:14px}
+label{font-weight:600}
+.hint{font-size:12.5px;color:var(--muted);font-weight:400}
+select,input[type=text],input[type=tel],input[type=password],input[type=datetime-local]{
+  width:100%;min-height:46px;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;
+  background:var(--surface);color:var(--ink);font:inherit}
+input.code{font:700 20px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.3em;text-transform:uppercase;text-align:center}
+select:focus-visible,input:focus-visible,button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.route{display:grid;gap:10px;grid-template-columns:1fr}
+.swap{justify-self:start;min-height:36px;padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font:600 13px var(--f-body);cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:12px 20px;border:0;border-radius:8px;
+  background:var(--gold);color:var(--on-gold);font:700 16px var(--f-body);cursor:pointer;width:100%;text-decoration:none;text-align:center}
+.btn:hover{filter:brightness(1.06)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.wa{background:var(--wa);color:var(--on-wa)}
+.btn svg,.nav svg,.card svg,.hero svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.err{color:var(--warn);font-size:13px;min-height:1.2em;margin:8px 0 0}
+.linkbtn{display:inline-block;background:none;border:0;padding:6px 0;color:var(--gold-ink);font:600 14px var(--f-body);cursor:pointer;text-decoration:underline}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0 6px}
+.top .hi{color:var(--muted);font-size:14px}
+.top .nm{font:800 22px/1.15 var(--f-display);letter-spacing:-.01em;overflow-wrap:anywhere}
+.top .mark{font-size:24px}
+.pane{padding-block:14px 120px;min-width:0}
+.pane > h1{font:800 24px/1.15 var(--f-display);letter-spacing:-.015em;margin-bottom:4px}
+.sub{margin:0 0 20px;color:var(--muted)}
+.hero{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:center;width:100%;text-align:left;padding:18px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;margin:12px 0 14px}
+.hero .ic{display:grid;place-items:center;width:52px;height:52px;border-radius:10px;background:var(--gold);color:var(--on-gold)}
+.hero .ic svg{width:26px;height:26px}
+.hero b{display:block;font:800 22px/1.15 var(--f-display)}
+.hero span.t{color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{display:grid;gap:10px;align-content:start;text-align:left;padding:16px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;min-width:0;text-decoration:none}
+.card:hover,.hero:hover{border-color:var(--gold)}
+.card .ic{color:var(--gold-ink)}
+.card b{font:800 17px/1.2 var(--f-display)}
+.card span.t{color:var(--muted);font-size:13.5px;line-height:1.4}
+.card.wa .ic{color:var(--wa)}
+
+.price{border:1.5px solid var(--line);border-radius:10px;background:var(--surface);padding:16px 16px 14px;margin-bottom:22px}
+.price .lbl{font:700 12px/1 var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.price .amt{margin:8px 0 2px;font:800 40px/1 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.price .note{margin:0;color:var(--muted);font-size:13.5px}
+.price.ok{border-color:var(--ok)} .price.ok .lbl{color:var(--ok)}
+.price.contact{border-color:var(--warn);background:var(--warn-bg)} .price.contact .lbl{color:var(--warn)} .price.contact .amt{font-size:28px}
+.price.empty .amt{color:var(--muted);font-size:22px;font-weight:600}
+.pill{display:inline-block;margin-top:10px;padding:3px 9px;border-radius:999px;background:var(--ok-bg);color:var(--ok);font:600 12px/1.5 var(--f-body)}
+.pill.warn{background:transparent;border:1px solid var(--warn);color:var(--warn)}
+.help-inline{margin:14px 0 0;text-align:center;color:var(--muted);font-size:14px}
+
+.panel{border:1.5px solid var(--line);border-radius:10px;background:var(--surface);padding:18px;display:grid;gap:12px}
+.panel.okb{border-color:var(--ok)}
+.panel h2{font:800 20px/1.2 var(--f-display)}
+.panel p{margin:0;color:var(--muted)}
+.msg{margin:0;padding:12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);font:13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.row{display:grid;gap:10px;grid-template-columns:1fr}
+.count{font:800 30px/1 var(--f-display);font-variant-numeric:tabular-nums;text-align:center}
+.amtbig{font:800 34px/1 var(--f-display);text-align:center;font-variant-numeric:tabular-nums}
+.qrwrap{display:grid;justify-items:center;gap:8px}
+.qr{background:#fff;padding:12px;border-radius:10px;border:1.5px solid var(--line);width:220px;max-width:100%}
+.qr svg{display:block;width:100%;height:auto}
+.qrcap{font:600 11px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.status{padding:10px 12px;border-radius:8px;background:var(--warn-bg);color:var(--warn);font-weight:600;text-align:center}
+.status.ok{background:var(--ok-bg);color:var(--ok)}
+.bk{font:800 22px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:700 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+td.n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.list{display:grid;gap:0;margin:0 0 22px}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.kv span:first-child{color:var(--muted)}
+.kv span:last-child{overflow-wrap:anywhere}
+
+details.proto-notes{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:13.5px}
+details.proto-notes summary{cursor:pointer;font-weight:700;color:var(--ink)}
+details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
+
+.nav{position:fixed;left:0;right:0;bottom:0;margin-inline:auto;width:min(520px,100%);z-index:20;
+  display:grid;grid-template-columns:repeat(5,1fr);align-items:end;background:var(--surface);border-top:1px solid var(--line);
+  padding:6px max(6px,env(safe-area-inset-left,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-right,0px))}
+.nav button{display:grid;justify-items:center;gap:2px;min-height:50px;padding:4px 2px;border:0;background:transparent;color:var(--muted);font:600 11.5px var(--f-body);cursor:pointer}
+.nav button[aria-current="page"]{color:var(--gold-ink)}
+.nav .plus .dot{display:grid;place-items:center;width:56px;height:56px;margin-top:-26px;border-radius:50%;background:var(--gold);color:var(--on-gold);box-shadow:0 6px 18px rgba(0,0,0,.25);border:4px solid var(--surface)}
+.nav .plus .dot svg{width:26px;height:26px;stroke-width:2.2}
+
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(6,12,26,.66);display:grid;place-items:end center;padding:0 0 env(safe-area-inset-bottom,0px)}
+.sheet{width:100%;max-width:560px;max-height:88vh;overflow:auto;background:var(--surface);color:var(--ink);
+  border-radius:14px 14px 0 0;padding:20px max(18px,env(safe-area-inset-left,0px)) 18px;box-shadow:0 -8px 40px rgba(0,0,0,.25)}
+.sheet h2{margin:0 0 4px;font:800 20px/1.2 var(--f-display)}
+.sheet .ver{margin:0 0 14px;color:var(--muted);font-size:12.5px}
+.sheet ol{margin:0 0 16px;padding-left:20px;display:grid;gap:10px}
+.agree{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:12px;border:1.5px solid var(--line);border-radius:8px;margin-bottom:14px;cursor:pointer}
+.agree input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--gold)}
+.sheet .btn{min-height:46px}
+@media (min-width:600px){ .overlay{place-items:center} .sheet{border-radius:14px} }
+@media (min-width:560px){ .route{grid-template-columns:1fr 1fr} .swap{grid-column:1/-1} .authhead{margin-inline:0;border-radius:0 0 14px 14px} }
+@media (prefers-reduced-motion:no-preference){ .price,.panel{animation:rise .25s ease-out} @keyframes rise{from{transform:translateY(4px);opacity:.6}to{transform:none;opacity:1}} }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+
+<div class="app">
+
+  <!-- GERBANG: daftar dengan kode dari admin, atau masuk -->
+  <section id="v-auth">
+    <header class="authhead">
+      <div class="mark">Cir<i>go</i></div>
+      <p class="tag">Jemputin · Nganterin</p>
+      <p class="lead">Antar-jemput pribadi di Kota Cirebon. Masuk atau daftar dulu untuk memesan.</p>
+    </header>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-in" aria-selected="true" aria-controls="f-in">Masuk</button>
+      <button class="tab" role="tab" id="tab-up" aria-selected="false" aria-controls="f-up">Daftar</button>
+    </div>
+
+    <form id="f-in" novalidate>
+      <div class="field"><label for="in-wa">ID (nomor WhatsApp)</label><input id="in-wa" type="tel" inputmode="tel" autocomplete="username" placeholder="08xxxxxxxxxx"></div>
+      <div class="field"><label for="in-pass">Kata sandi</label><input id="in-pass" type="password" autocomplete="current-password" placeholder="Kata sandi buatanmu"></div>
+      <button class="btn" type="submit">Masuk</button>
+      <p class="err" id="err-in" role="alert"></p>
+      <a class="linkbtn" id="forgot" href="#" target="_blank" rel="noopener">Lupa kata sandi? Minta kode lewat WhatsApp</a>
+    </form>
+
+    <form id="f-up" novalidate hidden>
+      <div class="field"><label for="up-code">Kode pendaftaran</label>
+        <input id="up-code" class="code" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCDEFGH">
+        <span class="hint">8 huruf, sekali pakai. Dapatkan dari admin lewat WhatsApp.</span></div>
+      <div class="field"><label for="up-nama">Nama</label><input id="up-nama" type="text" autocomplete="name" placeholder="Nama lengkap"></div>
+      <div class="field"><label for="up-wa">Nomor WhatsApp</label><input id="up-wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx"><span class="hint">Nomor ini menjadi ID masukmu.</span></div>
+      <div class="field"><label for="up-pass">Buat kata sandi</label><input id="up-pass" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter"></div>
+      <button class="btn" type="submit">Daftar dan masuk</button>
+      <p class="err" id="err-up" role="alert"></p>
+    </form>
+
+    <div class="wa-card">
+      <h3>Belum punya kode atau kurang paham?</h3>
+      <p>Chat admin lewat WhatsApp. Kami kirim kode pendaftaran dan bantu pesankan.</p>
+      <a class="btn wa" id="wa-code" href="#" target="_blank" rel="noopener">Minta kode pendaftaran</a>
+      <a class="btn ghost" id="wa-auth" href="#" target="_blank" rel="noopener">Tanya dulu lewat WhatsApp</a>
+    </div>
+  </section>
+
+  <!-- APLIKASI -->
+  <section id="v-app" hidden>
+    <header class="top">
+      <div><div class="hi" id="greet">Selamat pagi</div><div class="nm" id="uname">Nama</div></div>
+      <div class="mark">Cir<i>go</i></div>
+    </header>
+
+    <div class="pane" id="p-home">
+      <button class="hero" type="button" data-go="order">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+        <span><b>Mau ke mana?</b><span class="t">Pilih kelurahan jemput dan tujuan</span></span>
+      </button>
+      <div class="grid">
+        <button class="card" type="button" id="c-sched">
+          <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+          <b>Terjadwal</b><span class="t">Pilih tanggal dan jam jemput</span>
+        </button>
+        <button class="card" type="button" data-go="tarif">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg></span>
+          <b>Tarif</b><span class="t">Tarif, bayar, dan refund</span>
+        </button>
+        <a class="card wa" id="wa-home" href="#" target="_blank" rel="noopener">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span>
+          <b>Chat WhatsApp</b><span class="t">Bingung? Langsung tanya</span>
+        </a>
+        <button class="card" type="button" id="c-terms">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg></span>
+          <b>Ketentuan</b><span class="t">Aturan layanan Cirgo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pesan -->
+    <div class="pane" id="p-order" hidden>
+      <div id="s-form">
+        <h1>Pesan antar-jemput</h1>
+        <p class="sub">Pilih dari daftar kelurahan. Harga tidak berubah karena rute atau macet.</p>
+        <form id="f" novalidate>
+          <fieldset>
+            <legend>Rute</legend>
+            <div class="route">
+              <div class="field"><label for="from">Kelurahan jemput</label><select id="from"></select></div>
+              <div class="field"><label for="to">Kelurahan tujuan</label><select id="to"></select></div>
+              <button type="button" class="swap" id="swap" aria-label="Tukar jemput dan tujuan">Tukar arah</button>
+            </div>
+          </fieldset>
+          <div id="price" class="price empty" aria-live="polite">
+            <div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p>
+          </div>
+          <fieldset>
+            <legend>Data pemesan</legend>
+            <div class="field"><label for="nama">Nama</label><input id="nama" type="text" autocomplete="name"></div>
+            <div class="field"><label for="wa">Nomor WhatsApp</label><input id="wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx"></div>
+            <div class="field"><label for="det-from">Alamat atau patokan jemput</label><input id="det-from" type="text" placeholder="Nama jalan, perumahan, atau patokan"><span class="hint">Untuk pengemudi. Tidak memengaruhi harga.</span></div>
+            <div class="field"><label for="det-to">Alamat atau patokan tujuan <span class="hint">(boleh dikosongkan)</span></label><input id="det-to" type="text" placeholder="Nama jalan, gedung, atau patokan"></div>
+            <div class="field"><label for="when">Waktu jemput</label><select id="when"><option value="now">Secepatnya</option><option value="later">Jadwalkan</option></select></div>
+            <div class="field" id="when-wrap" hidden><label for="when-at">Tanggal dan jam</label><input id="when-at" type="datetime-local"><span class="hint">Refund 100% bila dibatalkan lewat admin paling lambat 1 jam sebelum jemput.</span></div>
+          </fieldset>
+          <button type="submit" class="btn" id="go">Lanjut</button>
+          <p class="err" id="err" role="alert"></p>
+          <p class="help-inline">Bingung mengisi? <a href="#" id="wa-order" target="_blank" rel="noopener" style="color:var(--gold-ink);font-weight:700">Chat admin lewat WhatsApp</a></p>
+        </form>
+      </div>
+
+      <!-- Rute di luar Zona 1: hubungi kami -->
+      <section id="s-contact" class="panel" hidden>
+        <h2>Tarif dikonfirmasi admin</h2>
+        <p>Rute ini di luar Zona 1. Kirim pesan ini lewat WhatsApp supaya tarif dan jadwalnya dikonfirmasi.</p>
+        <pre class="msg" id="msg"></pre>
+        <div class="row">
+          <a class="btn wa" id="wa-link" href="#" target="_blank" rel="noopener">Buka WhatsApp</a>
+          <button type="button" class="btn ghost" id="copy">Salin pesan</button>
+          <button type="button" class="btn ghost" data-again>Buat pesanan baru</button>
+        </div>
+      </section>
+
+      <!-- Bayar -->
+      <section id="s-pay" class="panel" hidden>
+        <h2>Bayar untuk konfirmasi pesanan</h2>
+        <div class="count" id="count" aria-live="off">15:00</div>
+        <p style="text-align:center">Selesaikan pembayaran sebelum waktu habis. Pesanan yang belum dibayar hangus otomatis.</p>
+        <div class="amtbig" id="pay-amt"></div>
+        <div class="qrwrap"><div class="qr" id="qr" style="display:grid;place-items:center;text-align:center;padding:14px;font-size:13.5px;color:#0F1B33">QRIS otomatis sedang disiapkan.<br>Sementara, bayar lewat WhatsApp admin dan tunggu konfirmasi.</div></div>
+        <div class="status" id="pay-status" aria-live="polite">Menunggu pembayaran</div>
+        <p style="font-size:13.5px">Status berubah sendiri setelah admin atau sistem pembayaran mengonfirmasi, tanpa perlu kirim bukti.</p>
+        <a class="btn wa" id="wa-pay" href="#" target="_blank" rel="noopener">Bayar lewat WhatsApp</a>
+        <button type="button" class="btn ghost" id="pay-cancel">Batalkan pesanan</button>
+      </section>
+
+      <!-- Terkonfirmasi -->
+      <section id="s-done" class="panel okb" hidden>
+        <div class="status ok" id="done-status">Pembayaran diterima</div>
+        <h2>Pesanan terkonfirmasi</h2>
+        <div>Kode pesanan <div class="bk" id="bk"></div></div>
+        <div class="list" id="summary"></div>
+        <div class="row">
+          <a class="btn wa" id="wa-done" href="#" target="_blank" rel="noopener">Chat admin lewat WhatsApp</a>
+          <button type="button" class="btn ghost" id="open-cancel">Ajukan pembatalan</button>
+          <button type="button" class="btn ghost" data-again>Buat pesanan baru</button>
+        </div>
+        <div id="cancel-box" hidden class="panel" style="padding:14px">
+          <p>Refund 100% bila diajukan paling lambat 1 jam sebelum jemput. Admin memprosesnya, pencairan maksimal 12 jam kerja.</p>
+          <div class="field"><label for="refund-to">Kirim refund ke</label><input id="refund-to" type="text" placeholder="Nomor e-wallet atau rekening"></div>
+          <button type="button" class="btn" id="send-cancel">Ajukan pembatalan</button>
+          <p class="err" id="cancel-msg" role="alert"></p>
+          <a class="btn wa" id="wa-cancel" href="#" target="_blank" rel="noopener" hidden>Kirim ke admin lewat WhatsApp</a>
+        </div>
+      </section>
+
+      <!-- Hangus -->
+      <section id="s-expired" class="panel" hidden>
+        <div class="status">Waktu pembayaran habis</div>
+        <h2>Pesanan hangus</h2>
+        <p>Pesanan ini tidak dibayar dalam 15 menit, jadi dibatalkan otomatis. Kamu bisa membuat pesanan baru kapan saja.</p>
+        <button type="button" class="btn" data-again>Buat pesanan baru</button>
+      </section>
+    </div>
+
+    <div class="pane" id="p-tarif" hidden>
+      <h1>Tarif</h1>
+      <p class="sub">Tarif flat berdasarkan kelurahan jemput dan tujuan. Harga yang tertera saat memesan bersifat mutlak.</p>
+      <table>
+        <thead><tr><th>Rute</th><th>Tarif</th></tr></thead>
+        <tbody>
+          <tr><td>Satu kecamatan (Zona 1)</td><td class="n">Rp15.000 <span class="hint">contoh</span></td></tr>
+          <tr><td>Beda kecamatan (Zona 1)</td><td class="n">Rp20.000 <span class="hint">contoh</span></td></tr>
+          <tr><td>Zona 2 dan luar daftar</td><td class="n">Hubungi kami</td></tr>
+        </tbody>
+      </table>
+      <div class="list" style="margin-top:18px">
+        <div class="kv"><span>Pembayaran</span><span>QRIS di web. Belum dibayar dalam 15 menit, pesanan hangus.</span></div>
+        <div class="kv"><span>Pembatalan</span><span>Hubungi admin paling lambat 1 jam sebelum jemput untuk refund 100%. Pencairan maksimal 12 jam kerja.</span></div>
+        <div class="kv"><span>Tunggu</span><span>Gratis 10 menit, lalu Rp1.500 per menit.</span></div>
+        <div class="kv"><span>Force majeure</span><span>Jarak tempuh 50% atau lebih: biaya 50% tarif dasar. Di bawah 50%: dikembalikan penuh.</span></div>
+      </div>
+      <button class="btn" type="button" data-go="order">Cek tarif rute saya</button>
+    </div>
+
+    <div class="pane" id="p-wa" hidden>
+      <h1>Langsung chat saja</h1>
+      <p class="sub">Tidak paham cara pakai aplikasi? Tidak apa-apa. Pilih salah satu di bawah, WhatsApp terbuka dengan pesan yang sudah terisi.</p>
+      <div class="row">
+        <a class="btn wa" id="wa-1" href="#" target="_blank" rel="noopener">Saya mau pesan, tolong dibantu</a>
+        <a class="btn ghost" id="wa-2" href="#" target="_blank" rel="noopener">Tanya tarif</a>
+        <a class="btn ghost" id="wa-4" href="#" target="_blank" rel="noopener">Batalkan atau refund pesanan</a>
+        <a class="btn ghost" id="wa-3" href="#" target="_blank" rel="noopener">Ada kendala atau keluhan</a>
+      </div>
+    </div>
+
+    <div class="pane" id="p-profil" hidden>
+      <h1>Profil</h1>
+      <p class="sub">Akun yang kamu pakai untuk memesan.</p>
+      <div class="list">
+        <div class="kv"><span>Nama</span><span id="pf-nama"></span></div>
+        <div class="kv"><span>ID Cirgo</span><span id="pf-id"></span></div>
+        <div class="kv"><span>WhatsApp</span><span id="pf-wa"></span></div>
+      </div>
+      <button type="button" class="btn ghost" id="logout">Keluar</button>
+    </div>
+
+    <nav class="nav" aria-label="Menu utama">
+      <button type="button" data-go="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Beranda</span></button>
+      <button type="button" data-go="tarif"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span>Tarif</span></button>
+      <button type="button" class="plus" data-go="order" aria-label="Pesan"><span class="dot"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span>Pesan</span></button>
+      <button type="button" data-go="wa"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span>WhatsApp</span></button>
+      <button type="button" data-go="profil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Profil</span></button>
+    </nav>
+  </section>
+</div>
+
+<div class="overlay" id="ov" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="t-title">
+    <h2 id="t-title">Ketentuan layanan</h2>
+    <p class="ver">Versi draf-1. Baca sebelum membayar.</p>
+    <ol>
+      <li><b>Tarif flat.</b> Harga mengikuti zona jemput dan tujuan sesuai daftar kelurahan. Tarif yang tertera saat memesan bersifat mutlak dan tidak berubah karena rute atau macet.</li>
+      <li><b>Pembayaran.</b> Pesanan dibayar lewat QRIS di web. Pesanan yang belum dibayar dalam 15 menit hangus otomatis.</li>
+      <li><b>Waktu tunggu.</b> Gratis 10 menit di titik jemput. Setelahnya Rp1.500 per menit.</li>
+      <li><b>Perubahan rute.</b> Pengemudi berhak mengubah rute dalam keadaan darurat.</li>
+      <li><b>Pembatalan dan refund.</b> Hubungi admin paling lambat 1 jam sebelum jemput untuk refund 100%. Pencairan maksimal 12 jam kerja. Pembatalan kurang dari 1 jam sebelum jemput tidak mendapat refund.</li>
+      <li><b>Force majeure.</b> Jika jarak tempuh sudah 50% atau lebih, biaya 50% dari tarif dasar dan sisanya dikembalikan. Di bawah 50%, dikembalikan penuh.</li>
+      <li><b>Di luar daftar.</b> Lokasi di luar Zona 1 atau di luar daftar kelurahan perlu konfirmasi tarif lewat WhatsApp.</li>
+    </ol>
+    <div id="agree-wrap">
+      <label class="agree" for="agree"><input type="checkbox" id="agree"><span>Saya sudah membaca dan menyetujui ketentuan layanan.</span></label>
+      <div class="row"><button type="button" class="btn" id="ok" disabled>Setuju, lanjut</button><button type="button" class="btn ghost" id="close">Kembali</button></div>
+    </div>
+    <button type="button" class="btn ghost" id="close2" hidden>Tutup</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  /* ====== PENGATURAN ====== */
+  var SUPABASE_URL='https://lsswxpywagnloqscwoda.supabase.co';
+  var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3d4cHl3YWdubG9xc2N3b2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNzY2OTUsImV4cCI6MjEwODg1MjY5NX0.e6tJ_5jJVWhF_5RjIEyyARIylX-MYt0zr1B7f6-83Kk'; // kunci anon (publik, aman di web)
+  var WA_NUMBER='';            // isi nomor Cirgo, contoh 62812xxxxxxx; kosong = WhatsApp membuka pilihan kontak
+  var WA_DOMAIN='wa.cirgo.app'; // harus sama dengan DOMAIN di fungsi register
+  var TERMS_VERSION='draft-1';
+  var REFUND_MIN=60;
+  /* ======================== */
+  var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  function waLink(t){return 'https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(t)}
+  function rp(n){return 'Rp'+String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.')}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function normWa(v){var d=String(v).replace(/\D/g,''); if(d.charAt(0)==='0') d='62'+d.slice(1); return d}
+  function validWa(d){return /^62[0-9]{8,12}$/.test(d)}
+  function showWa(d){return d.indexOf('62')===0? '0'+d.slice(2) : d}
+  var user=null;
+
+  ['wa-code','wa-auth','forgot','wa-home','wa-order','wa-1','wa-2','wa-3','wa-4'].forEach(function(id){
+    var T={'wa-code':'Halo Cirgo, saya mau daftar. Mohon kirim kode pendaftaran.','wa-auth':'Halo Cirgo, saya belum paham cara pakai aplikasinya. Mohon dibantu.','forgot':'Halo Cirgo, saya lupa kata sandi. Mohon dibantu atur ulang.','wa-home':'Halo Cirgo, saya butuh bantuan.','wa-order':'Halo Cirgo, saya mau pesan antar-jemput tapi bingung mengisinya. Mohon dibantu.','wa-1':'Halo Cirgo, saya mau pesan antar-jemput. Tolong dibantu.','wa-2':'Halo Cirgo, saya mau tanya tarif.','wa-3':'Halo Cirgo, saya ada kendala atau keluhan.','wa-4':'Halo Cirgo, saya mau membatalkan pesanan dan meminta refund.'}[id];
+    if($(id)) $(id).href=waLink(T);
+  });
+
+  /* ---------- masuk / daftar ---------- */
+  function tab(up){
+    $('tab-in').setAttribute('aria-selected',String(!up)); $('tab-up').setAttribute('aria-selected',String(up));
+    $('f-in').hidden=up; $('f-up').hidden=!up;
+  }
+  $('tab-in').addEventListener('click',function(){tab(false)});
+  $('tab-up').addEventListener('click',function(){tab(true)});
+  $('up-code').addEventListener('input',function(){ this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'') });
+  function busy(form,on){ var b=form.querySelector('button[type=submit]'); if(b){b.disabled=on} }
+
+  function signIn(wa,pw){ return sb.auth.signInWithPassword({email:wa+'@'+WA_DOMAIN,password:pw}) }
+
+  $('f-in').addEventListener('submit',function(e){
+    e.preventDefault(); var id=normWa($('in-wa').value), pw=$('in-pass').value, E=$('err-in'), f=this;
+    if(!validWa(id)||!pw){E.textContent='Isi nomor WhatsApp dan kata sandi.';return}
+    E.textContent=''; busy(f,true);
+    signIn(id,pw).then(function(r){
+      busy(f,false);
+      if(r.error){E.textContent='Nomor atau kata sandi salah. Belum terdaftar? Daftar dengan kode dari admin.';return}
+      loadUser();
+    },function(){busy(f,false);E.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.'});
+  });
+  $('f-up').addEventListener('submit',function(e){
+    e.preventDefault(); var code=$('up-code').value, n=$('up-nama').value.trim(), id=normWa($('up-wa').value), pw=$('up-pass').value, E=$('err-up'), f=this;
+    if(code.length!==8){E.textContent='Kode pendaftaran terdiri dari 8 huruf.';return}
+    if(!n){E.textContent='Isi nama.';return}
+    if(!validWa(id)){E.textContent='Isi nomor WhatsApp yang valid.';return}
+    if(pw.length<6){E.textContent='Kata sandi minimal 6 karakter.';return}
+    E.textContent=''; busy(f,true);
+    sb.functions.invoke('register',{body:{code:code,nama:n,wa:id,password:pw}}).then(function(r){
+      var d=r.data;
+      if(r.error||!d){busy(f,false);E.textContent='Pendaftaran belum bisa diproses. Coba lagi sebentar.';return}
+      if(!d.ok){busy(f,false);E.textContent=d.error||'Pendaftaran gagal.';return}
+      signIn(id,pw).then(function(s){busy(f,false); if(s.error){E.textContent='Akun dibuat. Silakan masuk.';tab(false)} else loadUser()});
+    },function(){busy(f,false);E.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.'});
+  });
+
+  function greet(){var h=new Date().getHours(); return h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam'}
+  function loadUser(){
+    sb.auth.getUser().then(function(r){
+      if(!r.data||!r.data.user){showAuth();return}
+      var uid=r.data.user.id;
+      sb.from('profiles').select('nama,wa,short_id').eq('user_id',uid).maybeSingle().then(function(p){
+        if(!p.data){ sb.auth.signOut(); showAuth(); $('err-in').textContent='Akun belum lengkap. Hubungi admin lewat WhatsApp.'; return }
+        enter({id:uid,nama:p.data.nama,wa:p.data.wa,sid:p.data.short_id});
+      });
+    });
+  }
+  function showAuth(){ $('v-app').hidden=true; $('v-auth').hidden=false }
+  function enter(u){
+    user=u; $('v-auth').hidden=true; $('v-app').hidden=false;
+    $('greet').textContent=greet(); $('uname').textContent=u.nama;
+    $('pf-nama').textContent=u.nama; $('pf-id').textContent=u.sid||u.wa.slice(-5); $('pf-wa').textContent=showWa(u.wa);
+    $('nama').value=u.nama; $('wa').value=showWa(u.wa);
+    loadAreas(); resetOrder(); go('home');
+  }
+  $('logout').addEventListener('click',function(){
+    stopTimer(); order=null; sb.auth.signOut().then(function(){ user=null; showAuth(); $('in-pass').value=''; tab(false); window.scrollTo(0,0) });
+  });
+
+  /* ---------- navigasi ---------- */
+  var panes=['home','order','tarif','wa','profil'];
+  function go(name){
+    panes.forEach(function(p){ $('p-'+p).hidden = p!==name });
+    document.querySelectorAll('.nav button').forEach(function(b){
+      if(b.getAttribute('data-go')===name) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+    });
+    window.scrollTo(0,0);
+  }
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-go]'); if(t&&t.getAttribute('data-go')) go(t.getAttribute('data-go'));
+    if(e.target.closest('[data-again]')) resetOrder();
+  });
+  $('c-sched').addEventListener('click',function(){ go('order'); $('when').value='later'; $('when-wrap').hidden=false });
+
+  /* ---------- daftar kelurahan dari database ---------- */
+  var from=$('from'),to=$('to'),price=$('price'), areas=[], byId={}, loaded=false, OTHER='other';
+  function loadAreas(){
+    if(loaded) return;
+    sb.from('areas').select('id,name,level,parent_id,wilayah,zone').order('name').then(function(r){
+      if(r.error||!r.data){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Daftar belum termuat</div><p class="note">Muat ulang halaman, atau pesan lewat WhatsApp.</p>'; return }
+      r.data.forEach(function(a){byId[a.id]=a});
+      areas=r.data.filter(function(a){return a.level==='kelurahan'||a.level==='desa'});
+      loaded=true; fill(from); fill(to); calc();
+    });
+  }
+  function fill(sel){
+    sel.innerHTML='';
+    var o=document.createElement('option'); o.value=''; o.textContent='Pilih kelurahan'; sel.appendChild(o);
+    var groups={};
+    areas.forEach(function(a){
+      var p=byId[a.parent_id], key=p?p.name:(a.wilayah==='kota'?'Kota Cirebon':'Kabupaten Cirebon');
+      var og=groups[key]; if(!og){og=document.createElement('optgroup'); og.label=key; groups[key]=og; sel.appendChild(og)}
+      var op=document.createElement('option'); op.value=a.id; op.textContent=a.name; og.appendChild(op);
+    });
+    var last=document.createElement('option'); last.value=OTHER; last.textContent='Lokasi lain di luar daftar (hubungi kami)'; sel.appendChild(last);
+  }
+  function nm(v){ return v===OTHER?'Lokasi lain':(byId[v]?byId[v].name:'') }
+  var cur=null, calcSeq=0;
+  function resetPrice(){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p>' }
+  function showContact(){
+    price.className='price contact';
+    price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Hubungi kami</div><p class="note">Rute ini di luar area tarif otomatis. Tarif dikonfirmasi lewat WhatsApp.</p><span class="pill warn">Konfirmasi tarif</span>';
+  }
+  function calc(){
+    var a=from.value,b=to.value; cur=null;
+    if(!a||!b){resetPrice();return}
+    if(a===OTHER||b===OTHER){cur={contact:true,a:a,b:b};showContact();return}
+    var seq=++calcSeq; price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Menghitung...</div>';
+    sb.rpc('fare_quote',{p_pickup:+a,p_dropoff:+b}).then(function(r){
+      if(seq!==calcSeq) return;
+      var row=r.data&&r.data[0];
+      if(r.error||!row){cur=null; price.className='price contact'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Belum bisa dihitung</div><p class="note">Coba lagi, atau pesan lewat WhatsApp.</p>'; return}
+      if(row.price==null){cur={contact:true,a:a,b:b};showContact();return}
+      cur={contact:false,amt:row.price,a:a,b:b}; price.className='price ok';
+      price.innerHTML='<div class="lbl">Tarif flat</div><div class="amt">'+rp(row.price)+'</div><p class="note">'+esc(nm(a))+' ke '+esc(nm(b))+'. Harga pasti, tidak berubah di jalan.</p>';
+    },function(){ if(seq===calcSeq){cur=null; resetPrice()} });
+  }
+  from.addEventListener('change',calc); to.addEventListener('change',calc);
+  $('swap').addEventListener('click',function(){var t=from.value; from.value=to.value; to.value=t; calc()});
+  $('when').addEventListener('change',function(){ $('when-wrap').hidden = this.value!=='later' });
+
+  /* ---------- validasi + ketentuan ---------- */
+  var err=$('err');
+  function pickupAt(){ if($('when').value!=='later') return null; var v=$('when-at').value; var d=v?new Date(v):null; return d&&!isNaN(d)?d:null }
+  function validate(){
+    if(!cur) return 'Pilih kelurahan jemput dan tujuan.';
+    if(!$('nama').value.trim()) return 'Isi nama pemesan.';
+    if($('wa').value.replace(/\D/g,'').length<9) return 'Isi nomor WhatsApp yang valid.';
+    if(!$('det-from').value.trim()) return 'Isi alamat atau patokan jemput.';
+    if($('when').value==='later'){ var p=pickupAt(); if(!p) return 'Pilih tanggal dan jam jemput.'; if(p.getTime()<=Date.now()) return 'Pilih waktu jemput di masa depan.' }
+    return '';
+  }
+  var ov=$('ov'), agree=$('agree'), ok=$('ok'), lastFocus=null;
+  function openT(readonly){
+    lastFocus=document.activeElement; agree.checked=false; ok.disabled=true;
+    $('agree-wrap').hidden=!!readonly; $('close2').hidden=!readonly;
+    ov.hidden=false; document.body.style.overflow='hidden'; (readonly?$('close2'):agree).focus();
+  }
+  function closeT(){ ov.hidden=true; document.body.style.overflow=''; if(lastFocus&&lastFocus.focus) lastFocus.focus() }
+  $('c-terms').addEventListener('click',function(){openT(true)});
+  $('f').addEventListener('submit',function(e){ e.preventDefault(); var m=validate(); err.textContent=m; if(m) return; openT(false) });
+  agree.addEventListener('change',function(){ ok.disabled=!agree.checked });
+  $('close').addEventListener('click',closeT); $('close2').addEventListener('click',closeT);
+  ov.addEventListener('click',function(e){ if(e.target===ov) closeT() });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!ov.hidden) closeT() });
+  function whenText(){
+    var p=pickupAt(); if($('when').value==='now') return 'Secepatnya';
+    return p? p.toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}) : 'Dijadwalkan';
+  }
+
+  /* ---------- alur pesanan: form -> bayar -> terkonfirmasi / hangus ---------- */
+  var order=null, timer=null, poll=null, subs=['form','contact','pay','done','expired'];
+  function sub(n){ subs.forEach(function(s){ $('s-'+s).hidden = s!==n }) }
+  function stopTimer(){ if(timer){clearInterval(timer); timer=null} if(poll){clearInterval(poll); poll=null} }
+  function resetOrder(){ stopTimer(); order=null; sub('form'); $('cancel-box').hidden=true; $('cancel-msg').textContent=''; $('wa-cancel').hidden=true; $('open-cancel').hidden=false; $('done-status').textContent='Pembayaran diterima'; $('ok').disabled=true; window.scrollTo(0,0) }
+  function shortCode(id){ return 'CG-'+String(id).replace(/-/g,'').slice(0,6).toUpperCase() }
+
+  ok.addEventListener('click',function(){
+    closeT();
+    if(cur.contact){
+      var t='Halo Cirgo, saya ingin memesan antar-jemput.\nNama: '+$('nama').value.trim()+'\nWhatsApp: '+$('wa').value.trim()
+        +'\nJemput: '+nm(cur.a)+' - '+$('det-from').value.trim()
+        +'\nTujuan: '+nm(cur.b)+($('det-to').value.trim()?' - '+$('det-to').value.trim():'')
+        +'\nWaktu: '+whenText()+'\nTarif: mohon dikonfirmasi';
+      $('msg').textContent=t; $('wa-link').href=waLink(t); sub('contact'); window.scrollTo(0,0); return;
+    }
+    var p=pickupAt(), btn=ok; btn.disabled=true;
+    var row={customer_name:$('nama').value.trim(),customer_phone:normWa($('wa').value),
+      pickup_area_id:+cur.a,dropoff_area_id:+cur.b,pickup_text:$('det-from').value.trim(),dropoff_text:$('det-to').value.trim()||null,
+      pickup_at:p?p.toISOString():null,terms_version:TERMS_VERSION,terms_accepted_at:new Date().toISOString()};
+    sb.from('bookings').insert(row).select('id,quoted_price,pay_expires_at,pickup_at').single().then(function(r){
+      if(r.error||!r.data){ err.textContent='Pesanan belum tersimpan. Coba lagi, atau pesan lewat WhatsApp.'; return }
+      var d=r.data;
+      if(d.quoted_price==null){ err.textContent='Tarif rute ini perlu dikonfirmasi admin. Gunakan tombol WhatsApp.'; return }
+      order={id:d.id,code:shortCode(d.id),amt:d.quoted_price,a:nm(cur.a),b:nm(cur.b),dfrom:row.pickup_text,dto:row.dropoff_text||'',
+        when:whenText(),pickup:d.pickup_at?new Date(d.pickup_at):null,paid:false,expires:new Date(d.pay_expires_at).getTime()};
+      $('pay-amt').textContent=rp(order.amt);
+      $('wa-pay').href=waLink('Halo Cirgo, saya mau membayar pesanan '+order.code+' ('+order.a+' ke '+order.b+') sebesar '+rp(order.amt)+'.');
+      $('pay-status').className='status'; $('pay-status').textContent='Menunggu pembayaran';
+      sub('pay'); window.scrollTo(0,0); tick(); stopTimer(); timer=setInterval(tick,1000); poll=setInterval(checkPaid,5000);
+    },function(){ err.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.' });
+  });
+  function tick(){
+    if(!order||order.paid){stopTimer();return}
+    var left=Math.max(0,Math.round((order.expires-Date.now())/1000));
+    $('count').textContent=('0'+Math.floor(left/60)).slice(-2)+':'+('0'+(left%60)).slice(-2);
+    if(left<=0){ checkPaid(function(paid){ if(!paid){ stopTimer(); sub('expired'); window.scrollTo(0,0) } }) }
+  }
+  function checkPaid(cb){
+    if(!order) return;
+    sb.from('bookings').select('payment_status').eq('id',order.id).single().then(function(r){
+      var paid=!!(r.data&&r.data.payment_status==='paid');
+      if(paid&&!order.paid){ order.paid=true; stopTimer(); $('pay-status').className='status ok'; $('pay-status').textContent='Pembayaran diterima'; setTimeout(showDone,700) }
+      if(typeof cb==='function') cb(paid);
+    },function(){ if(typeof cb==='function') cb(false) });
+  }
+  $('pay-cancel').addEventListener('click',function(){ resetOrder() });
+  function kv(a,b){return '<div class="kv"><span>'+a+'</span><span>'+b+'</span></div>'}
+  function showDone(){
+    $('bk').textContent=order.code;
+    $('summary').innerHTML=kv('Jemput',esc(order.a)+' - '+esc(order.dfrom))+kv('Tujuan',esc(order.b)+(order.dto?' - '+esc(order.dto):''))+kv('Waktu',esc(order.when))+kv('Dibayar',rp(order.amt));
+    $('wa-done').href=waLink('Halo Cirgo, pesanan '+order.code+' ('+order.a+' ke '+order.b+') sudah dibayar. Mohon konfirmasi.');
+    sub('done'); window.scrollTo(0,0);
+  }
+  $('open-cancel').addEventListener('click',function(){ $('cancel-box').hidden=false; $('refund-to').focus() });
+  var CMSG={belum_dibayar:'Pesanan belum dibayar.',sudah_diajukan:'Pembatalan sudah diajukan sebelumnya.',tujuan_refund_kosong:'Isi nomor e-wallet atau rekening tujuan refund.',tidak_ditemukan:'Pesanan tidak ditemukan.',
+    lewat_batas_refund:'Batas refund sudah lewat (kurang dari 1 jam sebelum jemput, atau pesanan "Secepatnya"). Hubungi admin lewat WhatsApp bila ada kendala.'};
+  $('send-cancel').addEventListener('click',function(){
+    var M=$('cancel-msg'), dest=$('refund-to').value.trim();
+    if(!order||!order.paid) return;
+    if(dest.length<6){ M.style.color=''; M.textContent=CMSG.tujuan_refund_kosong; return }
+    sb.rpc('request_cancel',{p_booking:order.id,p_refund_to:dest}).then(function(r){
+      if(r.error){ M.style.color=''; M.textContent='Belum bisa diproses. Coba lagi atau hubungi admin lewat WhatsApp.'; return }
+      if(r.data!=='ok'){ M.style.color=''; M.textContent=CMSG[r.data]||'Belum bisa diproses.'; return }
+      M.style.color='var(--ok)';
+      M.textContent='Pembatalan diajukan. Admin akan memprosesnya; pencairan maksimal 12 jam kerja. Anda juga bisa memberi tahu admin lewat WhatsApp.';
+      $('wa-cancel').href=waLink('Halo Cirgo, saya ajukan pembatalan pesanan '+order.code+'. Refund 100% ke: '+dest+'.'); $('wa-cancel').hidden=false;
+      $('done-status').textContent='Pembatalan diajukan'; $('open-cancel').hidden=true;
+    });
+  });
+  $('copy').addEventListener('click',function(){
+    var b=this, text=$('msg').textContent;
+    function done(m){b.textContent=m; setTimeout(function(){b.textContent='Salin pesan'},1800)}
+    function selx(){ var r=document.createRange(); r.selectNodeContents($('msg')); var s=getSelection(); s.removeAllRanges(); s.addRange(r); done('Pilih lalu salin') }
+    try{ navigator.clipboard.writeText(text).then(function(){done('Tersalin')},selx) }catch(e){selx()}
+  });
+
+  /* mulai: pulihkan sesi bila ada */
+  sb.auth.getSession().then(function(r){ if(r.data&&r.data.session) loadUser(); else showAuth() },showAuth);
+})();
+
+</script>
+</body>
+</html>
