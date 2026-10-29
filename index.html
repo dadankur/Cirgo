@@ -1,4 +1,8 @@
 <title>Cirgo Pemesanan</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0F1B2D">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
@@ -151,18 +155,14 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
 @media (min-width:600px){ .overlay{place-items:center} .sheet{border-radius:14px} }
 @media (min-width:560px){ .route{grid-template-columns:1fr 1fr} .swap{grid-column:1/-1} .authhead{margin-inline:0;border-radius:0 0 14px 14px} }
 @media (prefers-reduced-motion:no-preference){ .price,.panel{animation:rise .25s ease-out} @keyframes rise{from{transform:translateY(4px);opacity:.6}to{transform:none;opacity:1}} }
-</style>
+.field{position:relative}.eye{position:absolute;right:6px;bottom:6px;width:40px;height:40px;border:0;background:transparent;color:var(--muted,#566282);cursor:pointer;display:grid;place-items:center;border-radius:10px}.eye svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}input[type=password],input.pwshow{padding-right:50px}.steps{display:flex;gap:4px;margin:6px 0 2px}.steps i{flex:1;height:5px;border-radius:9px;background:var(--line,#D8DEEA)}.steps i.on{background:var(--gold,#E0B04A)}.authhead{display:grid;place-items:center;background:#F6F3EC;padding:30px 16px 22px;border-bottom:3px solid #B8975A}.logocard{width:min(330px,100%)}.logocard img{display:block;width:100%;height:auto}.top .appicon{width:34px;height:34px;border-radius:9px;display:block}</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 
 <div class="app">
 
   <!-- GERBANG: daftar dengan kode dari admin, atau masuk -->
   <section id="v-auth">
-    <header class="authhead">
-      <div class="mark">Cir<i>go</i></div>
-      <p class="tag">Jemputin · Nganterin</p>
-      <p class="lead">Antar-jemput pribadi di Kota Cirebon. Masuk atau daftar dulu untuk memesan.</p>
-    </header>
+    <header class="authhead"><div class="logocard"><img src="logo.svg" alt="Cirgo - Jemputin dan Nganterin" width="320" height="145"></div></header>
 
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" id="tab-in" aria-selected="true" aria-controls="f-in">Masuk</button>
@@ -200,7 +200,7 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
   <section id="v-app" hidden>
     <header class="top">
       <div><div class="hi" id="greet">Selamat pagi</div><div class="nm" id="uname">Nama</div></div>
-      <div class="mark">Cir<i>go</i></div>
+      <img class="appicon" src="icon.svg" alt="Cirgo" width="34" height="34">
     </header>
 
     <div class="pane" id="p-home">
@@ -215,7 +215,7 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
         </button>
         <button class="card" type="button" data-go="tarif">
           <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg></span>
-          <b>Tarif</b><span class="t">Tarif, bayar, dan refund</span>
+          <b>Tarif</b><span class="t">Tarif dan cara bayar</span>
         </button>
         <a class="card wa" id="wa-home" href="#" target="_blank" rel="noopener">
           <span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span>
@@ -252,65 +252,29 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
             <div class="field"><label for="det-from">Alamat atau patokan jemput</label><input id="det-from" type="text" placeholder="Nama jalan, perumahan, atau patokan"><span class="hint">Untuk pengemudi. Tidak memengaruhi harga.</span></div>
             <div class="field"><label for="det-to">Alamat atau patokan tujuan <span class="hint">(boleh dikosongkan)</span></label><input id="det-to" type="text" placeholder="Nama jalan, gedung, atau patokan"></div>
             <div class="field"><label for="when">Waktu jemput</label><select id="when"><option value="now">Secepatnya</option><option value="later">Jadwalkan</option></select></div>
-            <div class="field" id="when-wrap" hidden><label for="when-at">Tanggal dan jam</label><input id="when-at" type="datetime-local"><span class="hint">Refund 100% bila dibatalkan lewat admin paling lambat 1 jam sebelum jemput.</span></div>
+            <div class="field" id="when-wrap" hidden><label for="when-at">Tanggal dan jam</label><input id="when-at" type="datetime-local"><span class="hint">Admin akan mengonfirmasi jadwal ini.</span></div>
           </fieldset>
-          <button type="submit" class="btn" id="go">Lanjut</button>
+          <button type="submit" class="btn" id="go">Kirim pesanan</button>
           <p class="err" id="err" role="alert"></p>
           <p class="help-inline">Bingung mengisi? <a href="#" id="wa-order" target="_blank" rel="noopener" style="color:var(--gold-ink);font-weight:700">Chat admin lewat WhatsApp</a></p>
         </form>
       </div>
 
-      <!-- Rute di luar Zona 1: hubungi kami -->
-      <section id="s-contact" class="panel" hidden>
-        <h2>Tarif dikonfirmasi admin</h2>
-        <p>Rute ini di luar Zona 1. Kirim pesan ini lewat WhatsApp supaya tarif dan jadwalnya dikonfirmasi.</p>
-        <pre class="msg" id="msg"></pre>
-        <div class="row">
-          <a class="btn wa" id="wa-link" href="#" target="_blank" rel="noopener">Buka WhatsApp</a>
-          <button type="button" class="btn ghost" id="copy">Salin pesan</button>
-          <button type="button" class="btn ghost" data-again>Buat pesanan baru</button>
-        </div>
-      </section>
-
-      <!-- Bayar -->
-      <section id="s-pay" class="panel" hidden>
-        <h2>Bayar untuk konfirmasi pesanan</h2>
-        <div class="count" id="count" aria-live="off">15:00</div>
-        <p style="text-align:center">Selesaikan pembayaran sebelum waktu habis. Pesanan yang belum dibayar hangus otomatis.</p>
-        <div class="amtbig" id="pay-amt"></div>
-        <div class="qrwrap"><div class="qr" id="qr" style="display:grid;place-items:center;text-align:center;padding:14px;font-size:13.5px;color:#0F1B33">QRIS otomatis sedang disiapkan.<br>Sementara, bayar lewat WhatsApp admin dan tunggu konfirmasi.</div></div>
-        <div class="status" id="pay-status" aria-live="polite">Menunggu pembayaran</div>
-        <p style="font-size:13.5px">Status berubah sendiri setelah admin atau sistem pembayaran mengonfirmasi, tanpa perlu kirim bukti.</p>
-        <a class="btn wa" id="wa-pay" href="#" target="_blank" rel="noopener">Bayar lewat WhatsApp</a>
-        <button type="button" class="btn ghost" id="pay-cancel">Batalkan pesanan</button>
-      </section>
-
-      <!-- Terkonfirmasi -->
-      <section id="s-done" class="panel okb" hidden>
-        <div class="status ok" id="done-status">Pembayaran diterima</div>
-        <h2>Pesanan terkonfirmasi</h2>
-        <div>Kode pesanan <div class="bk" id="bk"></div></div>
+      <!-- Status pesanan -->
+      <section id="s-track" class="panel" hidden>
+        <div class="status" id="tk-status" aria-live="polite"></div>
+        <h2 id="tk-title"></h2>
+        <p id="tk-sub"></p>
+        <div class="bk" id="bk"></div>
+        <div class="steps" id="steps" aria-hidden="true"></div>
         <div class="list" id="summary"></div>
+        <p class="hint" id="tk-pay"></p>
         <div class="row">
           <a class="btn wa" id="wa-done" href="#" target="_blank" rel="noopener">Chat admin lewat WhatsApp</a>
-          <button type="button" class="btn ghost" id="open-cancel">Ajukan pembatalan</button>
-          <button type="button" class="btn ghost" data-again>Buat pesanan baru</button>
+          <button type="button" class="btn ghost" id="tk-cancel">Batalkan pesanan</button>
+          <button type="button" class="btn ghost" id="tk-new" hidden>Buat pesanan baru</button>
         </div>
-        <div id="cancel-box" hidden class="panel" style="padding:14px">
-          <p>Refund 100% bila diajukan paling lambat 1 jam sebelum jemput. Admin memprosesnya, pencairan maksimal 12 jam kerja.</p>
-          <div class="field"><label for="refund-to">Kirim refund ke</label><input id="refund-to" type="text" placeholder="Nomor e-wallet atau rekening"></div>
-          <button type="button" class="btn" id="send-cancel">Ajukan pembatalan</button>
-          <p class="err" id="cancel-msg" role="alert"></p>
-          <a class="btn wa" id="wa-cancel" href="#" target="_blank" rel="noopener" hidden>Kirim ke admin lewat WhatsApp</a>
-        </div>
-      </section>
-
-      <!-- Hangus -->
-      <section id="s-expired" class="panel" hidden>
-        <div class="status">Waktu pembayaran habis</div>
-        <h2>Pesanan hangus</h2>
-        <p>Pesanan ini tidak dibayar dalam 15 menit, jadi dibatalkan otomatis. Kamu bisa membuat pesanan baru kapan saja.</p>
-        <button type="button" class="btn" data-again>Buat pesanan baru</button>
+        <p class="err" id="tk-msg" role="alert"></p>
       </section>
     </div>
 
@@ -326,8 +290,8 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
         </tbody>
       </table>
       <div class="list" style="margin-top:18px">
-        <div class="kv"><span>Pembayaran</span><span>QRIS di web. Belum dibayar dalam 15 menit, pesanan hangus.</span></div>
-        <div class="kv"><span>Pembatalan</span><span>Hubungi admin paling lambat 1 jam sebelum jemput untuk refund 100%. Pencairan maksimal 12 jam kerja.</span></div>
+        <div class="kv"><span>Pembayaran</span><span>Langsung ke pengemudi saat perjalanan selesai (tunai atau QRIS).</span></div>
+        <div class="kv"><span>Pembatalan</span><span>Bisa dibatalkan sendiri di aplikasi selama pengemudi belum berangkat.</span></div>
         <div class="kv"><span>Tunggu</span><span>Gratis 10 menit, lalu Rp1.500 per menit.</span></div>
         <div class="kv"><span>Force majeure</span><span>Jarak tempuh 50% atau lebih: biaya 50% tarif dasar. Di bawah 50%: dikembalikan penuh.</span></div>
       </div>
@@ -340,7 +304,7 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
       <div class="row">
         <a class="btn wa" id="wa-1" href="#" target="_blank" rel="noopener">Saya mau pesan, tolong dibantu</a>
         <a class="btn ghost" id="wa-2" href="#" target="_blank" rel="noopener">Tanya tarif</a>
-        <a class="btn ghost" id="wa-4" href="#" target="_blank" rel="noopener">Batalkan atau refund pesanan</a>
+        <a class="btn ghost" id="wa-4" href="#" target="_blank" rel="noopener">Tanya atau batalkan pesanan</a>
         <a class="btn ghost" id="wa-3" href="#" target="_blank" rel="noopener">Ada kendala atau keluhan</a>
       </div>
     </div>
@@ -369,15 +333,15 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
 <div class="overlay" id="ov" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="t-title">
     <h2 id="t-title">Ketentuan layanan</h2>
-    <p class="ver">Versi draf-1. Baca sebelum membayar.</p>
+    <p class="ver">Versi draf-2. Baca sebelum memesan.</p>
     <ol>
       <li><b>Tarif flat.</b> Harga mengikuti zona jemput dan tujuan sesuai daftar kelurahan. Tarif yang tertera saat memesan bersifat mutlak dan tidak berubah karena rute atau macet.</li>
-      <li><b>Pembayaran.</b> Pesanan dibayar lewat QRIS di web. Pesanan yang belum dibayar dalam 15 menit hangus otomatis.</li>
+      <li><b>Konfirmasi dan pembayaran.</b> Pesanan berlaku setelah dikonfirmasi admin, yang juga memberi perkiraan waktu jemput untuk pesanan "Secepatnya". Pembayaran langsung kepada pengemudi saat perjalanan selesai, kecuali admin menginformasikan lain.</li>
       <li><b>Waktu tunggu.</b> Gratis 10 menit di titik jemput. Setelahnya Rp1.500 per menit.</li>
       <li><b>Perubahan rute.</b> Pengemudi berhak mengubah rute dalam keadaan darurat.</li>
-      <li><b>Pembatalan dan refund.</b> Hubungi admin paling lambat 1 jam sebelum jemput untuk refund 100%. Pencairan maksimal 12 jam kerja. Pembatalan kurang dari 1 jam sebelum jemput tidak mendapat refund.</li>
+      <li><b>Pembatalan.</b> Pesanan bisa dibatalkan sendiri lewat aplikasi selama pengemudi belum berangkat. Setelah itu, hubungi admin lewat WhatsApp.</li>
       <li><b>Force majeure.</b> Jika jarak tempuh sudah 50% atau lebih, biaya 50% dari tarif dasar dan sisanya dikembalikan. Di bawah 50%, dikembalikan penuh.</li>
-      <li><b>Di luar daftar.</b> Lokasi di luar Zona 1 atau di luar daftar kelurahan perlu konfirmasi tarif lewat WhatsApp.</li>
+      <li><b>Di luar daftar.</b> Rute di luar tarif otomatis tetap bisa dipesan; tarifnya ditetapkan dan dikonfirmasi admin sebelum pengemudi berangkat.</li>
     </ol>
     <div id="agree-wrap">
       <label class="agree" for="agree"><input type="checkbox" id="agree"><span>Saya sudah membaca dan menyetujui ketentuan layanan.</span></label>
@@ -395,7 +359,7 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
   var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3d4cHl3YWdubG9xc2N3b2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNzY2OTUsImV4cCI6MjEwODg1MjY5NX0.e6tJ_5jJVWhF_5RjIEyyARIylX-MYt0zr1B7f6-83Kk'; // kunci anon (publik, aman di web)
   var WA_NUMBER='';            // isi nomor Cirgo, contoh 62812xxxxxxx; kosong = WhatsApp membuka pilihan kontak
   var WA_DOMAIN='wa.cirgo.app'; // harus sama dengan DOMAIN di fungsi register
-  var TERMS_VERSION='draft-1';
+  var TERMS_VERSION='draft-2';
   var REFUND_MIN=60;
   /* ======================== */
   var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -408,7 +372,7 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
   var user=null;
 
   ['wa-code','wa-auth','forgot','wa-home','wa-order','wa-1','wa-2','wa-3','wa-4'].forEach(function(id){
-    var T={'wa-code':'Halo Cirgo, saya mau daftar. Mohon kirim kode pendaftaran.','wa-auth':'Halo Cirgo, saya belum paham cara pakai aplikasinya. Mohon dibantu.','forgot':'Halo Cirgo, saya lupa kata sandi. Mohon dibantu atur ulang.','wa-home':'Halo Cirgo, saya butuh bantuan.','wa-order':'Halo Cirgo, saya mau pesan antar-jemput tapi bingung mengisinya. Mohon dibantu.','wa-1':'Halo Cirgo, saya mau pesan antar-jemput. Tolong dibantu.','wa-2':'Halo Cirgo, saya mau tanya tarif.','wa-3':'Halo Cirgo, saya ada kendala atau keluhan.','wa-4':'Halo Cirgo, saya mau membatalkan pesanan dan meminta refund.'}[id];
+    var T={'wa-code':'Halo Cirgo, saya mau daftar. Mohon kirim kode pendaftaran.','wa-auth':'Halo Cirgo, saya belum paham cara pakai aplikasinya. Mohon dibantu.','forgot':'Halo Cirgo, saya lupa kata sandi. Mohon dibantu atur ulang.','wa-home':'Halo Cirgo, saya butuh bantuan.','wa-order':'Halo Cirgo, saya mau pesan antar-jemput tapi bingung mengisinya. Mohon dibantu.','wa-1':'Halo Cirgo, saya mau pesan antar-jemput. Tolong dibantu.','wa-2':'Halo Cirgo, saya mau tanya tarif.','wa-3':'Halo Cirgo, saya ada kendala atau keluhan.','wa-4':'Halo Cirgo, saya mau membatalkan pesanan.'}[id];
     if($(id)) $(id).href=waLink(T);
   });
 
@@ -466,7 +430,7 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
     $('greet').textContent=greet(); $('uname').textContent=u.nama;
     $('pf-nama').textContent=u.nama; $('pf-id').textContent=u.sid||u.wa.slice(-5); $('pf-wa').textContent=showWa(u.wa);
     $('nama').value=u.nama; $('wa').value=showWa(u.wa);
-    loadAreas(); resetOrder(); go('home');
+    loadAreas(); resetOrder(); go('home'); restoreActive();
   }
   $('logout').addEventListener('click',function(){
     stopTimer(); order=null; sb.auth.signOut().then(function(){ user=null; showAuth(); $('in-pass').value=''; tab(false); window.scrollTo(0,0) });
@@ -514,7 +478,7 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
   function resetPrice(){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p>' }
   function showContact(){
     price.className='price contact';
-    price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Hubungi kami</div><p class="note">Rute ini di luar area tarif otomatis. Tarif dikonfirmasi lewat WhatsApp.</p><span class="pill warn">Konfirmasi tarif</span>';
+    price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Dikonfirmasi admin</div><p class="note">Rute ini di luar tarif otomatis. Kirim pesanan, admin akan menetapkan tarif sebelum pengemudi berangkat.</p><span class="pill warn">Tarif menyusul</span>';
   }
   function calc(){
     var a=from.value,b=to.value; cur=null;
@@ -563,81 +527,88 @@ details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
     return p? p.toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}) : 'Dijadwalkan';
   }
 
-  /* ---------- alur pesanan: form -> bayar -> terkonfirmasi / hangus ---------- */
-  var order=null, timer=null, poll=null, subs=['form','contact','pay','done','expired'];
+  /* ---------- alur pesanan: kirim -> admin konfirmasi -> perjalanan -> selesai ---------- */
+  var order=null, poll=null, subs=['form','track'];
+  var ACTIVE=['new','confirmed','ontheway','arrived','ontrip'];
+  var ST={
+    new:{n:0,badge:'Menunggu konfirmasi',title:'Pesanan terkirim',sub:'Admin akan mengonfirmasi dan memberi perkiraan waktu jemput. Halaman ini berubah sendiri.'},
+    confirmed:{n:1,badge:'Dikonfirmasi',title:'Pesanan dikonfirmasi',sub:'Pengemudi akan segera berangkat menjemput.'},
+    ontheway:{n:2,badge:'Menuju lokasi jemput',title:'Pengemudi dalam perjalanan',sub:'Pengemudi sedang menuju titik jemput. Siapkan diri di lokasi.'},
+    arrived:{n:3,badge:'Pengemudi tiba',title:'Pengemudi sudah tiba',sub:'Pengemudi menunggu di titik jemput. Tunggu gratis 10 menit.'},
+    ontrip:{n:4,badge:'Dalam perjalanan',title:'Dalam perjalanan ke tujuan',sub:'Selamat jalan. Semoga nyaman.'},
+    done:{n:5,badge:'Selesai',title:'Perjalanan selesai',sub:'Terima kasih sudah memakai Cirgo.'},
+    cancelled:{n:5,badge:'Dibatalkan',title:'Pesanan dibatalkan',sub:'Kamu bisa membuat pesanan baru kapan saja.'}
+  };
   function sub(n){ subs.forEach(function(s){ $('s-'+s).hidden = s!==n }) }
-  function stopTimer(){ if(timer){clearInterval(timer); timer=null} if(poll){clearInterval(poll); poll=null} }
-  function resetOrder(){ stopTimer(); order=null; sub('form'); $('cancel-box').hidden=true; $('cancel-msg').textContent=''; $('wa-cancel').hidden=true; $('open-cancel').hidden=false; $('done-status').textContent='Pembayaran diterima'; $('ok').disabled=true; window.scrollTo(0,0) }
+  function stopTimer(){ if(poll){clearInterval(poll); poll=null} }
+  function resetOrder(){ stopTimer(); order=null; sub('form'); $('tk-msg').textContent=''; window.scrollTo(0,0) }
   function shortCode(id){ return 'CG-'+String(id).replace(/-/g,'').slice(0,6).toUpperCase() }
-
+  function kv(a,b){return '<div class="kv"><span>'+a+'</span><span>'+b+'</span></div>'}
+  function fromRow(d){
+    return {id:d.id,code:shortCode(d.id),status:d.status,amt:d.quoted_price,eta:d.eta_note,a:nm2(d.pickup_area_id,d.pickup_text),b:nm2(d.dropoff_area_id,d.dropoff_text),
+      dfrom:d.pickup_text||'',dto:d.dropoff_text||'',pickup:d.pickup_at}
+  }
+  function nm2(id){ return byId[id]?byId[id].name:'Lokasi lain' }
+  function render(){
+    var o=order, S=ST[o.status]||ST.new; sub('track');
+    $('tk-status').className='status'+(o.status==='done'?' ok':''); $('tk-status').textContent=S.badge;
+    $('tk-title').textContent=S.title;
+    var sb2=S.sub; if(o.eta&&(o.status==='new'||o.status==='confirmed')) sb2='Perkiraan jemput: '+o.eta+'. '+sb2;
+    $('tk-sub').textContent=sb2;
+    var filled=o.status==='cancelled'?0:(o.status==='done'?5:S.n+1), st='';
+    for(var i=0;i<5;i++) st+='<i'+(i<filled?' class="on"':'')+'></i>';
+    $('bk').textContent=o.code; $('steps').innerHTML=st;
+    $('summary').innerHTML=kv('Jemput',esc(o.a)+(o.dfrom?' - '+esc(o.dfrom):''))+kv('Tujuan',esc(o.b)+(o.dto?' - '+esc(o.dto):''))
+      +kv('Waktu',o.pickup?esc(new Date(o.pickup).toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})):'Secepatnya')
+      +kv('Tarif',o.amt!=null?rp(o.amt):'Dikonfirmasi admin');
+    $('tk-pay').textContent=(o.status==='cancelled')?'':'Pembayaran langsung kepada pengemudi saat perjalanan selesai (tunai atau QRIS), kecuali admin menginformasikan lain.';
+    $('wa-done').href=waLink('Halo Cirgo, soal pesanan '+o.code+' ('+o.a+' ke '+o.b+').');
+    var canCancel=(o.status==='new'||o.status==='confirmed'), fin=(o.status==='done'||o.status==='cancelled');
+    $('tk-cancel').hidden=!canCancel; $('tk-new').hidden=!fin; $('wa-done').hidden=fin;
+    if(fin) stopTimer(); else if(!poll) poll=setInterval(refreshOrder,5000);
+  }
+  function refreshOrder(){
+    if(!order) return;
+    sb.from('bookings').select('id,status,quoted_price,eta_note,pickup_area_id,dropoff_area_id,pickup_text,dropoff_text,pickup_at').eq('id',order.id).single().then(function(r){
+      if(r.data){ var old=order.status; order=fromRow(r.data); render(); if(old!==order.status&&navigator.vibrate){try{navigator.vibrate(120)}catch(e){}} }
+    },function(){});
+  }
+  function restoreActive(){
+    sb.from('bookings').select('id,status,quoted_price,eta_note,pickup_area_id,dropoff_area_id,pickup_text,dropoff_text,pickup_at').in('status',ACTIVE).order('created_at',{ascending:false}).limit(1).then(function(r){
+      if(r.data&&r.data[0]){ order=fromRow(r.data[0]); render(); go('order') }
+    },function(){});
+  }
   ok.addEventListener('click',function(){
-    closeT();
-    if(cur.contact){
-      var t='Halo Cirgo, saya ingin memesan antar-jemput.\nNama: '+$('nama').value.trim()+'\nWhatsApp: '+$('wa').value.trim()
-        +'\nJemput: '+nm(cur.a)+' - '+$('det-from').value.trim()
-        +'\nTujuan: '+nm(cur.b)+($('det-to').value.trim()?' - '+$('det-to').value.trim():'')
-        +'\nWaktu: '+whenText()+'\nTarif: mohon dikonfirmasi';
-      $('msg').textContent=t; $('wa-link').href=waLink(t); sub('contact'); window.scrollTo(0,0); return;
-    }
-    var p=pickupAt(), btn=ok; btn.disabled=true;
+    closeT(); var p=pickupAt(), btn=ok; btn.disabled=true;
+    var other=(cur.a===OTHER||cur.b===OTHER);
+    var ptxt=$('det-from').value.trim(), dtxt=$('det-to').value.trim();
     var row={customer_name:$('nama').value.trim(),customer_phone:normWa($('wa').value),
-      pickup_area_id:+cur.a,dropoff_area_id:+cur.b,pickup_text:$('det-from').value.trim(),dropoff_text:$('det-to').value.trim()||null,
+      pickup_area_id:cur.a===OTHER?null:+cur.a,dropoff_area_id:cur.b===OTHER?null:+cur.b,
+      pickup_text:(cur.a===OTHER?'[Lokasi lain] ':'')+ptxt,dropoff_text:((cur.b===OTHER?'[Lokasi lain] ':'')+dtxt).trim()||null,
       pickup_at:p?p.toISOString():null,terms_version:TERMS_VERSION,terms_accepted_at:new Date().toISOString()};
-    sb.from('bookings').insert(row).select('id,quoted_price,pay_expires_at,pickup_at').single().then(function(r){
+    sb.from('bookings').insert(row).select('id,status,quoted_price,eta_note,pickup_area_id,dropoff_area_id,pickup_text,dropoff_text,pickup_at').single().then(function(r){
       if(r.error||!r.data){ err.textContent='Pesanan belum tersimpan. Coba lagi, atau pesan lewat WhatsApp.'; return }
-      var d=r.data;
-      if(d.quoted_price==null){ err.textContent='Tarif rute ini perlu dikonfirmasi admin. Gunakan tombol WhatsApp.'; return }
-      order={id:d.id,code:shortCode(d.id),amt:d.quoted_price,a:nm(cur.a),b:nm(cur.b),dfrom:row.pickup_text,dto:row.dropoff_text||'',
-        when:whenText(),pickup:d.pickup_at?new Date(d.pickup_at):null,paid:false,expires:new Date(d.pay_expires_at).getTime()};
-      $('pay-amt').textContent=rp(order.amt);
-      $('wa-pay').href=waLink('Halo Cirgo, saya mau membayar pesanan '+order.code+' ('+order.a+' ke '+order.b+') sebesar '+rp(order.amt)+'.');
-      $('pay-status').className='status'; $('pay-status').textContent='Menunggu pembayaran';
-      sub('pay'); window.scrollTo(0,0); tick(); stopTimer(); timer=setInterval(tick,1000); poll=setInterval(checkPaid,5000);
+      order=fromRow(r.data); render(); window.scrollTo(0,0);
     },function(){ err.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.' });
   });
-  function tick(){
-    if(!order||order.paid){stopTimer();return}
-    var left=Math.max(0,Math.round((order.expires-Date.now())/1000));
-    $('count').textContent=('0'+Math.floor(left/60)).slice(-2)+':'+('0'+(left%60)).slice(-2);
-    if(left<=0){ checkPaid(function(paid){ if(!paid){ stopTimer(); sub('expired'); window.scrollTo(0,0) } }) }
-  }
-  function checkPaid(cb){
-    if(!order) return;
-    sb.from('bookings').select('payment_status').eq('id',order.id).single().then(function(r){
-      var paid=!!(r.data&&r.data.payment_status==='paid');
-      if(paid&&!order.paid){ order.paid=true; stopTimer(); $('pay-status').className='status ok'; $('pay-status').textContent='Pembayaran diterima'; setTimeout(showDone,700) }
-      if(typeof cb==='function') cb(paid);
-    },function(){ if(typeof cb==='function') cb(false) });
-  }
-  $('pay-cancel').addEventListener('click',function(){ resetOrder() });
-  function kv(a,b){return '<div class="kv"><span>'+a+'</span><span>'+b+'</span></div>'}
-  function showDone(){
-    $('bk').textContent=order.code;
-    $('summary').innerHTML=kv('Jemput',esc(order.a)+' - '+esc(order.dfrom))+kv('Tujuan',esc(order.b)+(order.dto?' - '+esc(order.dto):''))+kv('Waktu',esc(order.when))+kv('Dibayar',rp(order.amt));
-    $('wa-done').href=waLink('Halo Cirgo, pesanan '+order.code+' ('+order.a+' ke '+order.b+') sudah dibayar. Mohon konfirmasi.');
-    sub('done'); window.scrollTo(0,0);
-  }
-  $('open-cancel').addEventListener('click',function(){ $('cancel-box').hidden=false; $('refund-to').focus() });
-  var CMSG={belum_dibayar:'Pesanan belum dibayar.',sudah_diajukan:'Pembatalan sudah diajukan sebelumnya.',tujuan_refund_kosong:'Isi nomor e-wallet atau rekening tujuan refund.',tidak_ditemukan:'Pesanan tidak ditemukan.',
-    lewat_batas_refund:'Batas refund sudah lewat (kurang dari 1 jam sebelum jemput, atau pesanan "Secepatnya"). Hubungi admin lewat WhatsApp bila ada kendala.'};
-  $('send-cancel').addEventListener('click',function(){
-    var M=$('cancel-msg'), dest=$('refund-to').value.trim();
-    if(!order||!order.paid) return;
-    if(dest.length<6){ M.style.color=''; M.textContent=CMSG.tujuan_refund_kosong; return }
-    sb.rpc('request_cancel',{p_booking:order.id,p_refund_to:dest}).then(function(r){
-      if(r.error){ M.style.color=''; M.textContent='Belum bisa diproses. Coba lagi atau hubungi admin lewat WhatsApp.'; return }
-      if(r.data!=='ok'){ M.style.color=''; M.textContent=CMSG[r.data]||'Belum bisa diproses.'; return }
-      M.style.color='var(--ok)';
-      M.textContent='Pembatalan diajukan. Admin akan memprosesnya; pencairan maksimal 12 jam kerja. Anda juga bisa memberi tahu admin lewat WhatsApp.';
-      $('wa-cancel').href=waLink('Halo Cirgo, saya ajukan pembatalan pesanan '+order.code+'. Refund 100% ke: '+dest+'.'); $('wa-cancel').hidden=false;
-      $('done-status').textContent='Pembatalan diajukan'; $('open-cancel').hidden=true;
+  $('tk-cancel').addEventListener('click',function(){
+    if(!order||!confirm('Batalkan pesanan ini?')) return; var M=$('tk-msg'); M.textContent='';
+    sb.rpc('cancel_booking',{p_booking:order.id}).then(function(r){
+      if(r.error||r.data!=='ok'){ M.textContent=r.data==='sudah_berjalan'?'Pengemudi sudah berangkat. Hubungi admin lewat WhatsApp.':'Belum bisa dibatalkan. Coba lagi atau hubungi admin lewat WhatsApp.'; refreshOrder(); return }
+      refreshOrder();
     });
   });
-  $('copy').addEventListener('click',function(){
-    var b=this, text=$('msg').textContent;
-    function done(m){b.textContent=m; setTimeout(function(){b.textContent='Salin pesan'},1800)}
-    function selx(){ var r=document.createRange(); r.selectNodeContents($('msg')); var s=getSelection(); s.removeAllRanges(); s.addRange(r); done('Pilih lalu salin') }
-    try{ navigator.clipboard.writeText(text).then(function(){done('Tersalin')},selx) }catch(e){selx()}
+  $('tk-new').addEventListener('click',function(){ resetOrder() });
+
+
+  /* tombol mata untuk kata sandi */
+  document.querySelectorAll('input[type=password]').forEach(function(inp){
+    var b=document.createElement('button'); b.type='button'; b.className='eye'; b.setAttribute('aria-label','Tampilkan kata sandi');
+    var on='<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var off='<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6A17 17 0 0 0 2 12s3.6 7 10 7a9.8 9.8 0 0 0 4.2-.9M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+    b.innerHTML=on;
+    b.addEventListener('click',function(){ var show=inp.type==='password'; inp.type=show?'text':'password'; inp.classList.toggle('pwshow',show); b.innerHTML=show?off:on; b.setAttribute('aria-label',show?'Sembunyikan kata sandi':'Tampilkan kata sandi'); });
+    inp.parentNode.appendChild(b);
   });
 
   /* mulai: pulihkan sesi bila ada */
