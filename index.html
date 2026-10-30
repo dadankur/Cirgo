@@ -136,7 +136,7 @@ details.proto-notes summary{cursor:pointer;font-weight:700;color:var(--ink)}
 details.proto-notes ul{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
 
 .nav{position:fixed;left:0;right:0;bottom:0;margin-inline:auto;width:min(520px,100%);z-index:20;
-  display:grid;grid-template-columns:repeat(5,1fr);align-items:end;background:var(--surface);border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(4,1fr);align-items:end;background:var(--surface);border-top:1px solid var(--line);
   padding:6px max(6px,env(safe-area-inset-left,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-right,0px))}
 .nav button{display:grid;justify-items:center;gap:2px;min-height:50px;padding:4px 2px;border:0;background:transparent;color:var(--muted);font:600 11.5px var(--f-body);cursor:pointer}
 .nav button[aria-current="page"]{color:var(--gold-ink)}
@@ -202,6 +202,66 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 .nav .plus .dot{background:#0F1B2D;color:#CDAA6A;border-color:var(--bg)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .nav .plus .dot{background:#CDAA6A;color:#0F1B2D}}
 .status{border-radius:12px}.price.ok{border-color:var(--gold)}.price.ok .lbl{color:var(--gold-ink)}
+
+/* ===== daftar pesanan, pelacakan, bayar, animasi ===== */
+.back{justify-self:start;border:0;background:none;color:var(--gold-ink);font:500 15px var(--f-body);padding:4px 0;cursor:pointer}
+.hs{font:500 18px var(--f-display);margin:18px 0 8px}
+.oi{display:grid;gap:3px;width:100%;text-align:left;padding:14px 16px;margin-bottom:10px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.oi.act{border-color:var(--gold);box-shadow:inset 4px 0 0 var(--gold)}
+.oi-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.oi-top b{font:600 15px ui-monospace,Menlo,monospace;letter-spacing:.06em}
+.chip{font:500 12.5px var(--f-body);padding:3px 10px;border-radius:99px;background:rgba(184,151,90,.18);color:var(--gold-ink)}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.bad{background:var(--warn-bg);color:var(--warn)}
+.oi-route{font:500 17px var(--f-display)}.oi-route i{font-style:normal;color:var(--gold-ink)}.oi-meta{font-size:14px;color:var(--muted)}
+.emptyo{display:grid;gap:8px;justify-items:center;text-align:center;padding:36px 12px;color:var(--muted)}.emptyo b{font:500 20px var(--f-display);color:var(--ink)}
+.nav button{position:relative}.nav .badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:#B3261E;color:#fff;font:600 11px/18px var(--f-body);font-style:normal;text-align:center}
+.nav .badge[hidden]{display:none}
+.nav{grid-template-columns:repeat(4,1fr)}
+/* adegan perjalanan */
+.scene{position:relative;height:120px;border-radius:16px;overflow:hidden;background:#0F1B2D}
+.scene .road{position:absolute;left:0;right:0;bottom:22px;height:3px;background:repeating-linear-gradient(90deg,#B8975A 0 14px,transparent 14px 26px);opacity:.7}
+.scene .car{position:absolute;bottom:26px;left:8%;width:78px;height:auto;transition:left 1.2s cubic-bezier(.4,0,.2,1)}
+.scene .pin{position:absolute;right:9%;bottom:30px;width:14px;height:14px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#B8975A}
+.scene .ring{position:absolute;left:50%;top:50%;width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:50%;border:2px solid #B8975A;opacity:0}
+.scene.s-new .car{left:calc(50% - 39px)}.scene.s-new .pin{display:none}
+.scene.s-confirmed .car{left:6%}.scene.s-ontheway .car{left:36%}.scene.s-arrived .car{left:56%}
+.scene.s-ontrip .car{left:70%}.scene.s-done .car{left:calc(91% - 78px)}
+.scene.s-confirmed .pin,.scene.s-ontheway .pin,.scene.s-arrived .pin{right:34%}
+.paybox{display:grid;gap:10px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}
+.pb-h{font:500 17px var(--f-display)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;border-radius:14px;background:var(--line)}
+.seg button{min-height:44px;border:0;border-radius:11px;background:transparent;color:var(--ink);font:500 16px var(--f-body);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--btn-fg)}.seg button:disabled{opacity:.6}
+.qrbox{display:grid;place-items:center;background:#fff;border-radius:14px;padding:12px}.qrbox img{width:min(100%,300px);height:auto;display:block}
+.qr-miss{margin:0;padding:18px;color:#4A5568;text-align:center}.qr-amt{margin:0;text-align:center;font-size:18px}.paybox p{margin:0}
+.steps{display:flex;gap:5px}.steps i{flex:1;height:5px;border-radius:9px;background:var(--line);transition:background .5s}.steps i.on{background:var(--gold)}
+@media (prefers-reduced-motion:no-preference){
+  /* satu pembuka: hero dan baris menu muncul berurutan saat beranda dibuka */
+  #p-home:not([hidden]) .route-hero{animation:rise2 .6s cubic-bezier(.2,.7,.2,1) both}
+  #p-home:not([hidden]) .row2{animation:rise2 .5s cubic-bezier(.2,.7,.2,1) both}
+  #p-home:not([hidden]) .row2:nth-child(1){animation-delay:.18s}#p-home:not([hidden]) .row2:nth-child(2){animation-delay:.26s}
+  #p-home:not([hidden]) .row2:nth-child(3){animation-delay:.34s}#p-home:not([hidden]) .row2:nth-child(4){animation-delay:.42s}
+  @keyframes rise2{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  /* hero: garis rute mengalir, titik jemput berdenyut, huruf C melayang pelan */
+  .rh-route .line{border-left:0;width:2px;background:repeating-linear-gradient(180deg,rgba(184,151,90,.85) 0 6px,transparent 6px 12px);background-size:2px 12px;animation:flow 1s linear infinite}
+  @keyframes flow{to{background-position:0 12px}}
+  .rh-route .dot.a{box-shadow:0 0 0 0 rgba(184,151,90,.6);animation:pulse 2s ease-out infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 10px rgba(184,151,90,0)}100%{box-shadow:0 0 0 0 rgba(184,151,90,0)}}
+  .route-hero .watermark{animation:drift 9s ease-in-out infinite alternate}
+  @keyframes drift{to{transform:translate(-8px,10px) rotate(8deg)}}
+  .rh-go svg{animation:nudge 1.6s ease-in-out infinite}@keyframes nudge{50%{transform:translateX(4px)}}
+  /* perpindahan halaman */
+  .pane:not([hidden]){animation:paneIn .28s ease-out}@keyframes paneIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  /* adegan pelacakan */
+  .scene.s-new .ring{animation:ringp 2.4s ease-out infinite}.scene.s-new .ring.r2{animation-delay:1.2s}
+  @keyframes ringp{0%{transform:scale(.6);opacity:.8}100%{transform:scale(2.2);opacity:0}}
+  .scene .road{animation:roadmove .9s linear infinite}@keyframes roadmove{to{background-position:-26px 0}}
+  .scene.s-arrived .road,.scene.s-done .road,.scene.s-new .road{animation:none}
+  .scene.s-ontheway .car,.scene.s-ontrip .car{animation:bob .5s ease-in-out infinite alternate}@keyframes bob{to{transform:translateY(-2px)}}
+  .scene.s-arrived .pin{animation:hop 1s ease-in-out infinite}@keyframes hop{50%{transform:rotate(-45deg) translate(3px,-3px)}}
+  .pop{animation:pop .5s cubic-bezier(.2,.9,.3,1.3)}@keyframes pop{from{opacity:0;transform:scale(.92) translateY(6px)}to{opacity:1;transform:none}}
+  .oi.act .chip{animation:blink 1.8s ease-in-out infinite}@keyframes blink{50%{opacity:.55}}
+  .btn:active,.row2:active,.oi:active{transform:scale(.98)}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 
@@ -289,6 +349,44 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
       </div>
     </div>
 
+    <div class="pane" id="p-orders" hidden>
+      <div id="o-list">
+        <h1>Pesanan</h1>
+        <p class="sub" id="o-sub">Pesanan yang sedang berjalan dan riwayatmu.</p>
+        <div id="o-active"></div>
+        <h2 class="hs" id="o-hist-h" hidden>Riwayat</h2>
+        <div id="o-hist" class="hist"></div>
+        <div class="emptyo" id="o-empty" hidden><b>Belum ada pesanan</b><span>Pesanan pertamamu akan muncul di sini.</span><button type="button" class="btn" data-go="order">Pesan sekarang</button></div>
+      </div>
+      <section id="s-track" class="panel" hidden>
+        <button type="button" class="back" id="tk-back">&larr; Semua pesanan</button>
+        <div class="scene s-new" id="scene" aria-hidden="true"><i class="ring r1"></i><i class="ring r2"></i><i class="road"></i><svg class="car" viewBox="0 0 64 32" aria-hidden="true"><path d="M5 23v-6l10-3 7-9h21l8 9 8 3v6z" fill="#B8975A"/><path d="M24 7.5h8V14H18.5zM35 7.5h6l5 6.5H35z" fill="#0F1B2D" opacity=".55"/><circle cx="19" cy="24" r="5" fill="#0F1B2D" stroke="#F6F3EC" stroke-width="2"/><circle cx="46" cy="24" r="5" fill="#0F1B2D" stroke="#F6F3EC" stroke-width="2"/></svg><i class="pin"></i></div>
+        <div class="status" id="tk-status" aria-live="polite"></div>
+        <h2 id="tk-title"></h2>
+        <p id="tk-sub"></p>
+        <div class="bk" id="bk"></div>
+        <div class="steps" id="steps" aria-hidden="true"></div>
+        <div class="list" id="summary"></div>
+        <div class="paybox" id="pay-box" hidden>
+          <div class="pb-h">Cara bayar</div>
+          <div class="seg" role="group" aria-label="Cara bayar"><button type="button" data-pm="cash">Tunai</button><button type="button" data-pm="qris">QRIS</button></div>
+          <div id="pm-cash" hidden><p>Siapkan uang pas <b id="cash-amt"></b>. Bayar langsung ke pengemudi.</p></div>
+          <div id="pm-qris" hidden>
+            <div class="qrbox"><img id="qris-img" src="qris.png" alt="QRIS Cirgo"><p class="qr-miss" id="qris-miss" hidden>Gambar QRIS belum dipasang. Minta pengemudi menunjukkan QRIS-nya.</p></div>
+            <p class="qr-amt">Bayar <b id="qris-amt"></b></p>
+            <p class="hint">Scan dengan e-wallet atau mobile banking, ketik nominal persis seperti di atas, lalu tunjukkan bukti ke pengemudi.</p>
+          </div>
+        </div>
+        <p class="hint" id="tk-pay"></p>
+        <div class="row">
+          <a class="btn wa" id="wa-done" href="#" target="_blank" rel="noopener">Chat admin lewat WhatsApp</a>
+          <button type="button" class="btn ghost" id="tk-cancel">Batalkan pesanan</button>
+          <button type="button" class="btn" id="tk-new" hidden>Pesan lagi</button>
+        </div>
+        <p class="err" id="tk-msg" role="alert"></p>
+      </section>
+    </div>
+
     <!-- Pesan -->
     <div class="pane" id="p-order" hidden>
       <div id="s-form">
@@ -320,23 +418,6 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
           <p class="help-inline">Bingung mengisi? <a href="#" id="wa-order" target="_blank" rel="noopener" style="color:var(--gold-ink);font-weight:700">Chat admin lewat WhatsApp</a></p>
         </form>
       </div>
-
-      <!-- Status pesanan -->
-      <section id="s-track" class="panel" hidden>
-        <div class="status" id="tk-status" aria-live="polite"></div>
-        <h2 id="tk-title"></h2>
-        <p id="tk-sub"></p>
-        <div class="bk" id="bk"></div>
-        <div class="steps" id="steps" aria-hidden="true"></div>
-        <div class="list" id="summary"></div>
-        <p class="hint" id="tk-pay"></p>
-        <div class="row">
-          <a class="btn wa" id="wa-done" href="#" target="_blank" rel="noopener">Chat admin lewat WhatsApp</a>
-          <button type="button" class="btn ghost" id="tk-cancel">Batalkan pesanan</button>
-          <button type="button" class="btn ghost" id="tk-new" hidden>Buat pesanan baru</button>
-        </div>
-        <p class="err" id="tk-msg" role="alert"></p>
-      </section>
     </div>
 
     <div class="pane" id="p-tarif" hidden>
@@ -378,14 +459,14 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
         <div class="kv"><span>ID Cirgo</span><span id="pf-id"></span></div>
         <div class="kv"><span>WhatsApp</span><span id="pf-wa"></span></div>
       </div>
-      <button type="button" class="btn ghost" id="logout">Keluar</button>
+      <a class="row2 standalone" href="#" data-go="wa"><span class="ic wa"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><span class="tx"><b>Bantuan lewat WhatsApp</b><span class="t">Tanya, pesan, atau batalkan lewat admin</span></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+      <button type="button" class="btn ghost" id="logout" style="margin-top:14px">Keluar</button>
     </div>
 
     <nav class="nav" aria-label="Menu utama">
       <button type="button" data-go="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Beranda</span></button>
-      <button type="button" data-go="tarif"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span>Tarif</span></button>
       <button type="button" class="plus" data-go="order" aria-label="Pesan"><span class="dot"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span>Pesan</span></button>
-      <button type="button" data-go="wa"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span>WhatsApp</span></button>
+      <button type="button" data-go="orders" id="nav-orders"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg><i class="badge" id="nav-badge" hidden></i><span>Pesanan</span></button>
       <button type="button" data-go="profil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Profil</span></button>
     </nav>
   </section>
@@ -498,12 +579,15 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
   });
 
   /* ---------- navigasi ---------- */
-  var panes=['home','order','tarif','wa','profil'];
+  var openingTrack=false;
+  var panes=['home','order','orders','tarif','wa','profil'];
   function go(name){
     panes.forEach(function(p){ $('p-'+p).hidden = p!==name });
+    var nm0=(name==='wa')?'profil':name;
     document.querySelectorAll('.nav button').forEach(function(b){
-      if(b.getAttribute('data-go')===name) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+      if(b.getAttribute('data-go')===nm0) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
     });
+    if(name==='orders'&&!openingTrack){ showListView(); loadList(); }
     window.scrollTo(0,0);
   }
   document.addEventListener('click',function(e){
@@ -520,7 +604,7 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
       if(r.error||!r.data){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Daftar belum termuat</div><p class="note">Muat ulang halaman, atau pesan lewat WhatsApp.</p>'; return }
       r.data.forEach(function(a){byId[a.id]=a});
       areas=r.data.filter(function(a){return a.level==='kelurahan'||a.level==='desa'});
-      loaded=true; fill(from); fill(to); calc();
+      loaded=true; fill(from); fill(to); calc(); if(order&&viewing){ } loadList();
     });
   }
   function fill(sel){
@@ -588,9 +672,10 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
     return p? p.toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}) : 'Dijadwalkan';
   }
 
-  /* ---------- alur pesanan: kirim -> admin konfirmasi -> perjalanan -> selesai ---------- */
-  var order=null, poll=null, subs=['form','track'];
+  /* ---------- pesanan: daftar, pelacakan, cara bayar ---------- */
+  var order=null, poll=null, listTimer=null, viewing=false;
   var ACTIVE=['new','confirmed','ontheway','arrived','ontrip'];
+  var COLS='id,status,quoted_price,eta_note,pickup_area_id,dropoff_area_id,pickup_text,dropoff_text,pickup_at,created_at,payment_method,payment_status';
   var ST={
     new:{n:0,badge:'Menunggu konfirmasi',title:'Pesanan terkirim',sub:'Admin akan mengonfirmasi dan memberi perkiraan waktu jemput. Halaman ini berubah sendiri.'},
     confirmed:{n:1,badge:'Dikonfirmasi',title:'Pesanan dikonfirmasi',sub:'Pengemudi akan segera berangkat menjemput.'},
@@ -600,18 +685,20 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
     done:{n:5,badge:'Selesai',title:'Perjalanan selesai',sub:'Terima kasih sudah memakai Cirgo.'},
     cancelled:{n:5,badge:'Dibatalkan',title:'Pesanan dibatalkan',sub:'Kamu bisa membuat pesanan baru kapan saja.'}
   };
-  function sub(n){ subs.forEach(function(s){ $('s-'+s).hidden = s!==n }) }
   function stopTimer(){ if(poll){clearInterval(poll); poll=null} }
-  function resetOrder(){ stopTimer(); order=null; sub('form'); $('tk-msg').textContent=''; window.scrollTo(0,0) }
+  function resetOrder(){ stopTimer(); order=null; viewing=false; $('s-track').hidden=true; $('o-list').hidden=false; $('tk-msg').textContent='' }
   function shortCode(id){ return 'CG-'+String(id).replace(/-/g,'').slice(0,6).toUpperCase() }
   function kv(a,b){return '<div class="kv"><span>'+a+'</span><span>'+b+'</span></div>'}
-  function fromRow(d){
-    return {id:d.id,code:shortCode(d.id),status:d.status,amt:d.quoted_price,eta:d.eta_note,a:nm2(d.pickup_area_id,d.pickup_text),b:nm2(d.dropoff_area_id,d.dropoff_text),
-      dfrom:d.pickup_text||'',dto:d.dropoff_text||'',pickup:d.pickup_at}
-  }
   function nm2(id){ return byId[id]?byId[id].name:'Lokasi lain' }
+  function fromRow(d){
+    return {id:d.id,code:shortCode(d.id),status:d.status,amt:d.quoted_price,eta:d.eta_note,a:nm2(d.pickup_area_id),b:nm2(d.dropoff_area_id),
+      dfrom:d.pickup_text||'',dto:d.dropoff_text||'',pickup:d.pickup_at,created:d.created_at,pm:d.payment_method,paid:d.payment_status==='paid'}
+  }
+  function showListView(){ viewing=false; $('s-track').hidden=true; $('o-list').hidden=false; stopTimer() }
+  function openTrack(){ openingTrack=true; go('orders'); openingTrack=false; viewing=true; $('o-list').hidden=true; $('s-track').hidden=false; render(); window.scrollTo(0,0); if(!poll&&ACTIVE.indexOf(order.status)>-1) poll=setInterval(refreshOrder,5000) }
+  var lastStatus=null;
   function render(){
-    var o=order, S=ST[o.status]||ST.new; sub('track');
+    var o=order, S=ST[o.status]||ST.new;
     $('tk-status').className='status'+(o.status==='done'?' ok':''); $('tk-status').textContent=S.badge;
     $('tk-title').textContent=S.title;
     var sb2=S.sub; if(o.eta&&(o.status==='new'||o.status==='confirmed')) sb2='Perkiraan jemput: '+o.eta+'. '+sb2;
@@ -619,48 +706,89 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
     var filled=o.status==='cancelled'?0:(o.status==='done'?5:S.n+1), st='';
     for(var i=0;i<5;i++) st+='<i'+(i<filled?' class="on"':'')+'></i>';
     $('bk').textContent=o.code; $('steps').innerHTML=st;
+    $('scene').className='scene s-'+o.status; $('scene').hidden=(o.status==='cancelled');
+    if(lastStatus!==o.status){ lastStatus=o.status; var t=$('tk-title'); t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop') }
     $('summary').innerHTML=kv('Jemput',esc(o.a)+(o.dfrom?' - '+esc(o.dfrom):''))+kv('Tujuan',esc(o.b)+(o.dto?' - '+esc(o.dto):''))
       +kv('Waktu',o.pickup?esc(new Date(o.pickup).toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})):'Secepatnya')
       +kv('Tarif',o.amt!=null?rp(o.amt):'Dikonfirmasi admin');
-    $('tk-pay').textContent=(o.status==='cancelled')?'':'Pembayaran langsung kepada pengemudi saat perjalanan selesai (tunai atau QRIS), kecuali admin menginformasikan lain.';
+    var showPay=(o.status!=='new'&&o.status!=='cancelled'&&o.amt!=null);
+    $('pay-box').hidden=!showPay;
+    if(showPay){
+      document.querySelectorAll('#pay-box [data-pm]').forEach(function(b){ b.setAttribute('aria-pressed',String(o.pm===b.dataset.pm)); b.disabled=o.paid });
+      $('pm-cash').hidden=o.pm!=='cash'; $('pm-qris').hidden=o.pm!=='qris';
+      $('cash-amt').textContent=rp(o.amt); $('qris-amt').textContent=rp(o.amt);
+      if(o.paid){ $('pm-cash').hidden=true; $('pm-qris').hidden=true }
+    }
+    $('tk-pay').textContent=o.paid?'Pembayaran sudah diterima. Terima kasih.':((o.status==='cancelled')?'':'Pembayaran saat perjalanan selesai, tunai atau QRIS.');
     $('wa-done').href=waLink('Halo Cirgo, soal pesanan '+o.code+' ('+o.a+' ke '+o.b+').');
     var canCancel=(o.status==='new'||o.status==='confirmed'), fin=(o.status==='done'||o.status==='cancelled');
     $('tk-cancel').hidden=!canCancel; $('tk-new').hidden=!fin; $('wa-done').hidden=fin;
-    if(fin) stopTimer(); else if(!poll) poll=setInterval(refreshOrder,5000);
+    if(fin) stopTimer();
   }
   function refreshOrder(){
     if(!order) return;
-    sb.from('bookings').select('id,status,quoted_price,eta_note,pickup_area_id,dropoff_area_id,pickup_text,dropoff_text,pickup_at').eq('id',order.id).single().then(function(r){
-      if(r.data){ var old=order.status; order=fromRow(r.data); render(); if(old!==order.status&&navigator.vibrate){try{navigator.vibrate(120)}catch(e){}} }
+    sb.from('bookings').select(COLS).eq('id',order.id).single().then(function(r){
+      if(r.data){ var old=order.status; order=fromRow(r.data); if(viewing) render(); if(old!==order.status&&navigator.vibrate){try{navigator.vibrate(120)}catch(e){}} setBadge() }
     },function(){});
   }
+  /* daftar pesanan */
+  var cache=[];
+  function setBadge(){ var n=cache.filter(function(b){return ACTIVE.indexOf(b.status)>-1}).length; var bd=$('nav-badge'); bd.hidden=!n; bd.textContent=n||'' }
+  function itemHtml(b,active){
+    var S=ST[b.status]||ST.new, d=new Date(b.created_at), pc=b.status==='done'?' ok':(b.status==='cancelled'?' bad':'');
+    return '<button type="button" class="oi'+(active?' act':'')+'" data-id="'+b.id+'"><span class="oi-top"><b>'+esc(shortCode(b.id))+'</b><span class="chip'+pc+'">'+esc(S.badge)+'</span></span>'
+      +'<span class="oi-route">'+esc(nm2(b.pickup_area_id))+' <i>&rarr;</i> '+esc(nm2(b.dropoff_area_id))+'</span>'
+      +'<span class="oi-meta">'+d.toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+(b.quoted_price!=null?' &middot; '+rp(b.quoted_price):'')+(active&&b.eta_note?' &middot; '+esc(b.eta_note):'')+'</span></button>';
+  }
+  function loadList(cb){
+    if(!user) return;
+    sb.from('bookings').select(COLS).order('created_at',{ascending:false}).limit(40).then(function(r){
+      cache=r.data||[]; setBadge();
+      if(r.error){ $('o-active').innerHTML='<p class="muted">Gagal memuat pesanan. Tarik ke bawah untuk memuat ulang.</p>'; return }
+      var act=cache.filter(function(b){return ACTIVE.indexOf(b.status)>-1}), hist=cache.filter(function(b){return ACTIVE.indexOf(b.status)===-1});
+      $('o-active').innerHTML=act.length?'<h2 class="hs">Sedang berjalan</h2>'+act.map(function(b){return itemHtml(b,true)}).join(''):'';
+      $('o-hist-h').hidden=!hist.length; $('o-hist').innerHTML=hist.map(function(b){return itemHtml(b,false)}).join('');
+      $('o-empty').hidden=!!cache.length;
+      if(typeof cb==='function') cb(act);
+    },function(){});
+  }
+  $('o-list').addEventListener('click',function(e){
+    var it=e.target.closest('.oi'); if(!it) return;
+    var b=cache.filter(function(x){return x.id===it.dataset.id})[0]; if(!b) return;
+    order=fromRow(b); lastStatus=null; openTrack();
+  });
+  $('tk-back').addEventListener('click',function(){ showListView(); loadList() });
+  listTimer=setInterval(function(){ if(user&&!$('p-orders').hidden&&!viewing) loadList() },8000);
   function restoreActive(){
-    sb.from('bookings').select('id,status,quoted_price,eta_note,pickup_area_id,dropoff_area_id,pickup_text,dropoff_text,pickup_at').in('status',ACTIVE).order('created_at',{ascending:false}).limit(1).then(function(r){
-      if(r.data&&r.data[0]){ order=fromRow(r.data[0]); render(); go('order') }
-    },function(){});
+    loadList(function(act){ if(act&&act[0]){ order=fromRow(act[0]); lastStatus=null; openTrack() } });
   }
+  /* kirim pesanan */
   ok.addEventListener('click',function(){
-    closeT(); var p=pickupAt(), btn=ok; btn.disabled=true;
-    var other=(cur.a===OTHER||cur.b===OTHER);
+    closeT(); var p=pickupAt();
     var ptxt=$('det-from').value.trim(), dtxt=$('det-to').value.trim();
     var row={customer_name:$('nama').value.trim(),customer_phone:normWa($('wa').value),
       pickup_area_id:cur.a===OTHER?null:+cur.a,dropoff_area_id:cur.b===OTHER?null:+cur.b,
       pickup_text:(cur.a===OTHER?'[Lokasi lain] ':'')+ptxt,dropoff_text:((cur.b===OTHER?'[Lokasi lain] ':'')+dtxt).trim()||null,
       pickup_at:p?p.toISOString():null,terms_version:TERMS_VERSION,terms_accepted_at:new Date().toISOString()};
-    sb.from('bookings').insert(row).select('id,status,quoted_price,eta_note,pickup_area_id,dropoff_area_id,pickup_text,dropoff_text,pickup_at').single().then(function(r){
+    sb.from('bookings').insert(row).select(COLS).single().then(function(r){
       if(r.error||!r.data){ err.textContent='Pesanan belum tersimpan. Coba lagi, atau pesan lewat WhatsApp.'; return }
-      order=fromRow(r.data); render(); window.scrollTo(0,0);
+      order=fromRow(r.data); lastStatus=null; openTrack(); loadList();
+      $('det-from').value=''; $('det-to').value='';
     },function(){ err.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.' });
   });
   $('tk-cancel').addEventListener('click',function(){
     if(!order||!confirm('Batalkan pesanan ini?')) return; var M=$('tk-msg'); M.textContent='';
     sb.rpc('cancel_booking',{p_booking:order.id}).then(function(r){
-      if(r.error||r.data!=='ok'){ M.textContent=r.data==='sudah_berjalan'?'Pengemudi sudah berangkat. Hubungi admin lewat WhatsApp.':'Belum bisa dibatalkan. Coba lagi atau hubungi admin lewat WhatsApp.'; refreshOrder(); return }
+      if(r.error||r.data!=='ok'){ M.textContent=r.data==='sudah_berjalan'?'Pengemudi sudah berangkat. Hubungi admin lewat WhatsApp.':'Belum bisa dibatalkan. Coba lagi atau hubungi admin lewat WhatsApp.' }
       refreshOrder();
     });
   });
-  $('tk-new').addEventListener('click',function(){ resetOrder() });
-
+  $('tk-new').addEventListener('click',function(){ resetOrder(); go('order') });
+  document.querySelectorAll('#pay-box [data-pm]').forEach(function(b){ b.addEventListener('click',function(){
+    if(!order) return; var m=b.dataset.pm; order.pm=m; render();
+    sb.rpc('set_payment_method',{p_booking:order.id,p_method:m}).then(function(r){ if(r.error||r.data!=='ok') refreshOrder() },function(){});
+  })});
+  $('qris-img').addEventListener('error',function(){ this.hidden=true; $('qris-miss').hidden=false });
 
   /* tombol mata untuk kata sandi */
   document.querySelectorAll('input[type=password]').forEach(function(inp){
