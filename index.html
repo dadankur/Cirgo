@@ -354,6 +354,11 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 :root[data-theme="light"] .top{background:rgba(255,255,255,.9);box-shadow:0 1px 0 #E6EBF4}
 
 @keyframes lh_L0{0.0%{opacity:0;transform:translateY(34px) scale(.92)}7.0%{opacity:0;transform:translateY(34px) scale(.92)}15.25%{opacity:1;transform:translateY(-7px) scale(1.02)}18.7%{opacity:1;transform:translateY(2.5px) scale(1)}22.0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_L1{0.0%{opacity:0;transform:translateY(34px) scale(.92)}9.8%{opacity:0;transform:translateY(34px) scale(.92)}18.05%{opacity:1;transform:translateY(-7px) scale(1.02)}21.5%{opacity:1;transform:translateY(2.5px) scale(1)}24.8%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_L2{0.0%{opacity:0;transform:translateY(34px) scale(.92)}12.6%{opacity:0;transform:translateY(34px) scale(.92)}20.85%{opacity:1;transform:translateY(-7px) scale(1.02)}24.3%{opacity:1;transform:translateY(2.5px) scale(1)}27.6%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_L3{0.0%{opacity:0;transform:translateY(34px) scale(.92)}15.4%{opacity:0;transform:translateY(34px) scale(.92)}23.65%{opacity:1;transform:translateY(-7px) scale(1.02)}27.1%{opacity:1;transform:translateY(2.5px) scale(1)}30.4%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_L4{0.0%{opacity:0;transform:translateY(34px) scale(.92)}18.2%{opacity:0;transform:translateY(34px) scale(.92)}26.45%{opacity:1;transform:translateY(-7px) scale(1.02)}29.9%{opacity:1;transform:translateY(2.5px) scale(1)}33.2%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_LINE{0.0%{opacity:0;transform:scaleX(0)}27.0%{opacity:1;transform:scaleX(0)}37.0%{opacity:1;transform:scaleX(1)}100%{opacity:1;transform:scaleX(1)}}@keyframes lh_TAG1{0.0%{opacity:0;transform:translateY(8px)}35.0%{opacity:0;transform:translateY(8px)}45.0%{opacity:1;transform:translateY(0)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_TAG2{0.0%{opacity:0;transform:translateY(8px)}41.0%{opacity:0;transform:translateY(8px)}51.0%{opacity:1;transform:translateY(0)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_EMB{0%{opacity:0}2.4%{opacity:1}100%{opacity:1}}
+
+.svcbanner{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:14.5px;line-height:1.4}
+.pwcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 16px;margin-top:14px}
+.pwcard summary{cursor:pointer;font-weight:600;min-height:48px;display:flex;align-items:center;list-style:none}.pwcard summary::-webkit-details-marker{display:none}
+.pwcard[open] summary{border-bottom:1px solid var(--line);margin-bottom:12px}.pwcard .btn{width:100%;margin-bottom:8px}.pwcard .field{margin-bottom:12px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 
@@ -401,6 +406,7 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 
     <div class="pane" id="p-home">
       <div class="greetrow"><div class="hi" id="greet">Selamat pagi</div><div class="nm" id="uname">Nama</div></div>
+      <div class="svcbanner" role="status" hidden></div>
       
       <button class="route-hero" type="button" data-go="order" aria-label="Pesan antar-jemput">
         <svg class="watermark" viewBox="0 0 200 200" aria-hidden="true"><path d="M150 52A68 68 0 1 0 150 148" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/></svg>
@@ -555,6 +561,7 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
     <!-- Pesan -->
     <div class="pane" id="p-order" hidden>
       <div id="s-form">
+        <div class="svcbanner" role="status" hidden></div>
         <h1>Pesan antar-jemput</h1>
         <p class="sub">Pilih dari daftar kelurahan. Harga tidak berubah karena rute atau macet.</p>
         <form id="f" novalidate>
@@ -625,6 +632,10 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
         <div class="kv"><span>WhatsApp</span><span id="pf-wa"></span></div>
       </div>
       <a class="row2 standalone" href="#" data-go="wa"><span class="ic wa"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><span class="tx"><b>Bantuan lewat WhatsApp</b><span class="t">Tanya, pesan, atau batalkan lewat admin</span></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+      <details class="pwcard" id="pw-box"><summary>Ganti kata sandi</summary>
+        <div class="field"><label for="pw-new">Kata sandi baru</label><input id="pw-new" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter"></div>
+        <div class="field"><label for="pw-new2">Ulangi kata sandi baru</label><input id="pw-new2" type="password" autocomplete="new-password"></div>
+        <button type="button" class="btn" id="pw-save">Simpan kata sandi</button><p class="err" id="pw-msg" role="alert"></p></details>
       <button type="button" class="btn ghost" id="logout" style="margin-top:14px">Keluar</button>
     </div>
 
@@ -679,10 +690,13 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
   function showWa(d){return d.indexOf('62')===0? '0'+d.slice(2) : d}
   var user=null;
 
+  function setWaLinks(){
   ['wa-code','wa-auth','forgot','wa-home','wa-order','wa-1','wa-2','wa-3','wa-4'].forEach(function(id){
     var T={'wa-code':'Halo Cirgo, saya mau daftar. Mohon kirim kode pendaftaran.','wa-auth':'Halo Cirgo, saya belum paham cara pakai aplikasinya. Mohon dibantu.','forgot':'Halo Cirgo, saya lupa kata sandi. Mohon dibantu atur ulang.','wa-home':'Halo Cirgo, saya butuh bantuan.','wa-order':'Halo Cirgo, saya mau pesan antar-jemput tapi bingung mengisinya. Mohon dibantu.','wa-1':'Halo Cirgo, saya mau pesan antar-jemput. Tolong dibantu.','wa-2':'Halo Cirgo, saya mau tanya tarif.','wa-3':'Halo Cirgo, saya ada kendala atau keluhan.','wa-4':'Halo Cirgo, saya mau membatalkan pesanan.'}[id];
     if($(id)) $(id).href=waLink(T);
   });
+  }
+  setWaLinks();
 
   /* ---------- masuk / daftar ---------- */
   function tab(up){
@@ -738,8 +752,17 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
     $('greet').textContent=greet(); $('uname').textContent=u.nama;
     $('pf-nama').textContent=u.nama; $('pf-id').textContent=u.sid||u.wa.slice(-5); $('pf-wa').textContent=showWa(u.wa);
     $('nama').value=u.nama; $('wa').value=showWa(u.wa);
-    loadAreas(); resetOrder(); go('home'); restoreActive();
+    loadAreas(); resetOrder(); go('home'); restoreActive(); loadService();
   }
+  $('pw-save').addEventListener('click',function(){
+    var a=$('pw-new').value,b=$('pw-new2').value,M=$('pw-msg'); M.style.color='';
+    if(a.length<6){ M.textContent='Kata sandi minimal 6 karakter.'; return }
+    if(a!==b){ M.textContent='Kedua kata sandi harus sama.'; return }
+    var btn=this; btn.disabled=true; M.textContent='';
+    sb.auth.updateUser({password:a}).then(function(r){ btn.disabled=false;
+      if(r.error){ M.textContent='Belum berhasil. Coba lagi, atau masuk ulang lalu ganti sandi.'; return }
+      $('pw-new').value=''; $('pw-new2').value=''; M.style.color='var(--ok)'; M.textContent='Kata sandi sudah diganti.' },function(){ btn.disabled=false; M.textContent='Tidak bisa terhubung.' });
+  });
   $('logout').addEventListener('click',function(){
     stopTimer(); order=null; sb.auth.signOut().then(function(){ user=null; showAuth(); $('in-pass').value=''; tab(false); window.scrollTo(0,0) });
   });
@@ -811,9 +834,17 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 
   /* ---------- validasi + ketentuan ---------- */
   var err=$('err');
+  /* jam layanan dari pengaturan admin */
+  var svc=null;
+  function fmtShifts(x){ return String(x||'').split(',').map(function(t){ return t.replace(/:/g,'.').replace('-','\u2013') }).join(' dan ')+' WIB' }
+  function svcMsg(){ if(!svc) return ''; return (svc.message||'Layanan sedang tutup.')+(svc.shifts?' Jam layanan: '+fmtShifts(svc.shifts)+'.':'') }
+  function drawSvc(){ var closed=!!(svc&&!svc.open); document.querySelectorAll('.svcbanner').forEach(function(b){ b.hidden=!closed; if(closed) b.textContent=svcMsg() }) }
+  function loadService(){ sb.rpc('service_status').then(function(r){ if(r.error||!r.data) return; svc=r.data; if(svc.wa&&svc.wa!==WA_NUMBER){ WA_NUMBER=svc.wa; setWaLinks() } drawSvc() },function(){}) }
+  setInterval(function(){ if(user&&!document.hidden) loadService() },60000);
   function pickupAt(){ if($('when').value!=='later') return null; var v=$('when-at').value; var d=v?new Date(v):null; return d&&!isNaN(d)?d:null }
   function validate(){
     if(!cur) return 'Pilih kelurahan jemput dan tujuan.';
+    if($('when').value==='now'&&svc&&!svc.open) return svcMsg()+' Atau pilih jemput terjadwal di jam layanan.';
     if(!$('nama').value.trim()) return 'Isi nama pemesan.';
     if($('wa').value.replace(/\D/g,'').length<9) return 'Isi nomor WhatsApp yang valid.';
     if(!$('det-from').value.trim()) return 'Isi alamat atau patokan jemput.';
@@ -937,6 +968,7 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
       pickup_text:(cur.a===OTHER?'[Lokasi lain] ':'')+ptxt,dropoff_text:((cur.b===OTHER?'[Lokasi lain] ':'')+dtxt).trim()||null,
       pickup_at:p?p.toISOString():null,terms_version:TERMS_VERSION,terms_accepted_at:new Date().toISOString()};
     sb.from('bookings').insert(row).select(COLS).single().then(function(r){
+      if(r.error&&/layanan_tutup/.test(r.error.message||'')){ loadService(); err.textContent='Waktu jemput itu di luar jam layanan.'+(svc&&svc.shifts?' Jam layanan: '+fmtShifts(svc.shifts)+'.':''); return }
       if(r.error||!r.data){ err.textContent='Pesanan belum tersimpan. Coba lagi, atau pesan lewat WhatsApp.'; return }
       order=fromRow(r.data); lastStatus=null; openTrack(); loadList();
       $('det-from').value=''; $('det-to').value='';
