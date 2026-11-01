@@ -320,19 +320,21 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 :root[data-theme="light"] .scene{background:#8FD3F0;--cg-s0:#4FB8E8;--cg-s1:#8FD3F0;--cg-s2:#CFEFF8;--cg-s3:#FFF3D1;--cg-sun:#FFF0B0;--cg-sunc:#FFF6C4;--cg-m1:#5FA9C0;--cg-m2:#8CCAD6;--cg-m3:#7ABFCF;--cg-hz:#FFFFFF;--cg-sil:#456B8A;--cg-tree:#2E8B4A;--cg-r0:#5A6A7B;--cg-r1:#3F4D5A;--cg-curb:#A3B1BD;--cg-lane:#FFFFFF;--cg-route:#00A5C8;--cg-ring:#E0A526;--cg-ringbg:rgba(15,27,45,.2);--cg-c1:#2B6C8E;--cg-c2:#00B3D6;--cg-c3:#79CFE8;--cg-bird:#456B8A;--cg-star:0}
 .cgsvg{display:block;width:100%;height:100%}
 .cg-stars{opacity:var(--cg-star)}
-.cg-car{transform:translate(165px,161px);transition:transform 2.8s cubic-bezier(.4,0,.2,1)}
-.s-new .cg-car{transform:translate(165px,161px)}.s-confirmed .cg-car{transform:translate(6px,161px)}.s-ontheway .cg-car{transform:translate(72px,161px)}
-.s-arrived .cg-car{transform:translate(142px,161px)}.s-ontrip .cg-car{transform:translate(215px,161px)}.s-done .cg-car{transform:translate(292px,161px)}
+.cg-car{transform:translate(165px,174px);transition:transform 2.8s cubic-bezier(.4,0,.2,1);will-change:transform}
+.scene.tele .cg-car{transition:none}
+.s-new .cg-car{transform:translate(165px,174px)}.s-confirmed .cg-car{transform:translate(-100px,174px)}.s-ontheway .cg-car{transform:translate(72px,174px)}
+.s-arrived .cg-car{transform:translate(142px,174px)}.s-ontrip .cg-car{transform:translate(215px,174px)}.s-done .cg-car{transform:translate(292px,174px)}
 .cg-pickup,.cg-dest,.cg-ping,.cg-route{opacity:0;transition:opacity .6s}
 .s-confirmed .cg-pickup,.s-ontheway .cg-pickup,.s-arrived .cg-pickup{opacity:1}
 .s-ontrip .cg-dest,.s-done .cg-dest{opacity:1}
 .s-new .cg-ping{opacity:1}
 .s-confirmed .cg-route,.s-ontheway .cg-route,.s-ontrip .cg-route{opacity:.9}
 .cg-route{stroke-dasharray:6 9}
-.cg-ring{stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset 3.2s ease}
+.cg-ring{stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset 2.8s cubic-bezier(.4,0,.2,1)}
+.scene{contain:paint}
 .s-ontheway .cg-pickup .cg-ring{stroke-dashoffset:42}.s-arrived .cg-pickup .cg-ring{stroke-dashoffset:0}
 .s-ontrip .cg-dest .cg-ring{stroke-dashoffset:48}.s-done .cg-dest .cg-ring{stroke-dashoffset:0}
-.cg-rip{opacity:0;transform-box:fill-box;transform-origin:center}
+.cg-rip{opacity:0;transform-box:fill-box;transform-origin:center;vector-effect:non-scaling-stroke}
 .cg-door{transition:opacity .8s}.s-arrived .cg-door,.s-ontrip .cg-door{opacity:.7}.s-done .cg-door{opacity:1}
 .cg-brk{opacity:.55}
 @media (prefers-reduced-motion:no-preference){
@@ -340,15 +342,16 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
  .cg-pulse{animation:cgpl 2.4s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}@keyframes cgpl{from{opacity:.55;transform:scale(.94)}to{opacity:1;transform:scale(1.08)}}
  .cg-drift{animation:cgdr 60s linear infinite}@keyframes cgdr{to{transform:translateX(-400px)}}
  .cg-fly{animation:cgfl 26s linear infinite}@keyframes cgfl{from{transform:translateX(-40px)}to{transform:translateX(440px)}}
- .cg-route{animation:cgrt 1s linear infinite}@keyframes cgrt{to{stroke-dashoffset:-15}}
- .cg-dash{stroke-dasharray:18 16}.s-ontheway .cg-dash,.s-ontrip .cg-dash{animation:cgdh .6s linear infinite}@keyframes cgdh{to{stroke-dashoffset:-34}}
- .cg-spin{stroke-dasharray:3.5 3.5}.s-ontheway .cg-spin,.s-ontrip .cg-spin{animation:cgdh .45s linear infinite}
+ .s-confirmed .cg-route,.s-ontheway .cg-route,.s-ontrip .cg-route{animation:cgrt 1s linear infinite}@keyframes cgrt{to{stroke-dashoffset:-15}}
+ .cg-dash{stroke-dasharray:18 16}.s-ontheway .cg-dash,.s-ontrip .cg-dash{animation:cgdh .6s linear infinite}@keyframes cgdh{to{stroke-dashoffset:34}}
+ .cg-spin{stroke-dasharray:3.5 3.5}.s-ontheway .cg-spin,.s-ontrip .cg-spin{animation:cgsp .21s linear infinite}@keyframes cgsp{to{stroke-dashoffset:-7}}
  .s-ontheway .cg-bob,.s-ontrip .cg-bob{animation:cgbob .5s ease-in-out infinite alternate}@keyframes cgbob{to{transform:translateY(-1.2px)}}
- .cg-beam{animation:cgbm 1.8s ease-in-out infinite alternate}@keyframes cgbm{from{opacity:.2}to{opacity:.5}}
- .cg-pinbob{animation:cgpb .9s ease-in-out infinite alternate}@keyframes cgpb{to{transform:translateY(-3px)}}
+ .s-ontheway .cg-beam,.s-ontrip .cg-beam{animation:cgbm 1.8s ease-in-out infinite alternate}@keyframes cgbm{from{opacity:.2}to{opacity:.5}}
+ .s-confirmed .cg-pickup .cg-pinbob,.s-ontheway .cg-pickup .cg-pinbob,.s-arrived .cg-pickup .cg-pinbob,.s-ontrip .cg-dest .cg-pinbob,.s-done .cg-dest .cg-pinbob{animation:cgpb .9s ease-in-out infinite alternate}@keyframes cgpb{to{transform:translateY(-3px)}}
  .s-arrived .cg-pickup .cg-rip,.s-done .cg-dest .cg-rip{animation:cgrp 1.7s ease-out infinite}@keyframes cgrp{from{transform:scale(.4);opacity:.85}to{transform:scale(1.6);opacity:0}}
  .s-arrived .cg-brk,.s-done .cg-brk{animation:cgbk 1.2s steps(1) infinite}@keyframes cgbk{0%{opacity:1}50%{opacity:.2}}
- .cg-ping circle{transform-box:fill-box;transform-origin:center;animation:cgpg 2.4s ease-out infinite}.cg-ping .p2{animation-delay:1.2s}@keyframes cgpg{from{transform:scale(.5);opacity:.9}to{transform:scale(3.6);opacity:0}}
+ .cg-ping circle{transform-box:fill-box;transform-origin:center}.s-new .cg-ping circle{animation:cgpg 2.4s ease-out infinite}.s-new .cg-ping .p2{animation-delay:1.2s}
+ .scene.paused *{animation-play-state:paused!important}@keyframes cgpg{from{transform:scale(.5);opacity:.9}to{transform:scale(3.6);opacity:0}}
 }
 @media (prefers-reduced-motion:reduce){.cg-car,.cg-ring{transition:none}}
 :root[data-theme="light"] .top{background:rgba(255,255,255,.9);box-shadow:0 1px 0 #E6EBF4}
@@ -516,26 +519,26 @@ button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
 <rect x="250" y="124" width="2" height="28" style="fill:var(--cg-sil)"/><circle class="cg-pulse" cx="251" cy="122" r="10" fill="url(#cg-glow)"/><circle cx="251" cy="122" r="2.2" fill="#FFE9A8"/>
 <!-- jalan -->
 <rect y="150" width="400" height="70" fill="url(#cg-rd)"/><rect y="150" width="400" height="5" style="fill:var(--cg-curb)"/>
-<line class="cg-dash" x1="0" y1="200" x2="400" y2="200" style="stroke:var(--cg-lane)" stroke-width="2" opacity=".75"/>
+<line class="cg-dash" x1="0" y1="178" x2="400" y2="178" style="stroke:var(--cg-lane)" stroke-width="2" opacity=".75"/>
 <!-- rute menyala: dari mobil ke tujuan -->
-<line class="cg-route" x1="0" y1="186" x2="400" y2="186" style="stroke:var(--cg-route)" stroke-width="2.2" stroke-linecap="round"/>
+<line class="cg-route" x1="0" y1="196" x2="400" y2="196" style="stroke:var(--cg-route)" stroke-width="2.2" stroke-linecap="round"/>
 
 <!-- titik jemput: cincin terisi saat mobil mendekat, pin muncul -->
-<g class="cg-pickup" transform="translate(222,176)">
+<g class="cg-pickup" transform="translate(222,196)">
  <ellipse rx="17" ry="5.5" fill="none" style="stroke:var(--cg-ringbg)" stroke-width="2"/>
  <ellipse class="cg-ring" rx="17" ry="5.5" fill="none" style="stroke:var(--cg-ring)" stroke-width="2.4" stroke-linecap="round" pathLength="100"/>
  <ellipse class="cg-rip" rx="17" ry="5.5" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/>
  <g class="cg-pinbob"><path d="M0 -4C-7 -13 -9 -17 -9 -21a9 9 0 1 1 18 0c0 4-2 8-9 17z" style="fill:var(--cg-pin)"/><circle cy="-21" r="3.4" fill="#fff"/></g>
 </g>
 <!-- titik tujuan di gerbang keraton -->
-<g class="cg-dest" transform="translate(337,176)">
+<g class="cg-dest" transform="translate(337,196)">
  <ellipse rx="21" ry="6" fill="none" style="stroke:var(--cg-ringbg)" stroke-width="2"/>
  <ellipse class="cg-ring" rx="21" ry="6" fill="none" style="stroke:var(--cg-ring)" stroke-width="2.4" stroke-linecap="round" pathLength="100"/>
  <ellipse class="cg-rip" rx="21" ry="6" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/>
  <g class="cg-pinbob"><path d="M0 -4C-7 -13 -9 -17 -9 -21a9 9 0 1 1 18 0c0 4-2 8-9 17z" style="fill:var(--cg-pin2)"/><rect x="-3" y="-25" width="6" height="6" fill="#fff" rx="1"/></g>
 </g>
 <!-- mencari pengemudi (status baru) -->
-<g class="cg-ping" transform="translate(200,166)"><circle r="8" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/><circle class="p2" r="8" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/></g>
+<g class="cg-ping" transform="translate(200,184)"><circle r="8" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/><circle class="p2" r="8" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/></g>
 
 <!-- mobil Cirgo (tanpa merek lain) -->
 <g class="cg-car"><g class="cg-bob"><g transform="translate(0,-6) scale(.55)">
@@ -997,7 +1000,12 @@ button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
     var filled=o.status==='cancelled'?0:(o.status==='done'?5:S.n+1), st='';
     for(var i=0;i<5;i++) st+='<i'+(i<filled?' class="on"':'')+'></i>';
     $('bk').textContent=o.code; $('steps').innerHTML=st;
-    $('scene').className='scene s-'+o.status; $('scene').hidden=(o.status==='cancelled');
+    (function(){ var sc=$('scene'), X={new:165,confirmed:-100,ontheway:72,arrived:142,ontrip:215,done:292}, pm=(sc.className.match(/s-(\w+)/)||[])[1];
+      var back=pm&&X[pm]!=null&&X[o.status]!=null&&X[o.status]<X[pm];
+      sc.className='scene s-'+o.status+(back?' tele':'')+(sc.classList.contains('paused')?' paused':'');
+      if(back){ void sc.offsetWidth; requestAnimationFrame(function(){ sc.classList.remove('tele') }) }
+      if(!sc._io&&window.IntersectionObserver){ sc._io=new IntersectionObserver(function(en){ sc.classList.toggle('paused',!en[0].isIntersecting) }); sc._io.observe(sc) }
+    })(); $('scene').hidden=(o.status==='cancelled');
     if(lastStatus!==o.status){ lastStatus=o.status; var t=$('tk-title'); t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop') }
     $('summary').innerHTML=kv('Jemput',esc(o.a)+(o.dfrom?' - '+esc(o.dfrom):''))+kv('Tujuan',esc(o.b)+(o.dto?' - '+esc(o.dto):''))
       +kv('Waktu',o.pickup?esc(new Date(o.pickup).toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})):'Secepatnya')
