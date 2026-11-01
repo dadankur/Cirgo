@@ -359,6 +359,26 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 .pwcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 16px;margin-top:14px}
 .pwcard summary{cursor:pointer;font-weight:600;min-height:48px;display:flex;align-items:center;list-style:none}.pwcard summary::-webkit-details-marker{display:none}
 .pwcard[open] summary{border-bottom:1px solid var(--line);margin-bottom:12px}.pwcard .btn{width:100%;margin-bottom:8px}.pwcard .field{margin-bottom:12px}
+
+/* ---- Mau ke mana: input + pilihan langsung ---- */
+.route-hero{overflow:visible;cursor:default;z-index:2}
+.route-hero .wm{position:absolute;inset:0;overflow:hidden;border-radius:inherit;pointer-events:none}
+.rh-f{position:relative;min-width:0}.rh-f.f1{grid-column:2;grid-row:1}.rh-f.f2{grid-column:2;grid-row:2}
+.rh-route .rh-f label.s1,.rh-route .rh-f label.s2{display:block;cursor:text}
+.route-hero input.rh-in{display:block;width:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;outline:0;color:inherit;font:inherit;font-size:18px;line-height:1.25;appearance:none;-webkit-appearance:none}
+.route-hero input.rh-in::placeholder{color:inherit;opacity:.85}
+.rh-route .rh-f:focus-within label{border-bottom-color:#B8975A}
+.rh-list{position:absolute;left:-4px;right:-4px;top:100%;margin:6px 0 0;padding:6px;list-style:none;max-height:min(240px,38vh);overflow:auto;overscroll-behavior:contain;background:var(--surface,#fff);color:var(--ink,#0F1B2D);border:1px solid var(--line,#E3DCCB);border-radius:14px;box-shadow:0 14px 34px rgba(8,16,32,.28);z-index:40}
+.rh-list[hidden]{display:none}
+.rh-list li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:11px 12px;border-radius:10px;font:500 16.5px/1.2 var(--f-body);cursor:pointer}
+.rh-list li small{display:inline;margin:0;font-size:12.5px;color:var(--muted,#4A5568);text-align:right}
+.rh-list li[aria-selected="true"],.rh-list li:hover{background:rgba(184,151,90,.2)}
+.rh-list li.none{cursor:default;color:var(--muted,#4A5568);font-weight:400}
+.rh-list li.none:hover{background:transparent}
+.rh-err{position:relative;margin:-6px 0 0;font-size:14px;color:#F2B58A}
+.rh-err:empty{display:none}
+:root[data-theme="light"] .rh-err{color:#B3411A}
+button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 
@@ -408,16 +428,17 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
       <div class="greetrow"><div class="hi" id="greet">Selamat pagi</div><div class="nm" id="uname">Nama</div></div>
       <div class="svcbanner" role="status" hidden></div>
       
-      <button class="route-hero" type="button" data-go="order" aria-label="Pesan antar-jemput">
-        <svg class="watermark" viewBox="0 0 200 200" aria-hidden="true"><path d="M150 52A68 68 0 1 0 150 148" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/></svg>
+      <div class="route-hero" id="rh">
+        <div class="wm" aria-hidden="true"><svg class="watermark" viewBox="0 0 200 200"><path d="M150 52A68 68 0 1 0 150 148" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/></svg></div>
         <span class="rh-title">Mau ke mana?</span>
-        <span class="rh-route" aria-hidden="true">
-          <i class="dot a"></i><i class="line"></i><i class="dot b"></i>
-          <span class="s1"><small>Jemput</small>Pilih kelurahan</span>
-          <span class="s2"><small>Tujuan</small>Pilih kelurahan</span>
-        </span>
-        <span class="rh-go">Pesan sekarang<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-      </button>
+        <div class="rh-route">
+          <i class="dot a" aria-hidden="true"></i><i class="line" aria-hidden="true"></i><i class="dot b" aria-hidden="true"></i>
+          <div class="rh-f f1"><label class="s1" for="h-from"><small>Jemput</small><input class="rh-in" id="h-from" type="text" placeholder="Pilih kelurahan" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="l-from" aria-autocomplete="list"></label><ul class="rh-list" id="l-from" role="listbox" hidden></ul></div>
+          <div class="rh-f f2"><label class="s2" for="h-to"><small>Tujuan</small><input class="rh-in" id="h-to" type="text" placeholder="Pilih kelurahan" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="l-to" aria-autocomplete="list"></label><ul class="rh-list" id="l-to" role="listbox" hidden></ul></div>
+        </div>
+        <p class="rh-err" id="rh-err" role="alert"></p>
+        <button type="button" class="rh-go" id="rh-go">Pesan sekarang<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
       <div class="rows">
         <button class="row2" type="button" id="c-sched">
           <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
@@ -793,7 +814,7 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
       if(r.error||!r.data){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Daftar belum termuat</div><p class="note">Muat ulang halaman, atau pesan lewat WhatsApp.</p>'; return }
       r.data.forEach(function(a){byId[a.id]=a});
       areas=r.data.filter(function(a){return a.level==='kelurahan'||a.level==='desa'});
-      loaded=true; fill(from); fill(to); calc(); if(order&&viewing){ } loadList();
+      loaded=true; fill(from); fill(to); calc(); if(order&&viewing){ } loadList(); if(window.hhRefresh) window.hhRefresh();
     });
   }
   function fill(sel){
@@ -831,6 +852,79 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
   from.addEventListener('change',calc); to.addEventListener('change',calc);
   $('swap').addEventListener('click',function(){var t=from.value; from.value=to.value; to.value=t; calc()});
   $('when').addEventListener('change',function(){ $('when-wrap').hidden = this.value!=='later' });
+
+
+  /* ---------- beranda: ketik atau pilih langsung ---------- */
+  (function(){
+    var H={f:{inp:$('h-from'),list:$('l-from'),id:'',act:-1,shown:[]},t:{inp:$('h-to'),list:$('l-to'),id:'',act:-1,shown:[]}};
+    var errEl=$('rh-err');
+    function parentName(a){var p=byId[a.parent_id]; return p?p.name:(a.wilayah==='kota'?'Kota Cirebon':'Kabupaten Cirebon')}
+    function search(q){
+      q=q.trim().toLowerCase(); var out=[];
+      areas.forEach(function(a){
+        var n=a.name.toLowerCase(), pn=parentName(a); 
+        if(!q||n.indexOf(q)>-1||pn.toLowerCase().indexOf(q)>-1) out.push({id:String(a.id),name:a.name,sub:pn,r:n.indexOf(q)===0?0:n.indexOf(q)>-1?1:2});
+      });
+      if(q) out.sort(function(x,y){return x.r-y.r||x.name.localeCompare(y.name)});
+      if(!q||'lokasi lain di luar daftar'.indexOf(q)>-1) out.push({id:OTHER,name:'Lokasi lain di luar daftar',sub:'hubungi kami'});
+      return out;
+    }
+    function render(k){
+      var h=H[k]; if(h.list.hidden) return;
+      var q=h.id?'':h.inp.value; h.shown=search(q); h.act=-1;
+      if(!loaded){ h.list.innerHTML='<li class="none">Memuat daftar kelurahan...</li>'; return }
+      if(!h.shown.length){ h.list.innerHTML='<li class="none">Tidak ketemu. Coba ketik nama lain.</li>'; return }
+      h.list.innerHTML=h.shown.map(function(o,i){ return '<li role="option" data-i="'+i+'"'+(o.id===h.id?' aria-selected="true"':'')+'>'+esc(o.name)+'<small>'+esc(o.sub)+'</small></li>' }).join('');
+    }
+    function open(k){
+      var h=H[k]; var o=k==='f'?'t':'f'; close(o);
+      if(!loaded) loadAreas();
+      h.list.hidden=false; h.inp.setAttribute('aria-expanded','true'); render(k);
+      setTimeout(function(){ var top=h.inp.getBoundingClientRect().top; var hd=document.querySelector('.top'); var off=(hd?hd.offsetHeight:60)+70; if(top>window.innerHeight*0.45||top<off) window.scrollBy({top:top-off,behavior:'smooth'}) },120);
+    }
+    function close(k){ var h=H[k]; h.list.hidden=true; h.inp.setAttribute('aria-expanded','false') }
+    function choose(k,o){ var h=H[k]; h.id=o.id; h.inp.value=o.name; errEl.textContent=''; close(k); if(k==='f'&&!H.t.id) setTimeout(function(){H.t.inp.focus()},0) }
+    function exact(k){
+      var h=H[k]; if(h.id) return; var v=h.inp.value.trim().toLowerCase(); if(!v) return;
+      var m=search(v).filter(function(o){return o.name.toLowerCase()===v});
+      if(m.length===1){ h.id=m[0].id; h.inp.value=m[0].name; return }
+      var all=search(v).filter(function(o){return o.id!==OTHER});
+      if(all.length===1){ h.id=all[0].id; h.inp.value=all[0].name }
+    }
+    ['f','t'].forEach(function(k){
+      var h=H[k];
+      h.inp.addEventListener('focus',function(){ open(k) });
+      h.inp.addEventListener('click',function(){ if(h.list.hidden) open(k) });
+      h.inp.addEventListener('input',function(){ h.id=''; errEl.textContent=''; if(h.list.hidden) open(k); else render(k) });
+      h.inp.addEventListener('keydown',function(e){
+        var n=h.shown.length;
+        if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); if(h.list.hidden) open(k); if(!n) return; h.act=(h.act+(e.key==='ArrowDown'?1:-1)+n)%n; var els=h.list.querySelectorAll('li'); els.forEach(function(x,i){x.setAttribute('aria-selected',i===h.act?'true':'false')}); if(els[h.act]) els[h.act].scrollIntoView({block:'nearest'}) }
+        else if(e.key==='Enter'){ e.preventDefault(); if(!h.list.hidden&&n){ choose(k,h.shown[h.act>-1?h.act:0]) } }
+        else if(e.key==='Escape'){ close(k) }
+      });
+      h.inp.addEventListener('blur',function(){ setTimeout(function(){ exact(k); close(k) },160) });
+      h.list.addEventListener('pointerdown',function(e){ e.preventDefault() });
+      h.list.addEventListener('click',function(e){ var li=e.target.closest('li[data-i]'); if(li) choose(k,h.shown[+li.getAttribute('data-i')]) });
+    });
+    window.hhRefresh=function(){ ['f','t'].forEach(function(k){
+      var h=H[k]; if(!h.id&&h.inp.value) exact(k);
+      render(k);
+    }) };
+    $('rh-go').addEventListener('click',function(){
+      exact('f'); exact('t');
+      if(!H.f.id&&!H.f.inp.value.trim()){ errEl.textContent='Pilih kelurahan jemput dulu.'; H.f.inp.focus(); return }
+      if(!H.f.id){ errEl.textContent='Kelurahan jemput belum cocok. Pilih dari daftar.'; H.f.inp.focus(); return }
+      if(!H.t.id&&!H.t.inp.value.trim()){ errEl.textContent='Pilih kelurahan tujuan dulu.'; H.t.inp.focus(); return }
+      if(!H.t.id){ errEl.textContent='Kelurahan tujuan belum cocok. Pilih dari daftar.'; H.t.inp.focus(); return }
+      errEl.textContent=''; close('f'); close('t');
+      from.value=H.f.id; to.value=H.t.id; calc();
+      go('order');
+      setTimeout(function(){
+        var hd=document.querySelector('.top'); var y=price.getBoundingClientRect().top+window.pageYOffset-(hd?hd.offsetHeight:60)-12;
+        window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+      },80);
+    });
+  })();
 
   /* ---------- validasi + ketentuan ---------- */
   var err=$('err');
