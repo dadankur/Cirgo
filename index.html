@@ -320,21 +320,19 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 :root[data-theme="light"] .scene{background:#8FD3F0;--cg-s0:#4FB8E8;--cg-s1:#8FD3F0;--cg-s2:#CFEFF8;--cg-s3:#FFF3D1;--cg-sun:#FFF0B0;--cg-sunc:#FFF6C4;--cg-m1:#5FA9C0;--cg-m2:#8CCAD6;--cg-m3:#7ABFCF;--cg-hz:#FFFFFF;--cg-sil:#456B8A;--cg-tree:#2E8B4A;--cg-r0:#5A6A7B;--cg-r1:#3F4D5A;--cg-curb:#A3B1BD;--cg-lane:#FFFFFF;--cg-route:#00A5C8;--cg-ring:#E0A526;--cg-ringbg:rgba(15,27,45,.2);--cg-c1:#2B6C8E;--cg-c2:#00B3D6;--cg-c3:#79CFE8;--cg-bird:#456B8A;--cg-star:0}
 .cgsvg{display:block;width:100%;height:100%}
 .cg-stars{opacity:var(--cg-star)}
-.cg-car{transform:translate(165px,174px);transition:transform 2.8s cubic-bezier(.4,0,.2,1);will-change:transform}
-.scene.tele .cg-car{transition:none}
-.s-new .cg-car{transform:translate(165px,174px)}.s-confirmed .cg-car{transform:translate(-100px,174px)}.s-ontheway .cg-car{transform:translate(72px,174px)}
-.s-arrived .cg-car{transform:translate(142px,174px)}.s-ontrip .cg-car{transform:translate(215px,174px)}.s-done .cg-car{transform:translate(292px,174px)}
+.cg-car{transform:translate(165px,161px);transition:transform 2.8s cubic-bezier(.4,0,.2,1)}
+.s-new .cg-car{transform:translate(165px,161px)}.s-confirmed .cg-car{transform:translate(6px,161px)}.s-ontheway .cg-car{transform:translate(72px,161px)}
+.s-arrived .cg-car{transform:translate(142px,161px)}.s-ontrip .cg-car{transform:translate(215px,161px)}.s-done .cg-car{transform:translate(292px,161px)}
 .cg-pickup,.cg-dest,.cg-ping,.cg-route{opacity:0;transition:opacity .6s}
 .s-confirmed .cg-pickup,.s-ontheway .cg-pickup,.s-arrived .cg-pickup{opacity:1}
 .s-ontrip .cg-dest,.s-done .cg-dest{opacity:1}
 .s-new .cg-ping{opacity:1}
 .s-confirmed .cg-route,.s-ontheway .cg-route,.s-ontrip .cg-route{opacity:.9}
 .cg-route{stroke-dasharray:6 9}
-.cg-ring{stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset 2.8s cubic-bezier(.4,0,.2,1)}
-.scene{contain:paint}
+.cg-ring{stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset 3.2s ease}
 .s-ontheway .cg-pickup .cg-ring{stroke-dashoffset:42}.s-arrived .cg-pickup .cg-ring{stroke-dashoffset:0}
 .s-ontrip .cg-dest .cg-ring{stroke-dashoffset:48}.s-done .cg-dest .cg-ring{stroke-dashoffset:0}
-.cg-rip{opacity:0;transform-box:fill-box;transform-origin:center;vector-effect:non-scaling-stroke}
+.cg-rip{opacity:0;transform-box:fill-box;transform-origin:center}
 .cg-door{transition:opacity .8s}.s-arrived .cg-door,.s-ontrip .cg-door{opacity:.7}.s-done .cg-door{opacity:1}
 .cg-brk{opacity:.55}
 @media (prefers-reduced-motion:no-preference){
@@ -342,16 +340,15 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
  .cg-pulse{animation:cgpl 2.4s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}@keyframes cgpl{from{opacity:.55;transform:scale(.94)}to{opacity:1;transform:scale(1.08)}}
  .cg-drift{animation:cgdr 60s linear infinite}@keyframes cgdr{to{transform:translateX(-400px)}}
  .cg-fly{animation:cgfl 26s linear infinite}@keyframes cgfl{from{transform:translateX(-40px)}to{transform:translateX(440px)}}
- .s-confirmed .cg-route,.s-ontheway .cg-route,.s-ontrip .cg-route{animation:cgrt 1s linear infinite}@keyframes cgrt{to{stroke-dashoffset:-15}}
- .cg-dash{stroke-dasharray:18 16}.s-ontheway .cg-dash,.s-ontrip .cg-dash{animation:cgdh .6s linear infinite}@keyframes cgdh{to{stroke-dashoffset:34}}
- .cg-spin{stroke-dasharray:3.5 3.5}.s-ontheway .cg-spin,.s-ontrip .cg-spin{animation:cgsp .21s linear infinite}@keyframes cgsp{to{stroke-dashoffset:-7}}
+ .cg-route{animation:cgrt 1s linear infinite}@keyframes cgrt{to{stroke-dashoffset:-15}}
+ .cg-dash{stroke-dasharray:18 16}.s-ontheway .cg-dash,.s-ontrip .cg-dash{animation:cgdh .6s linear infinite}@keyframes cgdh{to{stroke-dashoffset:-34}}
+ .cg-spin{stroke-dasharray:3.5 3.5}.s-ontheway .cg-spin,.s-ontrip .cg-spin{animation:cgdh .45s linear infinite}
  .s-ontheway .cg-bob,.s-ontrip .cg-bob{animation:cgbob .5s ease-in-out infinite alternate}@keyframes cgbob{to{transform:translateY(-1.2px)}}
- .s-ontheway .cg-beam,.s-ontrip .cg-beam{animation:cgbm 1.8s ease-in-out infinite alternate}@keyframes cgbm{from{opacity:.2}to{opacity:.5}}
- .s-confirmed .cg-pickup .cg-pinbob,.s-ontheway .cg-pickup .cg-pinbob,.s-arrived .cg-pickup .cg-pinbob,.s-ontrip .cg-dest .cg-pinbob,.s-done .cg-dest .cg-pinbob{animation:cgpb .9s ease-in-out infinite alternate}@keyframes cgpb{to{transform:translateY(-3px)}}
+ .cg-beam{animation:cgbm 1.8s ease-in-out infinite alternate}@keyframes cgbm{from{opacity:.2}to{opacity:.5}}
+ .cg-pinbob{animation:cgpb .9s ease-in-out infinite alternate}@keyframes cgpb{to{transform:translateY(-3px)}}
  .s-arrived .cg-pickup .cg-rip,.s-done .cg-dest .cg-rip{animation:cgrp 1.7s ease-out infinite}@keyframes cgrp{from{transform:scale(.4);opacity:.85}to{transform:scale(1.6);opacity:0}}
  .s-arrived .cg-brk,.s-done .cg-brk{animation:cgbk 1.2s steps(1) infinite}@keyframes cgbk{0%{opacity:1}50%{opacity:.2}}
- .cg-ping circle{transform-box:fill-box;transform-origin:center}.s-new .cg-ping circle{animation:cgpg 2.4s ease-out infinite}.s-new .cg-ping .p2{animation-delay:1.2s}
- .scene.paused *{animation-play-state:paused!important}@keyframes cgpg{from{transform:scale(.5);opacity:.9}to{transform:scale(3.6);opacity:0}}
+ .cg-ping circle{transform-box:fill-box;transform-origin:center;animation:cgpg 2.4s ease-out infinite}.cg-ping .p2{animation-delay:1.2s}@keyframes cgpg{from{transform:scale(.5);opacity:.9}to{transform:scale(3.6);opacity:0}}
 }
 @media (prefers-reduced-motion:reduce){.cg-car,.cg-ring{transition:none}}
 :root[data-theme="light"] .top{background:rgba(255,255,255,.9);box-shadow:0 1px 0 #E6EBF4}
@@ -363,25 +360,14 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 .pwcard summary{cursor:pointer;font-weight:600;min-height:48px;display:flex;align-items:center;list-style:none}.pwcard summary::-webkit-details-marker{display:none}
 .pwcard[open] summary{border-bottom:1px solid var(--line);margin-bottom:12px}.pwcard .btn{width:100%;margin-bottom:8px}.pwcard .field{margin-bottom:12px}
 
-/* ---- Mau ke mana: input + pilihan langsung ---- */
-.route-hero{overflow:visible;cursor:default;z-index:2}
-.route-hero .wm{position:absolute;inset:0;overflow:hidden;border-radius:inherit;pointer-events:none}
-.rh-f{position:relative;min-width:0}.rh-f.f1{grid-column:2;grid-row:1}.rh-f.f2{grid-column:2;grid-row:2}
-.rh-route .rh-f label.s1,.rh-route .rh-f label.s2{display:block;cursor:text}
-.route-hero input.rh-in{display:block;width:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;outline:0;color:inherit;font:inherit;font-size:18px;line-height:1.25;appearance:none;-webkit-appearance:none}
-.route-hero input.rh-in::placeholder{color:inherit;opacity:.85}
-.rh-route .rh-f:focus-within label{border-bottom-color:#B8975A}
-.rh-list{position:absolute;left:-4px;right:-4px;top:100%;margin:6px 0 0;padding:6px;list-style:none;max-height:min(240px,38vh);overflow:auto;overscroll-behavior:contain;background:var(--surface,#fff);color:var(--ink,#0F1B2D);border:1px solid var(--line,#E3DCCB);border-radius:14px;box-shadow:0 14px 34px rgba(8,16,32,.28);z-index:40}
-.rh-list[hidden]{display:none}
-.rh-list li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:11px 12px;border-radius:10px;font:500 16.5px/1.2 var(--f-body);cursor:pointer}
-.rh-list li small{display:inline;margin:0;font-size:12.5px;color:var(--muted,#4A5568);text-align:right}
-.rh-list li[aria-selected="true"],.rh-list li:hover{background:rgba(184,151,90,.2)}
-.rh-list li.none{cursor:default;color:var(--muted,#4A5568);font-weight:400}
-.rh-list li.none:hover{background:transparent}
-.rh-err{position:relative;margin:-6px 0 0;font-size:14px;color:#F2B58A}
-.rh-err:empty{display:none}
-:root[data-theme="light"] .rh-err{color:#B3411A}
-button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
+.pfcard{position:relative;padding:6px 18px;border-radius:20px;background:var(--surface)}
+.pfcard .list{margin:0}
+.pfcard .kv:last-child{border-bottom:0}
+.pfcard svg.bd{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.pfcard svg.bd .base{fill:none;stroke:var(--line);stroke-width:1.5}
+.pfcard svg.bd .run{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round}
+.pfcard svg.bd .ar{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+#pf-wa{cursor:pointer;letter-spacing:.02em}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 
@@ -431,17 +417,16 @@ button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
       <div class="greetrow"><div class="hi" id="greet">Selamat pagi</div><div class="nm" id="uname">Nama</div></div>
       <div class="svcbanner" role="status" hidden></div>
       
-      <div class="route-hero" id="rh">
-        <div class="wm" aria-hidden="true"><svg class="watermark" viewBox="0 0 200 200"><path d="M150 52A68 68 0 1 0 150 148" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/></svg></div>
+      <button class="route-hero" type="button" data-go="order" aria-label="Pesan antar-jemput">
+        <svg class="watermark" viewBox="0 0 200 200" aria-hidden="true"><path d="M150 52A68 68 0 1 0 150 148" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/></svg>
         <span class="rh-title">Mau ke mana?</span>
-        <div class="rh-route">
-          <i class="dot a" aria-hidden="true"></i><i class="line" aria-hidden="true"></i><i class="dot b" aria-hidden="true"></i>
-          <div class="rh-f f1"><label class="s1" for="h-from"><small>Jemput</small><input class="rh-in" id="h-from" type="text" placeholder="Pilih kelurahan" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="l-from" aria-autocomplete="list"></label><ul class="rh-list" id="l-from" role="listbox" hidden></ul></div>
-          <div class="rh-f f2"><label class="s2" for="h-to"><small>Tujuan</small><input class="rh-in" id="h-to" type="text" placeholder="Pilih kelurahan" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="l-to" aria-autocomplete="list"></label><ul class="rh-list" id="l-to" role="listbox" hidden></ul></div>
-        </div>
-        <p class="rh-err" id="rh-err" role="alert"></p>
-        <button type="button" class="rh-go" id="rh-go">Pesan sekarang<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-      </div>
+        <span class="rh-route" aria-hidden="true">
+          <i class="dot a"></i><i class="line"></i><i class="dot b"></i>
+          <span class="s1"><small>Jemput</small>Pilih kelurahan</span>
+          <span class="s2"><small>Tujuan</small>Pilih kelurahan</span>
+        </span>
+        <span class="rh-go">Pesan sekarang<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </button>
       <div class="rows">
         <button class="row2" type="button" id="c-sched">
           <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
@@ -519,26 +504,26 @@ button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
 <rect x="250" y="124" width="2" height="28" style="fill:var(--cg-sil)"/><circle class="cg-pulse" cx="251" cy="122" r="10" fill="url(#cg-glow)"/><circle cx="251" cy="122" r="2.2" fill="#FFE9A8"/>
 <!-- jalan -->
 <rect y="150" width="400" height="70" fill="url(#cg-rd)"/><rect y="150" width="400" height="5" style="fill:var(--cg-curb)"/>
-<line class="cg-dash" x1="0" y1="178" x2="400" y2="178" style="stroke:var(--cg-lane)" stroke-width="2" opacity=".75"/>
+<line class="cg-dash" x1="0" y1="200" x2="400" y2="200" style="stroke:var(--cg-lane)" stroke-width="2" opacity=".75"/>
 <!-- rute menyala: dari mobil ke tujuan -->
-<line class="cg-route" x1="0" y1="196" x2="400" y2="196" style="stroke:var(--cg-route)" stroke-width="2.2" stroke-linecap="round"/>
+<line class="cg-route" x1="0" y1="186" x2="400" y2="186" style="stroke:var(--cg-route)" stroke-width="2.2" stroke-linecap="round"/>
 
 <!-- titik jemput: cincin terisi saat mobil mendekat, pin muncul -->
-<g class="cg-pickup" transform="translate(222,196)">
+<g class="cg-pickup" transform="translate(222,176)">
  <ellipse rx="17" ry="5.5" fill="none" style="stroke:var(--cg-ringbg)" stroke-width="2"/>
  <ellipse class="cg-ring" rx="17" ry="5.5" fill="none" style="stroke:var(--cg-ring)" stroke-width="2.4" stroke-linecap="round" pathLength="100"/>
  <ellipse class="cg-rip" rx="17" ry="5.5" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/>
  <g class="cg-pinbob"><path d="M0 -4C-7 -13 -9 -17 -9 -21a9 9 0 1 1 18 0c0 4-2 8-9 17z" style="fill:var(--cg-pin)"/><circle cy="-21" r="3.4" fill="#fff"/></g>
 </g>
 <!-- titik tujuan di gerbang keraton -->
-<g class="cg-dest" transform="translate(337,196)">
+<g class="cg-dest" transform="translate(337,176)">
  <ellipse rx="21" ry="6" fill="none" style="stroke:var(--cg-ringbg)" stroke-width="2"/>
  <ellipse class="cg-ring" rx="21" ry="6" fill="none" style="stroke:var(--cg-ring)" stroke-width="2.4" stroke-linecap="round" pathLength="100"/>
  <ellipse class="cg-rip" rx="21" ry="6" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/>
  <g class="cg-pinbob"><path d="M0 -4C-7 -13 -9 -17 -9 -21a9 9 0 1 1 18 0c0 4-2 8-9 17z" style="fill:var(--cg-pin2)"/><rect x="-3" y="-25" width="6" height="6" fill="#fff" rx="1"/></g>
 </g>
 <!-- mencari pengemudi (status baru) -->
-<g class="cg-ping" transform="translate(200,184)"><circle r="8" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/><circle class="p2" r="8" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/></g>
+<g class="cg-ping" transform="translate(200,166)"><circle r="8" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/><circle class="p2" r="8" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/></g>
 
 <!-- mobil Cirgo (tanpa merek lain) -->
 <g class="cg-car"><g class="cg-bob"><g transform="translate(0,-6) scale(.55)">
@@ -650,11 +635,13 @@ button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
     <div class="pane" id="p-profil" hidden>
       <h1>Profil</h1>
       <p class="sub">Akun yang kamu pakai untuk memesan.</p>
+      <div class="pfcard" id="pfcard"><svg class="bd" aria-hidden="true"><path class="base" id="pf-base"/><path class="run" id="pf-run"/><path class="ar" id="pf-ar" d="M-5 -6L3 0L-5 6"/></svg>
       <div class="list">
         <div class="kv"><span>Nama</span><span id="pf-nama"></span></div>
         <div class="kv"><span>ID Cirgo</span><span id="pf-id"></span></div>
-        <div class="kv"><span>WhatsApp</span><span id="pf-wa"></span></div>
-      </div>
+        <div class="kv"><span>WhatsApp</span><span id="pf-wa" role="button" tabindex="0" aria-label="Nomor WhatsApp, ketuk untuk menampilkan"></span></div>
+      </div></div>
+      <p class="hint" style="margin:6px 4px 0">Ketuk nomor WhatsApp untuk melihatnya sebentar.</p>
       <a class="row2 standalone" href="#" data-go="wa"><span class="ic wa"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><span class="tx"><b>Bantuan lewat WhatsApp</b><span class="t">Tanya, pesan, atau batalkan lewat admin</span></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
       <details class="pwcard" id="pw-box"><summary>Ganti kata sandi</summary>
         <div class="field"><label for="pw-new">Kata sandi baru</label><input id="pw-new" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter"></div>
@@ -774,7 +761,7 @@ button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
   function enter(u){
     user=u; $('v-auth').hidden=true; $('v-app').hidden=false;
     $('greet').textContent=greet(); $('uname').textContent=u.nama;
-    $('pf-nama').textContent=u.nama; $('pf-id').textContent=u.sid||u.wa.slice(-5); $('pf-wa').textContent=showWa(u.wa);
+    $('pf-nama').textContent=u.nama; $('pf-id').textContent=u.sid||u.wa.slice(-5); pfSetWa(showWa(u.wa));
     $('nama').value=u.nama; $('wa').value=showWa(u.wa);
     loadAreas(); resetOrder(); go('home'); restoreActive(); loadService();
   }
@@ -817,7 +804,7 @@ button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
       if(r.error||!r.data){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Daftar belum termuat</div><p class="note">Muat ulang halaman, atau pesan lewat WhatsApp.</p>'; return }
       r.data.forEach(function(a){byId[a.id]=a});
       areas=r.data.filter(function(a){return a.level==='kelurahan'||a.level==='desa'});
-      loaded=true; fill(from); fill(to); calc(); if(order&&viewing){ } loadList(); if(window.hhRefresh) window.hhRefresh();
+      loaded=true; fill(from); fill(to); calc(); if(order&&viewing){ } loadList();
     });
   }
   function fill(sel){
@@ -855,79 +842,6 @@ button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
   from.addEventListener('change',calc); to.addEventListener('change',calc);
   $('swap').addEventListener('click',function(){var t=from.value; from.value=to.value; to.value=t; calc()});
   $('when').addEventListener('change',function(){ $('when-wrap').hidden = this.value!=='later' });
-
-
-  /* ---------- beranda: ketik atau pilih langsung ---------- */
-  (function(){
-    var H={f:{inp:$('h-from'),list:$('l-from'),id:'',act:-1,shown:[]},t:{inp:$('h-to'),list:$('l-to'),id:'',act:-1,shown:[]}};
-    var errEl=$('rh-err');
-    function parentName(a){var p=byId[a.parent_id]; return p?p.name:(a.wilayah==='kota'?'Kota Cirebon':'Kabupaten Cirebon')}
-    function search(q){
-      q=q.trim().toLowerCase(); var out=[];
-      areas.forEach(function(a){
-        var n=a.name.toLowerCase(), pn=parentName(a); 
-        if(!q||n.indexOf(q)>-1||pn.toLowerCase().indexOf(q)>-1) out.push({id:String(a.id),name:a.name,sub:pn,r:n.indexOf(q)===0?0:n.indexOf(q)>-1?1:2});
-      });
-      if(q) out.sort(function(x,y){return x.r-y.r||x.name.localeCompare(y.name)});
-      if(!q||'lokasi lain di luar daftar'.indexOf(q)>-1) out.push({id:OTHER,name:'Lokasi lain di luar daftar',sub:'hubungi kami'});
-      return out;
-    }
-    function render(k){
-      var h=H[k]; if(h.list.hidden) return;
-      var q=h.id?'':h.inp.value; h.shown=search(q); h.act=-1;
-      if(!loaded){ h.list.innerHTML='<li class="none">Memuat daftar kelurahan...</li>'; return }
-      if(!h.shown.length){ h.list.innerHTML='<li class="none">Tidak ketemu. Coba ketik nama lain.</li>'; return }
-      h.list.innerHTML=h.shown.map(function(o,i){ return '<li role="option" data-i="'+i+'"'+(o.id===h.id?' aria-selected="true"':'')+'>'+esc(o.name)+'<small>'+esc(o.sub)+'</small></li>' }).join('');
-    }
-    function open(k){
-      var h=H[k]; var o=k==='f'?'t':'f'; close(o);
-      if(!loaded) loadAreas();
-      h.list.hidden=false; h.inp.setAttribute('aria-expanded','true'); render(k);
-      setTimeout(function(){ var top=h.inp.getBoundingClientRect().top; var hd=document.querySelector('.top'); var off=(hd?hd.offsetHeight:60)+70; if(top>window.innerHeight*0.45||top<off) window.scrollBy({top:top-off,behavior:'smooth'}) },120);
-    }
-    function close(k){ var h=H[k]; h.list.hidden=true; h.inp.setAttribute('aria-expanded','false') }
-    function choose(k,o){ var h=H[k]; h.id=o.id; h.inp.value=o.name; errEl.textContent=''; close(k); if(k==='f'&&!H.t.id) setTimeout(function(){H.t.inp.focus()},0) }
-    function exact(k){
-      var h=H[k]; if(h.id) return; var v=h.inp.value.trim().toLowerCase(); if(!v) return;
-      var m=search(v).filter(function(o){return o.name.toLowerCase()===v});
-      if(m.length===1){ h.id=m[0].id; h.inp.value=m[0].name; return }
-      var all=search(v).filter(function(o){return o.id!==OTHER});
-      if(all.length===1){ h.id=all[0].id; h.inp.value=all[0].name }
-    }
-    ['f','t'].forEach(function(k){
-      var h=H[k];
-      h.inp.addEventListener('focus',function(){ open(k) });
-      h.inp.addEventListener('click',function(){ if(h.list.hidden) open(k) });
-      h.inp.addEventListener('input',function(){ h.id=''; errEl.textContent=''; if(h.list.hidden) open(k); else render(k) });
-      h.inp.addEventListener('keydown',function(e){
-        var n=h.shown.length;
-        if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); if(h.list.hidden) open(k); if(!n) return; h.act=(h.act+(e.key==='ArrowDown'?1:-1)+n)%n; var els=h.list.querySelectorAll('li'); els.forEach(function(x,i){x.setAttribute('aria-selected',i===h.act?'true':'false')}); if(els[h.act]) els[h.act].scrollIntoView({block:'nearest'}) }
-        else if(e.key==='Enter'){ e.preventDefault(); if(!h.list.hidden&&n){ choose(k,h.shown[h.act>-1?h.act:0]) } }
-        else if(e.key==='Escape'){ close(k) }
-      });
-      h.inp.addEventListener('blur',function(){ setTimeout(function(){ exact(k); close(k) },160) });
-      h.list.addEventListener('pointerdown',function(e){ e.preventDefault() });
-      h.list.addEventListener('click',function(e){ var li=e.target.closest('li[data-i]'); if(li) choose(k,h.shown[+li.getAttribute('data-i')]) });
-    });
-    window.hhRefresh=function(){ ['f','t'].forEach(function(k){
-      var h=H[k]; if(!h.id&&h.inp.value) exact(k);
-      render(k);
-    }) };
-    $('rh-go').addEventListener('click',function(){
-      exact('f'); exact('t');
-      if(!H.f.id&&!H.f.inp.value.trim()){ errEl.textContent='Pilih kelurahan jemput dulu.'; H.f.inp.focus(); return }
-      if(!H.f.id){ errEl.textContent='Kelurahan jemput belum cocok. Pilih dari daftar.'; H.f.inp.focus(); return }
-      if(!H.t.id&&!H.t.inp.value.trim()){ errEl.textContent='Pilih kelurahan tujuan dulu.'; H.t.inp.focus(); return }
-      if(!H.t.id){ errEl.textContent='Kelurahan tujuan belum cocok. Pilih dari daftar.'; H.t.inp.focus(); return }
-      errEl.textContent=''; close('f'); close('t');
-      from.value=H.f.id; to.value=H.t.id; calc();
-      go('order');
-      setTimeout(function(){
-        var hd=document.querySelector('.top'); var y=price.getBoundingClientRect().top+window.pageYOffset-(hd?hd.offsetHeight:60)-12;
-        window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
-      },80);
-    });
-  })();
 
   /* ---------- validasi + ketentuan ---------- */
   var err=$('err');
@@ -1000,12 +914,7 @@ button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
     var filled=o.status==='cancelled'?0:(o.status==='done'?5:S.n+1), st='';
     for(var i=0;i<5;i++) st+='<i'+(i<filled?' class="on"':'')+'></i>';
     $('bk').textContent=o.code; $('steps').innerHTML=st;
-    (function(){ var sc=$('scene'), X={new:165,confirmed:-100,ontheway:72,arrived:142,ontrip:215,done:292}, pm=(sc.className.match(/s-(\w+)/)||[])[1];
-      var back=pm&&X[pm]!=null&&X[o.status]!=null&&X[o.status]<X[pm];
-      sc.className='scene s-'+o.status+(back?' tele':'')+(sc.classList.contains('paused')?' paused':'');
-      if(back){ void sc.offsetWidth; requestAnimationFrame(function(){ sc.classList.remove('tele') }) }
-      if(!sc._io&&window.IntersectionObserver){ sc._io=new IntersectionObserver(function(en){ sc.classList.toggle('paused',!en[0].isIntersecting) }); sc._io.observe(sc) }
-    })(); $('scene').hidden=(o.status==='cancelled');
+    $('scene').className='scene s-'+o.status; $('scene').hidden=(o.status==='cancelled');
     if(lastStatus!==o.status){ lastStatus=o.status; var t=$('tk-title'); t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop') }
     $('summary').innerHTML=kv('Jemput',esc(o.a)+(o.dfrom?' - '+esc(o.dfrom):''))+kv('Tujuan',esc(o.b)+(o.dto?' - '+esc(o.dto):''))
       +kv('Waktu',o.pickup?esc(new Date(o.pickup).toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})):'Secepatnya')
@@ -1117,7 +1026,23 @@ button.rh-go{width:100%;border:0;cursor:pointer;text-align:left}
 
   /* mulai: pulihkan sesi bila ada */
   sb.auth.getSession().then(function(r){ if(r.data&&r.data.session) loadUser(); else showAuth() },showAuth);
+
+/* profil: nomor disamarkan + garis emas berputar */
+var pfFull='',pfT=0;
+function pfMask(w){return w.length>7?w.slice(0,4)+new Array(w.length-6).join('x')+w.slice(-3):w}
+function pfSetWa(w){pfFull=w;$('pf-wa').textContent=pfMask(w)}
+function pfReveal(){if(!pfFull)return;$('pf-wa').textContent=pfFull;clearTimeout(pfT);pfT=setTimeout(function(){$('pf-wa').textContent=pfMask(pfFull)},5000)}
+$('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pfReveal()}});
+(function(){var card=$('pfcard'),base=$('pf-base'),run=$('pf-run'),ar=$('pf-ar'),len=0,t0=null,still=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function build(){var w=card.clientWidth,h=card.clientHeight;if(!w||!h)return false;var r=20,d='M'+r+' 0H'+(w-r)+'A'+r+' '+r+' 0 0 1 '+w+' '+r+'V'+(h-r)+'A'+r+' '+r+' 0 0 1 '+(w-r)+' '+h+'H'+r+'A'+r+' '+r+' 0 0 1 0 '+(h-r)+'V'+r+'A'+r+' '+r+' 0 0 1 '+r+' 0Z';
+    base.setAttribute('d',d);run.setAttribute('d',d);len=run.getTotalLength();var seg=Math.min(len*.22,150);run.style.strokeDasharray=seg+' '+(len-seg);run.dataset.seg=seg;return true}
+  function frame(ts){if(card.offsetParent!==null){if(!len||card.dataset.w!=card.clientWidth+'x'+card.clientHeight){card.dataset.w=card.clientWidth+'x'+card.clientHeight;build()}
+      if(len){if(t0===null)t0=ts;var k=still?.3:((ts-t0)/6000)%1,seg=+run.dataset.seg,head=k*len;run.style.strokeDashoffset=-(head-seg);
+        var a=run.getPointAtLength(head%len),b=run.getPointAtLength((head+2)%len),ang=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI;ar.setAttribute('transform','translate('+a.x+' '+a.y+') rotate('+ang+')')}}
+    if(!still)requestAnimationFrame(frame)}
+  requestAnimationFrame(frame);if(still)setTimeout(function(){requestAnimationFrame(frame)},400)})();
 })();
+
 
 </script>
 </body>
