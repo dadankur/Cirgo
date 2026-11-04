@@ -376,7 +376,7 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 .cg-bd{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
 .cg-bd .base{fill:none;stroke:var(--line);stroke-width:1.5}
 .cg-bd .tr{fill:none;stroke:var(--gold);stroke-linecap:round}
-.cg-bd .ar{fill:var(--gold);stroke:none}
+.cg-bd .ar{fill:none;stroke:var(--gold);stroke-width:3.6;stroke-linecap:round;stroke-linejoin:round}
 .cg-bd .st{fill:#fff;stroke:var(--gold);stroke-width:1.2}
 .cg-bd .pt{fill:var(--gold);opacity:0}
 .overlay.cgpop{place-items:center;padding:18px;z-index:60}
@@ -397,6 +397,12 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 .p2row b{font-variant-numeric:tabular-nums;word-break:break-all}
 .p2copy{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 10px;font:500 13px var(--f-body);cursor:pointer}
 .pp-hint{margin-top:6px}
+#pay-box .seg{display:none}
+#pay-box #pm-qris{display:none!important}
+.cashbig{display:grid;gap:4px;text-align:center;padding:6px 0 2px}
+.cashbig span{font-size:15px;color:var(--muted)}
+.cashbig b{font:700 46px/1.1 var(--f-display);color:var(--ink);letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.cashbig small{font-size:13px;color:var(--muted)}
 @media (prefers-reduced-motion:no-preference){
   .cgbox .sheet{animation:popin .38s cubic-bezier(.2,1.3,.4,1)}
   @keyframes popin{from{transform:scale(.86);opacity:0}to{transform:none;opacity:1}}
@@ -583,9 +589,9 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
         <div class="steps" id="steps" aria-hidden="true"></div>
         <div class="list" id="summary"></div>
         <div class="paybox" id="pay-box" hidden>
-          <div class="pb-h">Cara bayar</div>
+          <div class="pb-h">Bayar tunai</div>
           <div class="seg" role="group" aria-label="Cara bayar"><button type="button" data-pm="cash">Tunai</button><button type="button" data-pm="qris">QRIS</button></div>
-          <div id="pm-cash" hidden><p>Siapkan uang pas <b id="cash-amt"></b>. Bayar langsung ke pengemudi.</p></div>
+          <div id="pm-cash" hidden><div class="cashbig"><span>Bayar tunai ke pengemudi</span><b id="cash-amt"></b><small>Siapkan uang pas agar pengemudi tidak perlu memberi kembalian.</small></div></div>
           <div id="pm-qris" hidden>
             <div class="qrbox"><img id="qris-img" src="qris.png" alt="QRIS Cirgo"><p class="qr-miss" id="qris-miss" hidden>Gambar QRIS belum dipasang. Minta pengemudi menunjukkan QRIS-nya.</p></div>
             <p class="qr-amt">Bayar <b id="qris-amt"></b></p>
@@ -962,7 +968,7 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
     if(o.paid) return 'Pembayaran sudah diterima. Terima kasih.';
     if(o.status==='cancelled') return '';
     if(o.pref==='noncash') return o.status==='offered'||o.status==='new'?'Non-tunai: pembayaran dibuka setelah kamu menyetujui tawaran jemputan.':'';
-    return 'Pembayaran saat perjalanan selesai, tunai atau QRIS.';
+    return 'Pembayaran tunai saat perjalanan selesai.';
   }
   function stopTimer(){ if(poll){clearInterval(poll); poll=null} }
   function resetOrder(){ stopTimer(); order=null; viewing=false; $('s-track').hidden=true; $('o-list').hidden=false; $('tk-msg').textContent='' }
@@ -995,7 +1001,7 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
     $('pay-box').hidden=!showPay;
     if(showPay){
       document.querySelectorAll('#pay-box [data-pm]').forEach(function(b){ b.setAttribute('aria-pressed',String(o.pm===b.dataset.pm)); b.disabled=o.paid });
-      $('pm-cash').hidden=o.pm!=='cash'; $('pm-qris').hidden=o.pm!=='qris';
+      $('pm-cash').hidden=false; $('pm-qris').hidden=true; if(o.pm!=='cash'&&!o.paid&&!cashSet[o.id]){ cashSet[o.id]=1; o.pm='cash'; sb.rpc('set_payment_method',{p_booking:o.id,p_method:'cash'}).then(function(){},function(){}) }
       $('cash-amt').textContent=rp(o.amt); $('qris-amt').textContent=rp(o.amt);
       if(o.paid){ $('pm-cash').hidden=true; $('pm-qris').hidden=true }
     }
@@ -1114,12 +1120,12 @@ $('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydo
   var NS='http://www.w3.org/2000/svg';
   function mk(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e}
   function CgF(el,o){
-    o=o||{}; var period=o.period||7000, LAY=[.56,.45,.34,.24,.14,.06], dead=false;
+    o=o||{}; var period=o.period||7000, LAY=[.9,.72,.54,.38,.22,.08], dead=false;
     var svg=mk('svg',{'class':'cg-bd','aria-hidden':'true'}); el.insertBefore(svg,el.firstChild);
     var base=mk('path',{'class':'base'}); svg.appendChild(base);
     var trs=LAY.map(function(f,i){var p=mk('path',{'class':'tr'});p.style.opacity=(.16+i*.14).toFixed(2);p.style.strokeWidth=(1.6+i*.5).toFixed(1);svg.appendChild(p);return p});
     var star=mk('path',{'class':'st',d:'M0 -9L2.2 -2.2L9 0L2.2 2.2L0 9L-2.2 2.2L-9 0L-2.2 -2.2Z'});
-    var ar=mk('path',{'class':'ar',d:'M-6 -6L4 0L-6 6Z'});
+    var ar=mk('path',{'class':'ar',d:'M-5 -7L5 0L-5 7'});
     var N=26, pts=[], pi=0, i;
     for(i=0;i<N;i++){var c=mk('circle',{'class':'pt',r:'1.8',cx:'0',cy:'0'});svg.appendChild(c);pts.push({e:c,x:0,y:0,vx:0,vy:0,age:9,life:1})}
     svg.appendChild(ar); svg.appendChild(star);
@@ -1140,7 +1146,7 @@ $('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydo
     function burst(n,x,y,sp){ if(REDUCE||!P) return; if(x==null){x=W/2;y=0} for(var k=0;k<n;k++) spawn(x,y,sp||150,.9) }
     function draw(head){
       trs.forEach(function(p,k){var L=P*LAY[k],s=(((head-L)%P)+P)%P;p.style.strokeDashoffset=-s});
-      var a=pos(head-7),b=pos(head+3);
+      var a=pos(head+2),b=pos(head-P*LAY[0]);
       ar.setAttribute('transform','translate('+a.x+' '+a.y+') rotate('+a.a+')');
       return b;
     }
@@ -1181,7 +1187,7 @@ $('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydo
   function mmss(ms){ if(ms<0) ms=0; var m=Math.floor(ms/60000),s=Math.floor(ms/1000)%60; return (m<10?'0':'')+m+':'+(s<10?'0':'')+s }
 
   /* ===== pilihan tunai / non-tunai di form pesan ===== */
-  var payPref='cash';
+  var payPref='cash', cashSet={};
   document.querySelectorAll('#pp [data-pp]').forEach(function(b){ b.addEventListener('click',function(){
     payPref=b.dataset.pp;
     document.querySelectorAll('#pp [data-pp]').forEach(function(x){ x.setAttribute('aria-pressed',String(x===b)) });
