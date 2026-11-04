@@ -1,3 +1,4 @@
+<script>/*DIAG*/window.onerror=function(m,s,l,c){try{var d=document.getElementById('cg-err');if(!d){d=document.createElement('pre');d.id='cg-err';d.style.cssText='position:fixed;left:0;right:0;bottom:0;max-height:45vh;overflow:auto;margin:0;padding:8px;background:#7a0000;color:#fff;font:11px monospace;white-space:pre-wrap;z-index:99999';(document.body||document.documentElement).appendChild(d)}d.textContent+=String(m)+' ('+l+':'+c+')\n'}catch(e){}};</script>
 <title>Cirgo Pemesanan</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -213,4 +214,1142 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 .chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.bad{background:var(--warn-bg);color:var(--warn)}
 .oi-route{font:500 17px var(--f-display)}.oi-route i{font-style:normal;color:var(--gold-ink)}.oi-meta{font-size:14px;color:var(--muted)}
 .emptyo{display:grid;gap:8px;justify-items:center;text-align:center;padding:36px 12px;color:var(--muted)}.emptyo b{font:500 20px var(--f-display);color:var(--ink)}
-.nav button{position:relative}.nav .badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:#B3261E;color:#fff;font:600 11px/18px var(--f-body);
+.nav button{position:relative}.nav .badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:#B3261E;color:#fff;font:600 11px/18px var(--f-body);font-style:normal;text-align:center}
+.nav .badge[hidden]{display:none}
+.nav{grid-template-columns:repeat(4,1fr)}
+/* adegan perjalanan */
+.paybox{display:grid;gap:10px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}
+.pb-h{font:500 17px var(--f-display)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;border-radius:14px;background:var(--line)}
+.seg button{min-height:44px;border:0;border-radius:11px;background:transparent;color:var(--ink);font:500 16px var(--f-body);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--btn-fg)}.seg button:disabled{opacity:.6}
+.qrbox{display:grid;place-items:center;background:#fff;border-radius:14px;padding:12px}.qrbox img{width:min(100%,300px);height:auto;display:block}
+.qr-miss{margin:0;padding:18px;color:#4A5568;text-align:center}.qr-amt{margin:0;text-align:center;font-size:18px}.paybox p{margin:0}
+.steps{display:flex;gap:5px}.steps i{flex:1;height:5px;border-radius:9px;background:var(--line);transition:background .5s}.steps i.on{background:var(--gold)}
+@media (prefers-reduced-motion:no-preference){
+  /* satu pembuka: hero dan baris menu muncul berurutan saat beranda dibuka */
+  #p-home:not([hidden]) .route-hero{animation:rise2 .6s cubic-bezier(.2,.7,.2,1) both}
+  #p-home:not([hidden]) .row2{animation:rise2 .5s cubic-bezier(.2,.7,.2,1) both}
+  #p-home:not([hidden]) .row2:nth-child(1){animation-delay:.18s}#p-home:not([hidden]) .row2:nth-child(2){animation-delay:.26s}
+  #p-home:not([hidden]) .row2:nth-child(3){animation-delay:.34s}#p-home:not([hidden]) .row2:nth-child(4){animation-delay:.42s}
+  @keyframes rise2{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  /* hero: garis rute mengalir, titik jemput berdenyut, huruf C melayang pelan */
+  .rh-route .line{border-left:0;width:2px;background:repeating-linear-gradient(180deg,rgba(184,151,90,.85) 0 6px,transparent 6px 12px);background-size:2px 12px;animation:flow 1s linear infinite}
+  @keyframes flow{to{background-position:0 12px}}
+  .rh-route .dot.a{box-shadow:0 0 0 0 rgba(184,151,90,.6);animation:pulse 2s ease-out infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 10px rgba(184,151,90,0)}100%{box-shadow:0 0 0 0 rgba(184,151,90,0)}}
+  .route-hero .watermark{animation:drift 9s ease-in-out infinite alternate}
+  @keyframes drift{to{transform:translate(-8px,10px) rotate(8deg)}}
+  .rh-go svg{animation:nudge 1.6s ease-in-out infinite}@keyframes nudge{50%{transform:translateX(4px)}}
+  /* perpindahan halaman */
+  .pane:not([hidden]){animation:paneIn .28s ease-out}@keyframes paneIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  /* adegan pelacakan */
+  @keyframes ringp{0%{transform:scale(.6);opacity:.8}100%{transform:scale(2.2);opacity:0}}
+  .pop{animation:pop .5s cubic-bezier(.2,.9,.3,1.3)}@keyframes pop{from{opacity:0;transform:scale(.92) translateY(6px)}to{opacity:1;transform:none}}
+  .oi.act .chip{animation:blink 1.8s ease-in-out infinite}@keyframes blink{50%{opacity:.55}}
+  .btn:active,.row2:active,.oi:active{transform:scale(.98)}
+}
+
+/* ===== logo animasi, tema, nav 5, adegan Cirebon ===== */
+@keyframes lp_ALL{0%{opacity:1}87.143%{opacity:1}95.714%{opacity:0}100%{opacity:0}}.lp_ALL{animation:lp_ALL 7.0s linear infinite}@keyframes lp_RING{0.0%{stroke-dashoffset:105}1.714%{stroke-dashoffset:105}16.429%{stroke-dashoffset:0}100.0%{stroke-dashoffset:0}}.lp_RING{animation:lp_RING 7.0s cubic-bezier(.5,0,.2,1) infinite;stroke-dasharray:100 200;stroke-dashoffset:105;}@keyframes lp_PING1{0.0%{opacity:0;transform:scale(.1)}1.429%{opacity:.9;transform:scale(.1)}12.143%{opacity:0;transform:scale(1)}100.0%{opacity:0;transform:scale(1)}}.lp_PING1{animation:lp_PING1 7.0s ease-out infinite;transform-origin:143.08px 80.89px;opacity:0;}@keyframes lp_CHEV{0.0%{opacity:0;transform:scale(0) rotate(-40deg)}14.286%{opacity:0;transform:scale(0) rotate(-40deg)}19.286%{opacity:1;transform:scale(1.2) rotate(6deg)}21.714%{opacity:1;transform:scale(1) rotate(0deg)}22.571%{opacity:1;transform:scale(1) rotate(0deg)}22.857%{opacity:0;transform:scale(1) rotate(0deg)}49.286%{opacity:0;transform:scale(0) rotate(-40deg)}54.286%{opacity:1;transform:scale(1.25) rotate(8deg)}57.143%{opacity:1;transform:scale(.96) rotate(-2deg)}60.0%{opacity:1;transform:scale(1) rotate(0deg)}100.0%{opacity:1;transform:scale(1) rotate(0deg)}}.lp_CHEV{animation:lp_CHEV 7.0s cubic-bezier(.3,.7,.3,1) infinite;transform-origin:118px 112px;opacity:0;}@keyframes lp_CARX{0.0%{transform:translateX(118px)}22.857%{transform:translateX(118px)}30.714%{transform:translateX(195px)}45.714%{transform:translateX(515px)}100.0%{transform:translateX(515px)}}.lp_CARX{animation:lp_CARX 7.0s linear infinite;opacity:1;}@keyframes lp_CARY{0.0%{transform:translateY(112px)}25.714%{transform:translateY(112px)}30.714%{transform:translateY(24px)}100.0%{transform:translateY(24px)}}.lp_CARY{animation:lp_CARY 7.0s cubic-bezier(.4,0,.2,1) infinite;opacity:1;}@keyframes lp_CARS{0.0%{opacity:0;transform:scale(1)}22.571%{opacity:0;transform:scale(1)}22.857%{opacity:1;transform:scale(1)}30.714%{opacity:1;transform:scale(.42)}43.571%{opacity:1;transform:scale(.42)}45.714%{opacity:0;transform:scale(.42)}100.0%{opacity:0;transform:scale(.42)}}.lp_CARS{animation:lp_CARS 7.0s cubic-bezier(.3,.7,.3,1) infinite;opacity:0;}@keyframes lp_TRAIL{0.0%{opacity:0;transform:scaleX(0)}30.714%{opacity:.9;transform:scaleX(0)}45.714%{opacity:.9;transform:scaleX(1)}54.286%{opacity:0;transform:scaleX(1)}100.0%{opacity:0;transform:scaleX(1)}}.lp_TRAIL{animation:lp_TRAIL 7.0s linear infinite;transform-origin:195px 24.5px;opacity:0;}@keyframes lp_L0{0.0%{opacity:0;transform:translateY(-52px)}32.297%{opacity:0;transform:translateY(-52px)}33.44%{opacity:1;transform:translateY(-40px)}38.011%{opacity:1;transform:translateY(6px)}39.725%{opacity:1;transform:translateY(-2.5px)}41.44%{opacity:1;transform:translateY(0)}100.0%{opacity:1;transform:translateY(0)}}.lp_L0{animation:lp_L0 7.0s cubic-bezier(.4,0,.6,1) infinite;opacity:0;}@keyframes lp_L1{0.0%{opacity:0;transform:translateY(-52px)}34.688%{opacity:0;transform:translateY(-52px)}35.83%{opacity:1;transform:translateY(-40px)}40.402%{opacity:1;transform:translateY(6px)}42.116%{opacity:1;transform:translateY(-2.5px)}43.83%{opacity:1;transform:translateY(0)}100.0%{opacity:1;transform:translateY(0)}}.lp_L1{animation:lp_L1 7.0s cubic-bezier(.4,0,.6,1) infinite;opacity:0;}@keyframes lp_L2{0.0%{opacity:0;transform:translateY(-52px)}36.234%{opacity:0;transform:translateY(-52px)}37.377%{opacity:1;transform:translateY(-40px)}41.949%{opacity:1;transform:translateY(6px)}43.663%{opacity:1;transform:translateY(-2.5px)}45.377%{opacity:1;transform:translateY(0)}100.0%{opacity:1;transform:translateY(0)}}.lp_L2{animation:lp_L2 7.0s cubic-bezier(.4,0,.6,1) infinite;opacity:0;}@keyframes lp_L3{0.0%{opacity:0;transform:translateY(-52px)}38.438%{opacity:0;transform:translateY(-52px)}39.58%{opacity:1;transform:translateY(-40px)}44.152%{opacity:1;transform:translateY(6px)}45.866%{opacity:1;transform:translateY(-2.5px)}47.58%{opacity:1;transform:translateY(0)}100.0%{opacity:1;transform:translateY(0)}}.lp_L3{animation:lp_L3 7.0s cubic-bezier(.4,0,.6,1) infinite;opacity:0;}@keyframes lp_L4{0.0%{opacity:0;transform:translateY(-52px)}41.484%{opacity:0;transform:translateY(-52px)}42.627%{opacity:1;transform:translateY(-40px)}47.199%{opacity:1;transform:translateY(6px)}48.913%{opacity:1;transform:translateY(-2.5px)}50.627%{opacity:1;transform:translateY(0)}100.0%{opacity:1;transform:translateY(0)}}.lp_L4{animation:lp_L4 7.0s cubic-bezier(.4,0,.6,1) infinite;opacity:0;}@keyframes lp_LINE{0.0%{opacity:0;transform:scaleX(0)}45.714%{opacity:0;transform:scaleX(0)}46.429%{opacity:1;transform:scaleX(0)}52.857%{opacity:1;transform:scaleX(1)}100.0%{opacity:1;transform:scaleX(1)}}.lp_LINE{animation:lp_LINE 7.0s cubic-bezier(.3,.7,.3,1) infinite;transform-origin:208px 129.5px;opacity:0;}@keyframes lp_JEM{0.0%{opacity:0;transform:translateX(-34px)}50.714%{opacity:0;transform:translateX(-34px)}57.857%{opacity:1;transform:translateX(0)}100.0%{opacity:1;transform:translateX(0)}}.lp_JEM{animation:lp_JEM 7.0s cubic-bezier(.2,.8,.2,1) infinite;opacity:0;}@keyframes lp_NGAN{0.0%{opacity:0;transform:translateX(34px)}50.714%{opacity:0;transform:translateX(34px)}57.857%{opacity:1;transform:translateX(0)}100.0%{opacity:1;transform:translateX(0)}}.lp_NGAN{animation:lp_NGAN 7.0s cubic-bezier(.2,.8,.2,1) infinite;opacity:0;}@keyframes lp_DOT{0.0%{opacity:0;transform:scale(0)}57.143%{opacity:0;transform:scale(0)}60.0%{opacity:1;transform:scale(2.4)}62.857%{opacity:1;transform:scale(1)}100.0%{opacity:1;transform:scale(1)}}.lp_DOT{animation:lp_DOT 7.0s cubic-bezier(.3,.7,.3,1) infinite;transform-origin:318.4px 153.3px;opacity:0;}@keyframes lp_PING2{0.0%{opacity:0;transform:scale(.1)}58.571%{opacity:.9;transform:scale(.1)}68.571%{opacity:0;transform:scale(1)}100.0%{opacity:0;transform:scale(1)}}.lp_PING2{animation:lp_PING2 7.0s ease-out infinite;transform-origin:318.4px 153.3px;opacity:0;}@keyframes lp_TAG2{0.0%{opacity:0;transform:translateY(8px)}62.857%{opacity:0;transform:translateY(8px)}70.714%{opacity:1;transform:translateY(0)}100.0%{opacity:1;transform:translateY(0)}}.lp_TAG2{animation:lp_TAG2 7.0s cubic-bezier(.2,.8,.2,1) infinite;opacity:0;}
+@keyframes lb_L0{0.0%{opacity:0;transform:translateY(34px) scale(.92)}7.0%{opacity:0;transform:translateY(34px) scale(.92)}15.25%{opacity:1;transform:translateY(-7px) scale(1.02)}18.7%{opacity:1;transform:translateY(2.5px) scale(1)}22.0%{opacity:1;transform:translateY(0) scale(1)}84.0%{opacity:1;transform:translateY(0)}95.0%{opacity:0;transform:translateY(-10px)}100.0%{opacity:0;transform:translateY(-10px)}}.lb_L0{animation:lb_L0 5.0s cubic-bezier(.3,.7,.3,1) infinite;transform-box:fill-box;transform-origin:center bottom;opacity:0}@keyframes lb_L1{0.0%{opacity:0;transform:translateY(34px) scale(.92)}9.8%{opacity:0;transform:translateY(34px) scale(.92)}18.05%{opacity:1;transform:translateY(-7px) scale(1.02)}21.5%{opacity:1;transform:translateY(2.5px) scale(1)}24.8%{opacity:1;transform:translateY(0) scale(1)}84.0%{opacity:1;transform:translateY(0)}95.0%{opacity:0;transform:translateY(-10px)}100.0%{opacity:0;transform:translateY(-10px)}}.lb_L1{animation:lb_L1 5.0s cubic-bezier(.3,.7,.3,1) infinite;transform-box:fill-box;transform-origin:center bottom;opacity:0}@keyframes lb_L2{0.0%{opacity:0;transform:translateY(34px) scale(.92)}12.6%{opacity:0;transform:translateY(34px) scale(.92)}20.85%{opacity:1;transform:translateY(-7px) scale(1.02)}24.3%{opacity:1;transform:translateY(2.5px) scale(1)}27.6%{opacity:1;transform:translateY(0) scale(1)}84.0%{opacity:1;transform:translateY(0)}95.0%{opacity:0;transform:translateY(-10px)}100.0%{opacity:0;transform:translateY(-10px)}}.lb_L2{animation:lb_L2 5.0s cubic-bezier(.3,.7,.3,1) infinite;transform-box:fill-box;transform-origin:center bottom;opacity:0}@keyframes lb_L3{0.0%{opacity:0;transform:translateY(34px) scale(.92)}15.4%{opacity:0;transform:translateY(34px) scale(.92)}23.65%{opacity:1;transform:translateY(-7px) scale(1.02)}27.1%{opacity:1;transform:translateY(2.5px) scale(1)}30.4%{opacity:1;transform:translateY(0) scale(1)}84.0%{opacity:1;transform:translateY(0)}95.0%{opacity:0;transform:translateY(-10px)}100.0%{opacity:0;transform:translateY(-10px)}}.lb_L3{animation:lb_L3 5.0s cubic-bezier(.3,.7,.3,1) infinite;transform-box:fill-box;transform-origin:center bottom;opacity:0}@keyframes lb_L4{0.0%{opacity:0;transform:translateY(34px) scale(.92)}18.2%{opacity:0;transform:translateY(34px) scale(.92)}26.45%{opacity:1;transform:translateY(-7px) scale(1.02)}29.9%{opacity:1;transform:translateY(2.5px) scale(1)}33.2%{opacity:1;transform:translateY(0) scale(1)}84.0%{opacity:1;transform:translateY(0)}95.0%{opacity:0;transform:translateY(-10px)}100.0%{opacity:0;transform:translateY(-10px)}}.lb_L4{animation:lb_L4 5.0s cubic-bezier(.3,.7,.3,1) infinite;transform-box:fill-box;transform-origin:center bottom;opacity:0}@keyframes lb_LINE{0.0%{opacity:0;transform:scaleX(0)}27.0%{opacity:1;transform:scaleX(0)}37.0%{opacity:1;transform:scaleX(1)}84.0%{opacity:1;transform:scaleX(1)}95.0%{opacity:0;transform:scaleX(1)}100.0%{opacity:0;transform:scaleX(1)}}.lb_LINE{animation:lb_LINE 5.0s cubic-bezier(.3,.7,.3,1) infinite;transform-box:fill-box;transform-origin:left center;opacity:0}@keyframes lb_TAG1{0.0%{opacity:0;transform:translateY(8px)}35.0%{opacity:0;transform:translateY(8px)}45.0%{opacity:1;transform:translateY(0)}84.0%{opacity:1;transform:translateY(0)}95.0%{opacity:0;transform:translateY(0)}100.0%{opacity:0;transform:translateY(0)}}.lb_TAG1{animation:lb_TAG1 5.0s cubic-bezier(.3,.7,.3,1) infinite;transform-box:fill-box;transform-origin:center bottom;opacity:0}@keyframes lb_TAG2{0.0%{opacity:0;transform:translateY(8px)}41.0%{opacity:0;transform:translateY(8px)}51.0%{opacity:1;transform:translateY(0)}84.0%{opacity:1;transform:translateY(0)}95.0%{opacity:0;transform:translateY(0)}100.0%{opacity:0;transform:translateY(0)}}.lb_TAG2{animation:lb_TAG2 5.0s cubic-bezier(.3,.7,.3,1) infinite;transform-box:fill-box;transform-origin:center bottom;opacity:0}@keyframes lb_EMB{0%{opacity:0}2.4%{opacity:1}84.0%{opacity:1}95.0%{opacity:0}100%{opacity:0}}.lb_EMB{animation:lb_EMB 5.0s linear infinite;opacity:0}@keyframes lb_ECR{0%{transform:rotate(-1080deg)}48.0%{transform:rotate(0deg)}100%{transform:rotate(0deg)}}.lb_ECR{animation:lb_ECR 5.0s cubic-bezier(.08,.6,.2,1) infinite;transform-origin:106px 112px}@keyframes lb_EROT{0.0%{transform:rotate(0deg)}5.0%{transform:rotate(38deg)}12.0%{transform:rotate(-30deg)}19.0%{transform:rotate(19deg)}27.0%{transform:rotate(-11deg)}36.0%{transform:rotate(6deg)}46.0%{transform:rotate(-2.5deg)}56.0%{transform:rotate(0deg)}100%{transform:rotate(0deg)}}@keyframes lb_EBOB{0.0%{transform:translateY(0px)}5.0%{transform:translateY(-5px)}12.0%{transform:translateY(4px)}19.0%{transform:translateY(-2.8px)}27.0%{transform:translateY(1.7px)}36.0%{transform:translateY(-0.9px)}46.0%{transform:translateY(0.4px)}56.0%{transform:translateY(0px)}100%{transform:translateY(0)}}.lb_EROT{animation:lb_EROT 5.0s ease-in-out infinite;transform-origin:118px 112px}.lb_EBOB{animation:lb_EBOB 5.0s ease-in-out infinite}
+.lgp .lp_CAR,.lgp .lp_TRAIL,.lgp .lp_PING1,.lgp .lp_PING2{transform-box:view-box}
+.homelogo{display:grid;place-items:center;padding:6px 0 4px}.homelogo .logo{width:min(240px,70%);height:auto}
+.authhead{position:relative}
+.themebtn{display:grid;place-items:center;width:40px;height:40px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);cursor:pointer;flex:none}
+.themebtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.themebtn .i-moon{display:none}
+:root[data-theme="dark"] .themebtn .i-sun{display:none}:root[data-theme="dark"] .themebtn .i-moon{display:block}
+@media (prefers-color-scheme:dark){:root[data-theme="dark"] .themebtn .i-sun{display:none}:root[data-theme="dark"] .themebtn .i-moon{display:block}}
+.authhead .themebtn{position:absolute;top:12px;right:12px;background:#FFFDF9;color:#0F1B2D;border-color:#E3DCCB}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.nav{grid-template-columns:repeat(5,1fr)}
+:root[data-theme="dark"]{--bg:#0A121F;--surface:#111D2F;--ink:#F1EDE3;--muted:#A9B2C3;--line:#223148;--gold:#CDAA6A;--gold-ink:#CDAA6A;--btn-bg:#CDAA6A;--btn-fg:#0F1B2D;--panel-bg:#0E1B35;--panel-fg:#EDF1FA;--panel-muted:#9DAAC8;--ok:#5CC592;--ok-bg:#123023;--warn:#EBB158;--warn-bg:#33270F;--wa:#2FB36A;--on-wa:#06210F;--focus:#7FA2FF;color-scheme:dark}
+:root[data-theme="dark"] .route-hero{background:#13233B;box-shadow:0 0 0 1px #223148}
+:root[data-theme="dark"] .nav .plus .dot{background:#CDAA6A;color:#0F1B2D}
+:root[data-theme="light"]{--bg:#F6F3EC;--surface:#FFFDF9;--ink:#0F1B2D;--muted:#4A5568;--line:#E3DCCB;--gold:#B8975A;--gold-ink:#7F6329;--btn-bg:#0F1B2D;--btn-fg:#F6F3EC;color-scheme:light}
+/* adegan perjalanan khas Cirebon: awan mega mendung dan gapura candi bentar keraton */
+@media (prefers-reduced-motion:no-preference){
+  @keyframes mmv{to{transform:translateX(-80px)}}
+}
+@media (prefers-reduced-motion:reduce){.lgp *,.lgb *{animation:none!important;opacity:1!important;transform:none!important;stroke-dashoffset:0!important}.lgp .lp_PING1,.lgp .lp_PING2,.lgp .lp_CAR,.lgp .lp_TRAIL{display:none}}
+
+/* ===== v3: tiga tema (Putih, Gading, Gelap), header logo tetap, adegan Cirebon baru ===== */
+:root{--logo-ink:#0F1B2D;--logo-sub:#4A5568;--logo-gold:#7F6329;--shadow-card:none}
+:root[data-theme="ivory"]{--bg:#F6F3EC;--surface:#FFFDF9;--ink:#0F1B2D;--muted:#4A5568;--line:#E3DCCB;--gold:#B8975A;--gold-ink:#7F6329;--on-gold:#0F1B2D;--btn-bg:#0F1B2D;--btn-fg:#F6F3EC;--panel-bg:#0F1B2D;--panel-fg:#F6F3EC;--panel-muted:#B9C0CE;--ok:#1D7449;--ok-bg:#E4F3EB;--warn:#9A5806;--warn-bg:#FBF0DC;--wa:#1E8F4E;--on-wa:#FFFFFF;--focus:#2D5BD1;color-scheme:light}
+/* PUTIH: bersih, terang, bayangan lembut, aksen emas hangat */
+:root[data-theme="light"]{--bg:#F3F6FB;--surface:#FFFFFF;--ink:#0F1B33;--muted:#56637C;--line:#E1E7F1;--gold:#C79A33;--gold-ink:#8A6314;--on-gold:#0F1B33;--btn-bg:#0F2A55;--btn-fg:#FFFFFF;--panel-bg:#0F2A55;--panel-fg:#FFFFFF;--panel-muted:#B6C2DD;--ok:#18794E;--ok-bg:#E3F5EC;--warn:#9A5806;--warn-bg:#FFF3DB;--wa:#1E9A55;--on-wa:#FFFFFF;--focus:#2D5BD1;--shadow-card:0 1px 2px rgba(15,32,70,.05),0 10px 28px rgba(15,32,70,.07);color-scheme:light}
+:root[data-theme="dark"]{--logo-ink:#F1EDE3;--logo-sub:#A9B2C3;--logo-gold:#CDAA6A}
+:root[data-theme="light"] body{background:linear-gradient(180deg,#FFFFFF 0,#F3F6FB 320px) fixed,var(--bg)}
+:root[data-theme="light"] .rows,:root[data-theme="light"] .panel,:root[data-theme="light"] .wa-card,:root[data-theme="light"] .price,:root[data-theme="light"] .oi{box-shadow:var(--shadow-card);border-color:#E6EBF4}
+:root[data-theme="light"] .route-hero{background:linear-gradient(135deg,#FFFFFF 0%,#EEF3FC 58%,#FBF1D8 100%);color:var(--ink);box-shadow:var(--shadow-card);border:1px solid #E1E7F1}
+:root[data-theme="light"] .route-hero .watermark{color:#C79A33;opacity:.2}
+:root[data-theme="light"] .rh-route .s1,:root[data-theme="light"] .rh-route .s2{color:var(--ink);border-bottom-color:#D9E1EE}
+:root[data-theme="light"] .rh-route small{color:var(--muted)}
+:root[data-theme="light"] .rh-route .dot{background:#C79A33}:root[data-theme="light"] .rh-route .dot.b{background:transparent;border-color:#C79A33}
+:root[data-theme="light"] .rh-go{background:#0F2A55;color:#fff}
+:root[data-theme="light"] .nav{background:rgba(255,255,255,.94);border-top-color:#E1E7F1;box-shadow:0 -6px 24px rgba(15,32,70,.06)}
+:root[data-theme="light"] .nav .plus .dot{background:#0F2A55;color:#F2C95C;border-color:#F3F6FB}
+:root[data-theme="light"] .row2 .ic{background:#FBF1D8;color:#8A6314}
+:root[data-theme="light"] .authhead{background:#FFFFFF}
+:root[data-theme="light"] .authhead .themebtn{background:#fff;border-color:#E1E7F1}
+:root[data-theme="light"] .themebtn{box-shadow:0 1px 2px rgba(15,32,70,.06)}
+:root[data-theme="ivory"] .route-hero{background:#0F1B2D}
+/* tombol tema: ikon sesuai tema aktif (matahari = Putih, kertas = Gading, bulan = Gelap) */
+.themebtn svg{display:none}
+:root[data-theme="light"] .themebtn .i-sun{display:block}
+:root[data-theme="ivory"] .themebtn .i-ivory{display:block}
+:root[data-theme="dark"] .themebtn .i-moon{display:block}
+.themebtn .tn{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* header tetap berisi logo animasi: tampil di semua tab */
+.top{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 2px 8px;margin:0 -2px 4px;background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.brandlogo{display:block;width:136px;line-height:0;cursor:pointer;-webkit-tap-highlight-color:transparent;background:none;border:0;padding:0}
+.brandlogo svg{width:100%;height:auto;display:block}
+.lgh [style*="--logo"]{}
+.greetrow{padding:6px 2px 12px}.greetrow .hi{font-size:15px;color:var(--muted)}.greetrow .nm{font:500 26px/1.15 var(--f-display);letter-spacing:-.01em;overflow-wrap:anywhere}
+.homelogo{display:none}
+/* logo header: intro sekali lalu tetap terlihat (tidak memudar di akhir siklus) */
+@media (prefers-reduced-motion:no-preference){
+ .lgh .lb_L0,.lgh .lb_L1,.lgh .lb_L2,.lgh .lb_L3,.lgh .lb_L4,.lgh .lb_LINE,.lgh .lb_TAG1,.lgh .lb_TAG2,.lgh .lb_EMB{animation-iteration-count:1;animation-fill-mode:both}
+ .lgh .lb_L0{animation-name:lh_L0}.lgh .lb_L1{animation-name:lh_L1}.lgh .lb_L2{animation-name:lh_L2}.lgh .lb_L3{animation-name:lh_L3}.lgh .lb_L4{animation-name:lh_L4}
+ .lgh .lb_LINE{animation-name:lh_LINE}.lgh .lb_TAG1{animation-name:lh_TAG1}.lgh .lb_TAG2{animation-name:lh_TAG2}.lgh .lb_EMB{animation-name:lh_EMB}
+ .lgh .lb_ECR,.lgh .lb_EROT,.lgh .lb_EBOB{animation-duration:9s}
+}
+/* ===== adegan perjalanan Cirebon (senja di Gading/Gelap, siang di Putih) ===== */
+.scene{position:relative;height:auto;aspect-ratio:400/210;border-radius:18px;overflow:hidden;background:#0B2D4A;
+ --cg-s0:#0B2D4A;--cg-s1:#14708F;--cg-s2:#8ADBE6;--cg-s3:#FFE2B0;--cg-sun:#FFD27A;--cg-sunc:#FFF0CC;--cg-m1:#0F4F6E;--cg-m2:#2A8AA3;--cg-m3:#1B7C99;--cg-hz:#FFE2B0;--cg-sil:#12304B;--cg-tree:#0C3B4A;--cg-r0:#1A4D6E;--cg-r1:#071D30;--cg-curb:#2A6F93;--cg-lane:#6EE7FF;--cg-route:#6EE7FF;--cg-ring:#FFD27A;--cg-ringbg:rgba(255,255,255,.2);--cg-pin:#E24B4B;--cg-pin2:#D9AE5B;--cg-c1:#0B2D4A;--cg-c2:#00B3D6;--cg-c3:#6EE7FF;--cg-bird:#FFF4D6;--cg-star:1}
+:root[data-theme="light"] .scene{background:#8FD3F0;--cg-s0:#4FB8E8;--cg-s1:#8FD3F0;--cg-s2:#CFEFF8;--cg-s3:#FFF3D1;--cg-sun:#FFF0B0;--cg-sunc:#FFF6C4;--cg-m1:#5FA9C0;--cg-m2:#8CCAD6;--cg-m3:#7ABFCF;--cg-hz:#FFFFFF;--cg-sil:#456B8A;--cg-tree:#2E8B4A;--cg-r0:#5A6A7B;--cg-r1:#3F4D5A;--cg-curb:#A3B1BD;--cg-lane:#FFFFFF;--cg-route:#00A5C8;--cg-ring:#E0A526;--cg-ringbg:rgba(15,27,45,.2);--cg-c1:#2B6C8E;--cg-c2:#00B3D6;--cg-c3:#79CFE8;--cg-bird:#456B8A;--cg-star:0}
+.cgsvg{display:block;width:100%;height:100%}
+.cg-stars{opacity:var(--cg-star)}
+.cg-car{transform:translate(165px,161px);transition:transform 2.8s cubic-bezier(.4,0,.2,1)}
+.s-new .cg-car{transform:translate(165px,161px)}.s-confirmed .cg-car{transform:translate(6px,161px)}.s-ontheway .cg-car{transform:translate(72px,161px)}
+.s-arrived .cg-car{transform:translate(142px,161px)}.s-ontrip .cg-car{transform:translate(215px,161px)}.s-done .cg-car{transform:translate(292px,161px)}
+.cg-pickup,.cg-dest,.cg-ping,.cg-route{opacity:0;transition:opacity .6s}
+.s-confirmed .cg-pickup,.s-ontheway .cg-pickup,.s-arrived .cg-pickup{opacity:1}
+.s-ontrip .cg-dest,.s-done .cg-dest{opacity:1}
+.s-new .cg-ping{opacity:1}
+.s-confirmed .cg-route,.s-ontheway .cg-route,.s-ontrip .cg-route{opacity:.9}
+.cg-route{stroke-dasharray:6 9}
+.cg-ring{stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset 3.2s ease}
+.s-ontheway .cg-pickup .cg-ring{stroke-dashoffset:42}.s-arrived .cg-pickup .cg-ring{stroke-dashoffset:0}
+.s-ontrip .cg-dest .cg-ring{stroke-dashoffset:48}.s-done .cg-dest .cg-ring{stroke-dashoffset:0}
+.cg-rip{opacity:0;transform-box:fill-box;transform-origin:center}
+.cg-door{transition:opacity .8s}.s-arrived .cg-door,.s-ontrip .cg-door{opacity:.7}.s-done .cg-door{opacity:1}
+.cg-brk{opacity:.55}
+@media (prefers-reduced-motion:no-preference){
+ .cg-tw{animation:cgtw 3.2s ease-in-out infinite}.cg-tw.t1{animation-delay:-1.1s}.cg-tw.t2{animation-delay:-2.2s}@keyframes cgtw{50%{opacity:.2}}
+ .cg-pulse{animation:cgpl 2.4s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}@keyframes cgpl{from{opacity:.55;transform:scale(.94)}to{opacity:1;transform:scale(1.08)}}
+ .cg-drift{animation:cgdr 60s linear infinite}@keyframes cgdr{to{transform:translateX(-400px)}}
+ .cg-fly{animation:cgfl 26s linear infinite}@keyframes cgfl{from{transform:translateX(-40px)}to{transform:translateX(440px)}}
+ .cg-route{animation:cgrt 1s linear infinite}@keyframes cgrt{to{stroke-dashoffset:-15}}
+ .cg-dash{stroke-dasharray:18 16}.s-ontheway .cg-dash,.s-ontrip .cg-dash{animation:cgdh .6s linear infinite}@keyframes cgdh{to{stroke-dashoffset:-34}}
+ .cg-spin{stroke-dasharray:3.5 3.5}.s-ontheway .cg-spin,.s-ontrip .cg-spin{animation:cgdh .45s linear infinite}
+ .s-ontheway .cg-bob,.s-ontrip .cg-bob{animation:cgbob .5s ease-in-out infinite alternate}@keyframes cgbob{to{transform:translateY(-1.2px)}}
+ .cg-beam{animation:cgbm 1.8s ease-in-out infinite alternate}@keyframes cgbm{from{opacity:.2}to{opacity:.5}}
+ .cg-pinbob{animation:cgpb .9s ease-in-out infinite alternate}@keyframes cgpb{to{transform:translateY(-3px)}}
+ .s-arrived .cg-pickup .cg-rip,.s-done .cg-dest .cg-rip{animation:cgrp 1.7s ease-out infinite}@keyframes cgrp{from{transform:scale(.4);opacity:.85}to{transform:scale(1.6);opacity:0}}
+ .s-arrived .cg-brk,.s-done .cg-brk{animation:cgbk 1.2s steps(1) infinite}@keyframes cgbk{0%{opacity:1}50%{opacity:.2}}
+ .cg-ping circle{transform-box:fill-box;transform-origin:center;animation:cgpg 2.4s ease-out infinite}.cg-ping .p2{animation-delay:1.2s}@keyframes cgpg{from{transform:scale(.5);opacity:.9}to{transform:scale(3.6);opacity:0}}
+}
+@media (prefers-reduced-motion:reduce){.cg-car,.cg-ring{transition:none}}
+:root[data-theme="light"] .top{background:rgba(255,255,255,.9);box-shadow:0 1px 0 #E6EBF4}
+
+@keyframes lh_L0{0.0%{opacity:0;transform:translateY(34px) scale(.92)}7.0%{opacity:0;transform:translateY(34px) scale(.92)}15.25%{opacity:1;transform:translateY(-7px) scale(1.02)}18.7%{opacity:1;transform:translateY(2.5px) scale(1)}22.0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_L1{0.0%{opacity:0;transform:translateY(34px) scale(.92)}9.8%{opacity:0;transform:translateY(34px) scale(.92)}18.05%{opacity:1;transform:translateY(-7px) scale(1.02)}21.5%{opacity:1;transform:translateY(2.5px) scale(1)}24.8%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_L2{0.0%{opacity:0;transform:translateY(34px) scale(.92)}12.6%{opacity:0;transform:translateY(34px) scale(.92)}20.85%{opacity:1;transform:translateY(-7px) scale(1.02)}24.3%{opacity:1;transform:translateY(2.5px) scale(1)}27.6%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_L3{0.0%{opacity:0;transform:translateY(34px) scale(.92)}15.4%{opacity:0;transform:translateY(34px) scale(.92)}23.65%{opacity:1;transform:translateY(-7px) scale(1.02)}27.1%{opacity:1;transform:translateY(2.5px) scale(1)}30.4%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_L4{0.0%{opacity:0;transform:translateY(34px) scale(.92)}18.2%{opacity:0;transform:translateY(34px) scale(.92)}26.45%{opacity:1;transform:translateY(-7px) scale(1.02)}29.9%{opacity:1;transform:translateY(2.5px) scale(1)}33.2%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_LINE{0.0%{opacity:0;transform:scaleX(0)}27.0%{opacity:1;transform:scaleX(0)}37.0%{opacity:1;transform:scaleX(1)}100%{opacity:1;transform:scaleX(1)}}@keyframes lh_TAG1{0.0%{opacity:0;transform:translateY(8px)}35.0%{opacity:0;transform:translateY(8px)}45.0%{opacity:1;transform:translateY(0)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_TAG2{0.0%{opacity:0;transform:translateY(8px)}41.0%{opacity:0;transform:translateY(8px)}51.0%{opacity:1;transform:translateY(0)}100%{opacity:1;transform:translateY(0)}}@keyframes lh_EMB{0%{opacity:0}2.4%{opacity:1}100%{opacity:1}}
+
+.svcbanner{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:14.5px;line-height:1.4}
+.pwcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 16px;margin-top:14px}
+.pwcard summary{cursor:pointer;font-weight:600;min-height:48px;display:flex;align-items:center;list-style:none}.pwcard summary::-webkit-details-marker{display:none}
+.pwcard[open] summary{border-bottom:1px solid var(--line);margin-bottom:12px}.pwcard .btn{width:100%;margin-bottom:8px}.pwcard .field{margin-bottom:12px}
+
+.pfcard{position:relative;padding:6px 18px;border-radius:20px;background:var(--surface)}
+.pfcard .list{margin:0}
+.pfcard .kv:last-child{border-bottom:0}
+.pfcard svg.bd{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.pfcard svg.bd .base{fill:none;stroke:var(--line);stroke-width:1.5}
+.pfcard svg.bd .run{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round}
+.pfcard svg.bd .ar{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+#pf-wa{cursor:pointer;letter-spacing:.02em}
+
+/* ===== patch 12: bayar non-tunai, tawaran, bingkai ===== */
+.seg3{grid-template-columns:repeat(3,1fr)}
+.seg.sm button{font-size:14px;padding:0 4px}
+.cg-bd{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.cg-bd .base{fill:none;stroke:var(--line);stroke-width:1.5}
+.cg-bd .tr{fill:none;stroke:var(--gold);stroke-linecap:round}
+.cg-bd .ar{fill:var(--gold);stroke:none}
+.cg-bd .st{fill:#fff;stroke:var(--gold);stroke-width:1.2}
+.cg-bd .pt{fill:var(--gold);opacity:0}
+.overlay.cgpop{place-items:center;padding:18px;z-index:60}
+.cgbox{position:relative;width:100%;max-width:400px;border-radius:24px}
+.cgbox .sheet{border-radius:24px;max-height:82vh;text-align:center;padding:24px 20px 20px;display:grid;gap:12px;justify-items:stretch}
+.cgbox .sheet h2{margin:0;font:600 21px/1.25 var(--f-display)}
+.cgbox .sheet p{margin:0;color:var(--muted);line-height:1.5}
+.cgbox .sheet .list{text-align:left}
+.cgbox .sheet .cdn{font:600 26px var(--f-display);font-variant-numeric:tabular-nums;color:var(--ink)}
+.cgbox .sheet .big{font:600 26px var(--f-display);color:var(--ink)}
+.cgbox .sheet .pmsg{min-height:18px;font-size:13px;color:#B3261E!important}
+.cgbox .mascot{width:132px;height:auto;margin:0 auto}
+.cdn.low{color:#C0392B}
+.p2cd{font:600 15px var(--f-body);font-variant-numeric:tabular-nums;text-align:center;padding:8px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.p2cd.low{color:#C0392B;border-color:#C0392B}
+.p2row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}
+.p2row:last-child{border:0}
+.p2row b{font-variant-numeric:tabular-nums;word-break:break-all}
+.p2copy{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 10px;font:500 13px var(--f-body);cursor:pointer}
+.pp-hint{margin-top:6px}
+@media (prefers-reduced-motion:no-preference){
+  .cgbox .sheet{animation:popin .38s cubic-bezier(.2,1.3,.4,1)}
+  @keyframes popin{from{transform:scale(.86);opacity:0}to{transform:none;opacity:1}}
+  .mascot .tear{animation:tear 1.8s ease-in infinite}
+  @keyframes tear{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(16px);opacity:0}}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+
+<div class="app">
+
+  <!-- GERBANG: daftar dengan kode dari admin, atau masuk -->
+  <section id="v-auth">
+    <header class="authhead"><button type="button" class="themebtn" id="themebtn2" aria-label="Ganti tema"><svg viewBox="0 0 24 24" class="i-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg><svg viewBox="0 0 24 24" class="i-ivory"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg><svg viewBox="0 0 24 24" class="i-moon"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button><div class="logocard"><svg class="logo lgp" viewBox="0 0 510.75 232" role="img" aria-label="Cirgo - Jemputin dan Nganterin"><g class="lp_ALL"><circle class="lp_PING1" cx="143.08" cy="80.89" r="16" fill="none" stroke="#B8975A" stroke-width="2.2"/><path class="lp_RING" pathLength="100" d="M143.08 80.89 A48.4 48.4 0 1 0 143.08 143.11" fill="none" stroke="#0F1B2D" stroke-width="9.9" stroke-linecap="round"/><path class="lp_CHEV" d="M106 92.2 L130.2 112 L106 131.8" fill="none" stroke="#B8975A" stroke-width="9.9" stroke-linecap="round" stroke-linejoin="round"/><rect class="lp_TRAIL" x="195" y="23.2" width="320" height="2.6" rx="1.3" fill="#B8975A"/><path class="lp_L0" d="M245.63 44.42Q256.29 44.42 264.59 49.65Q272.9 54.88 276.64 64.48H263.49Q260.9 59.2 256.29 56.61Q251.68 54.02 245.63 54.02Q239.01 54.02 233.82 56.99Q228.64 59.97 225.71 65.54Q222.78 71.1 222.78 78.5Q222.78 85.89 225.71 91.46Q228.64 97.02 233.82 100.05Q239.01 103.07 245.63 103.07Q251.68 103.07 256.29 100.48Q260.9 97.89 263.49 92.61H276.64Q272.9 102.21 264.59 107.39Q256.29 112.58 245.63 112.58Q236.22 112.58 228.45 108.21Q220.67 103.84 216.11 96.06Q211.55 88.29 211.55 78.5Q211.55 68.7 216.11 60.93Q220.67 53.15 228.5 48.78Q236.32 44.42 245.63 44.42Z" fill="#0F1B2D"/><path class="lp_L1" d="M287.97 45.09Q287.97 42.11 289.98 40.1Q292 38.08 294.98 38.08Q297.86 38.08 299.87 40.1Q301.89 42.11 301.89 45.09Q301.89 48.06 299.87 50.08Q297.86 52.1 294.98 52.1Q292 52.1 289.98 50.08Q287.97 48.06 287.97 45.09ZM300.35 59.1V112H289.41V59.1Z" fill="#0F1B2D"/><path class="lp_L2" d="M341.54 58.24V69.57H338.75Q332.32 69.57 329.01 72.83Q325.7 76.1 325.7 84.16V112H314.75V59.1H325.7V66.78Q328.1 62.75 332.08 60.5Q336.06 58.24 341.54 58.24Z" fill="#0F1B2D"/><path class="lp_L3" d="M391.26 66.78V59.1H402.3V112.86Q402.3 120.16 399.23 125.87Q396.16 131.58 390.35 134.85Q384.54 138.11 376.48 138.11Q365.73 138.11 358.62 133.07Q351.52 128.03 350.56 119.39H361.41Q362.66 123.52 366.74 126.06Q370.82 128.61 376.48 128.61Q383.1 128.61 387.18 124.58Q391.26 120.54 391.26 112.86V104.03Q388.48 107.78 383.73 110.32Q378.98 112.86 372.93 112.86Q366.02 112.86 360.3 109.36Q354.59 105.86 351.28 99.57Q347.97 93.28 347.97 85.31Q347.97 77.34 351.28 71.2Q354.59 65.06 360.3 61.65Q366.02 58.24 372.93 58.24Q379.07 58.24 383.82 60.69Q388.58 63.14 391.26 66.78ZM375.23 67.74Q371.01 67.74 367.36 69.81Q363.71 71.87 361.46 75.86Q359.2 79.84 359.2 85.31Q359.2 90.78 361.46 94.91Q363.71 99.04 367.41 101.2Q371.1 103.36 375.23 103.36Q379.46 103.36 383.1 101.25Q386.75 99.14 389.01 95.06Q391.26 90.98 391.26 85.5Q391.26 80.03 389.01 76Q386.75 71.97 383.1 69.86Q379.46 67.74 375.23 67.74Z" fill="#0F1B2D"/><path class="lp_L4" d="M413.15 85.5Q413.15 77.44 416.7 71.2Q420.26 64.96 426.4 61.6Q432.54 58.24 440.13 58.24Q447.71 58.24 453.86 61.6Q460 64.96 463.55 71.2Q467.1 77.44 467.1 85.5Q467.1 93.57 463.46 99.81Q459.81 106.05 453.52 109.46Q447.23 112.86 439.65 112.86Q432.16 112.86 426.11 109.46Q420.06 106.05 416.61 99.86Q413.15 93.66 413.15 85.5ZM455.87 85.5Q455.87 79.74 453.66 75.76Q451.46 71.78 447.81 69.76Q444.16 67.74 439.94 67.74Q435.71 67.74 432.11 69.76Q428.51 71.78 426.4 75.76Q424.29 79.74 424.29 85.5Q424.29 94.05 428.66 98.7Q433.02 103.36 439.65 103.36Q443.87 103.36 447.57 101.34Q451.26 99.33 453.57 95.3Q455.87 91.26 455.87 85.5Z" fill="#0F1B2D"/><rect class="lp_LINE" x="208" y="128" width="56" height="3" fill="#B8975A"/><path class="lp_JEM" d="M214.36 148.27V155.28Q214.36 156.59 213.56 157.34Q212.77 158.1 211.49 158.1Q210.2 158.1 209.41 157.34Q208.62 156.59 208.62 155.28H210.23Q210.24 155.93 210.56 156.31Q210.87 156.68 211.49 156.68Q212.1 156.68 212.42 156.3Q212.75 155.91 212.75 155.28V148.27ZM222.74 149.56V152.41H226.1V153.72H222.74V156.7H226.52V158H221.15V148.26H226.52V149.56ZM242.93 148.27V158H241.33V151.34L238.37 158H237.26L234.28 151.34V158H232.68V148.27H234.4L237.82 155.9L241.22 148.27ZM252.59 154.05H250.83V158H249.23V148.27H252.59Q253.71 148.27 254.49 148.66Q255.26 149.04 255.65 149.7Q256.03 150.36 256.03 151.17Q256.03 151.91 255.68 152.57Q255.33 153.23 254.56 153.64Q253.79 154.05 252.59 154.05ZM254.4 151.17Q254.4 149.57 252.59 149.57H250.83V152.75H252.59Q253.5 152.75 253.95 152.34Q254.4 151.92 254.4 151.17ZM263.34 148.27V154.47Q263.34 155.58 263.92 156.14Q264.5 156.7 265.54 156.7Q266.59 156.7 267.17 156.14Q267.75 155.58 267.75 154.47V148.27H269.35V154.44Q269.35 155.63 268.83 156.46Q268.31 157.29 267.44 157.69Q266.58 158.1 265.53 158.1Q264.48 158.1 263.62 157.69Q262.75 157.29 262.25 156.46Q261.75 155.63 261.75 154.44V148.27ZM281.91 148.27V149.57H279.32V158H277.72V149.57H275.12V148.27ZM289.31 148.27V158H287.72V148.27ZM303.61 158H302.01L297.21 150.73V158H295.61V148.26H297.21L302.01 155.51V148.26H303.61Z" fill="#7F6329"/><path class="lp_DOT" d="M317.42 153.31Q317.42 152.88 317.72 152.58Q318.01 152.29 318.45 152.29Q318.87 152.29 319.16 152.58Q319.45 152.88 319.45 153.31Q319.45 153.74 319.16 154.04Q318.87 154.33 318.45 154.33Q318.01 154.33 317.72 154.04Q317.42 153.74 317.42 153.31Z" fill="#7F6329"/><path class="lp_NGAN" d="M341.2 158H339.6L334.8 150.73V158H333.2V148.26H334.8L339.6 155.51V148.26H341.2ZM354.54 151.07Q354.16 150.34 353.49 149.97Q352.82 149.6 351.93 149.6Q350.97 149.6 350.21 150.03Q349.46 150.47 349.03 151.27Q348.6 152.06 348.6 153.11Q348.6 154.16 349.03 154.97Q349.46 155.77 350.21 156.21Q350.97 156.64 351.93 156.64Q353.24 156.64 354.05 155.91Q354.86 155.19 355.04 153.94H351.39V152.67H356.75V153.91Q356.6 155.05 355.94 156Q355.29 156.95 354.25 157.52Q353.21 158.08 351.93 158.08Q350.56 158.08 349.43 157.45Q348.29 156.81 347.63 155.68Q346.96 154.54 346.96 153.11Q346.96 151.69 347.63 150.55Q348.29 149.42 349.43 148.78Q350.58 148.14 351.93 148.14Q353.49 148.14 354.7 148.91Q355.91 149.67 356.46 151.07ZM368.38 156.01H364.31L363.61 158H361.94L365.43 148.26H367.28L370.76 158H369.08ZM367.94 154.71 366.35 150.19 364.76 154.71ZM384.47 158H382.87L378.07 150.73V158H376.48V148.26H378.07L382.87 155.51V148.26H384.47ZM397.06 148.27V149.57H394.47V158H392.87V149.57H390.27V148.27ZM404.46 149.56V152.41H407.82V153.72H404.46V156.7H408.24V158H402.87V148.26H408.24V149.56ZM419.46 158 417.22 154.11H416V158H414.4V148.27H417.76Q418.88 148.27 419.66 148.66Q420.44 149.05 420.82 149.71Q421.21 150.37 421.21 151.18Q421.21 152.13 420.65 152.91Q420.1 153.69 418.95 153.97L421.36 158ZM416 152.83H417.76Q418.66 152.83 419.11 152.39Q419.57 151.94 419.57 151.18Q419.57 150.43 419.12 150Q418.67 149.57 417.76 149.57H416ZM429.05 148.27V158H427.45V148.27ZM443.34 158H441.74L436.94 150.73V158H435.35V148.26H436.94L441.74 155.51V148.26H443.34Z" fill="#7F6329"/><circle class="lp_PING2" cx="318.4" cy="153.3" r="12" fill="none" stroke="#B8975A" stroke-width="1.6"/><path class="lp_TAG2" d="M215.34 179.68H210.78L209.94 182H208.5L212.28 171.6H213.85L217.62 182H216.18ZM214.94 178.56 213.06 173.28 211.16 178.56ZM227.23 177.16V182H225.88V177.35Q225.88 176.12 225.26 175.47Q224.65 174.81 223.59 174.81Q222.5 174.81 221.87 175.49Q221.23 176.16 221.23 177.46V182H219.87V173.78H221.23V174.95Q221.64 174.32 222.33 173.97Q223.03 173.63 223.87 173.63Q225.37 173.63 226.3 174.54Q227.23 175.44 227.23 177.16ZM231.73 174.91V179.75Q231.73 180.35 231.99 180.6Q232.24 180.84 232.87 180.84H233.88V182H232.65Q231.5 182 230.94 181.47Q230.37 180.95 230.37 179.75V174.91H229.3V173.78H230.37V171.71H231.73V173.78H233.88V174.91ZM239.51 173.65Q240.59 173.65 241.39 174.11Q242.19 174.57 242.57 175.28V173.78H243.95V182H242.57V180.47Q242.17 181.19 241.37 181.66Q240.56 182.13 239.5 182.13Q238.41 182.13 237.52 181.59Q236.63 181.06 236.12 180.08Q235.62 179.1 235.62 177.86Q235.62 176.6 236.12 175.65Q236.63 174.69 237.53 174.17Q238.42 173.65 239.51 173.65ZM239.78 174.83Q239.02 174.83 238.39 175.19Q237.76 175.55 237.38 176.24Q237.01 176.93 237.01 177.86Q237.01 178.81 237.38 179.5Q237.76 180.2 238.39 180.57Q239.02 180.94 239.78 180.94Q240.55 180.94 241.19 180.57Q241.82 180.2 242.2 179.5Q242.57 178.81 242.57 177.88Q242.57 176.94 242.2 176.25Q241.82 175.56 241.19 175.2Q240.55 174.83 239.78 174.83ZM250.89 173.63V175.04H250.53Q248.23 175.04 248.23 177.53V182H246.87V173.78H248.23V175.12Q248.59 174.41 249.26 174.02Q249.93 173.63 250.89 173.63ZM258.76 175.93V177.08H252.77V175.93ZM261.75 171.51Q261.75 171.12 262.01 170.86Q262.27 170.59 262.66 170.59Q263.05 170.59 263.31 170.86Q263.57 171.12 263.57 171.51Q263.57 171.91 263.31 172.18Q263.05 172.44 262.66 172.44Q262.27 172.44 262.01 172.18Q261.75 171.91 261.75 171.51ZM263.33 183.78Q263.33 184.88 262.78 185.39Q262.22 185.9 261.16 185.9H260.37V184.75H260.94Q261.5 184.75 261.74 184.52Q261.97 184.29 261.97 183.75V173.78H263.33ZM273.7 178.4H267.13Q267.2 179.62 267.96 180.3Q268.72 180.98 269.8 180.98Q270.69 180.98 271.28 180.57Q271.87 180.16 272.11 179.47H273.58Q273.25 180.65 272.26 181.39Q271.27 182.13 269.8 182.13Q268.63 182.13 267.71 181.61Q266.78 181.09 266.26 180.12Q265.73 179.15 265.73 177.88Q265.73 176.6 266.25 175.64Q266.75 174.68 267.68 174.16Q268.6 173.65 269.8 173.65Q270.97 173.65 271.87 174.16Q272.77 174.66 273.26 175.56Q273.74 176.45 273.74 177.57Q273.74 177.97 273.7 178.4ZM269.74 174.8Q268.7 174.8 267.98 175.46Q267.25 176.12 267.14 177.29H272.33Q272.33 176.51 271.99 175.95Q271.64 175.38 271.05 175.09Q270.46 174.8 269.74 174.8ZM289.36 177.16V182H288.01V177.35Q288.01 176.12 287.4 175.47Q286.79 174.81 285.76 174.81Q284.69 174.81 284.06 175.5Q283.43 176.18 283.43 177.47V182H282.08V177.35Q282.08 176.12 281.48 175.47Q280.87 174.81 279.83 174.81Q278.77 174.81 278.14 175.5Q277.51 176.18 277.51 177.47V182H276.14V173.78H277.51V174.97Q277.91 174.32 278.6 173.97Q279.28 173.63 280.1 173.63Q281.14 173.63 281.93 174.09Q282.73 174.56 283.12 175.46Q283.46 174.59 284.26 174.11Q285.05 173.63 286.03 173.63Q286.99 173.63 287.74 174.03Q288.49 174.43 288.92 175.22Q289.36 176.01 289.36 177.16ZM296.63 173.65Q297.73 173.65 298.62 174.17Q299.51 174.69 300.02 175.65Q300.53 176.6 300.53 177.86Q300.53 179.1 300.02 180.08Q299.51 181.06 298.62 181.59Q297.73 182.13 296.63 182.13Q295.58 182.13 294.78 181.66Q293.98 181.19 293.56 180.49V185.9H292.19V173.78H293.56V175.29Q293.96 174.59 294.77 174.12Q295.57 173.65 296.63 173.65ZM296.35 174.83Q295.6 174.83 294.96 175.2Q294.32 175.56 293.94 176.26Q293.56 176.96 293.56 177.88Q293.56 178.81 293.94 179.5Q294.32 180.2 294.96 180.57Q295.6 180.94 296.35 180.94Q297.11 180.94 297.75 180.57Q298.39 180.2 298.76 179.5Q299.14 178.81 299.14 177.86Q299.14 176.93 298.76 176.24Q298.39 175.55 297.75 175.19Q297.11 174.83 296.35 174.83ZM310.22 173.78V182H308.86V180.78Q308.47 181.41 307.77 181.77Q307.07 182.12 306.23 182.12Q305.27 182.12 304.51 181.72Q303.74 181.32 303.3 180.53Q302.86 179.74 302.86 178.59V173.78H304.21V178.41Q304.21 179.63 304.82 180.28Q305.44 180.94 306.5 180.94Q307.6 180.94 308.23 180.26Q308.86 179.59 308.86 178.29V173.78ZM314.8 174.91V179.75Q314.8 180.35 315.05 180.6Q315.31 180.84 315.94 180.84H316.94V182H315.71Q314.57 182 314 181.47Q313.43 180.95 313.43 179.75V174.91H312.37V173.78H313.43V171.71H314.8V173.78H316.94V174.91ZM329.47 182 325.16 177.23V182H323.8V171.54H325.16V176.39L329.48 171.54H331.21L326.47 176.78L331.25 182ZM332.87 177.88Q332.87 176.62 333.42 175.65Q333.97 174.68 334.91 174.16Q335.86 173.65 337.03 173.65Q338.2 173.65 339.14 174.16Q340.09 174.68 340.64 175.64Q341.18 176.6 341.18 177.88Q341.18 179.15 340.62 180.12Q340.06 181.09 339.1 181.61Q338.14 182.13 336.97 182.13Q335.81 182.13 334.88 181.61Q333.94 181.09 333.41 180.12Q332.87 179.15 332.87 177.88ZM339.79 177.88Q339.79 176.88 339.4 176.19Q339.01 175.5 338.38 175.17Q337.75 174.83 337.01 174.83Q336.26 174.83 335.64 175.17Q335.02 175.5 334.64 176.19Q334.27 176.88 334.27 177.88Q334.27 178.88 334.64 179.57Q335 180.26 335.62 180.6Q336.23 180.94 336.97 180.94Q337.7 180.94 338.35 180.59Q338.99 180.25 339.39 179.56Q339.79 178.87 339.79 177.88ZM345.25 174.91V179.75Q345.25 180.35 345.5 180.6Q345.76 180.84 346.39 180.84H347.39V182H346.16Q345.02 182 344.45 181.47Q343.88 180.95 343.88 179.75V174.91H342.82V173.78H343.88V171.71H345.25V173.78H347.39V174.91ZM353.03 173.65Q354.11 173.65 354.91 174.11Q355.7 174.57 356.09 175.28V173.78H357.47V182H356.09V180.47Q355.69 181.19 354.89 181.66Q354.08 182.13 353.02 182.13Q351.92 182.13 351.04 181.59Q350.15 181.06 349.64 180.08Q349.13 179.1 349.13 177.86Q349.13 176.6 349.64 175.65Q350.15 174.69 351.05 174.17Q351.94 173.65 353.03 173.65ZM353.3 174.83Q352.54 174.83 351.91 175.19Q351.28 175.55 350.9 176.24Q350.53 176.93 350.53 177.86Q350.53 178.81 350.9 179.5Q351.28 180.2 351.91 180.57Q352.54 180.94 353.3 180.94Q354.07 180.94 354.71 180.57Q355.34 180.2 355.72 179.5Q356.09 178.81 356.09 177.88Q356.09 176.94 355.72 176.25Q355.34 175.56 354.71 175.2Q354.07 174.83 353.3 174.83ZM369.7 171.41Q371.41 171.41 372.68 172.24Q373.96 173.06 374.54 174.57H372.91Q372.47 173.63 371.66 173.12Q370.84 172.61 369.7 172.61Q368.6 172.61 367.73 173.12Q366.86 173.63 366.37 174.57Q365.88 175.5 365.88 176.76Q365.88 178.01 366.37 178.95Q366.86 179.88 367.73 180.39Q368.6 180.91 369.7 180.91Q370.84 180.91 371.66 180.4Q372.47 179.9 372.91 178.96H374.54Q373.96 180.46 372.68 181.27Q371.41 182.09 369.7 182.09Q368.25 182.09 367.05 181.41Q365.86 180.72 365.17 179.51Q364.48 178.29 364.48 176.76Q364.48 175.24 365.17 174.01Q365.86 172.79 367.05 172.1Q368.25 171.41 369.7 171.41ZM376.94 171.51Q376.94 171.12 377.22 170.86Q377.49 170.59 377.88 170.59Q378.25 170.59 378.51 170.86Q378.77 171.12 378.77 171.51Q378.77 171.91 378.51 172.18Q378.25 172.44 377.88 172.44Q377.49 172.44 377.22 172.18Q376.94 171.91 376.94 171.51ZM378.53 173.78V182H377.17V173.78ZM385.48 173.63V175.04H385.12Q382.82 175.04 382.82 177.53V182H381.46V173.78H382.82V175.12Q383.19 174.41 383.85 174.02Q384.52 173.63 385.48 173.63ZM395.11 178.4H388.54Q388.62 179.62 389.37 180.3Q390.13 180.98 391.21 180.98Q392.1 180.98 392.69 180.57Q393.28 180.16 393.52 179.47H394.99Q394.66 180.65 393.67 181.39Q392.68 182.13 391.21 182.13Q390.04 182.13 389.12 181.61Q388.19 181.09 387.67 180.12Q387.14 179.15 387.14 177.88Q387.14 176.6 387.65 175.64Q388.17 174.68 389.09 174.16Q390.01 173.65 391.21 173.65Q392.38 173.65 393.28 174.16Q394.18 174.66 394.67 175.56Q395.15 176.45 395.15 177.57Q395.15 177.97 395.11 178.4ZM391.15 174.8Q390.12 174.8 389.39 175.46Q388.66 176.12 388.56 177.29H393.75Q393.75 176.51 393.4 175.95Q393.06 175.38 392.46 175.09Q391.87 174.8 391.15 174.8ZM402 173.65Q403.1 173.65 403.99 174.17Q404.88 174.69 405.38 175.65Q405.89 176.6 405.89 177.86Q405.89 179.1 405.38 180.08Q404.88 181.06 403.98 181.59Q403.09 182.13 402 182.13Q400.93 182.13 400.13 181.67Q399.32 181.21 398.92 180.49V182H397.55V170.9H398.92V175.31Q399.34 174.57 400.15 174.11Q400.96 173.65 402 173.65ZM401.71 174.83Q400.96 174.83 400.32 175.2Q399.69 175.56 399.3 176.26Q398.92 176.96 398.92 177.88Q398.92 178.81 399.3 179.5Q399.69 180.2 400.32 180.57Q400.96 180.94 401.71 180.94Q402.47 180.94 403.11 180.57Q403.75 180.2 404.12 179.5Q404.5 178.81 404.5 177.86Q404.5 176.93 404.12 176.24Q403.75 175.55 403.11 175.19Q402.47 174.83 401.71 174.83ZM407.78 177.88Q407.78 176.62 408.33 175.65Q408.88 174.68 409.82 174.16Q410.77 173.65 411.94 173.65Q413.11 173.65 414.06 174.16Q415 174.68 415.55 175.64Q416.09 176.6 416.09 177.88Q416.09 179.15 415.53 180.12Q414.97 181.09 414.01 181.61Q413.05 182.13 411.88 182.13Q410.72 182.13 409.79 181.61Q408.85 181.09 408.32 180.12Q407.78 179.15 407.78 177.88ZM414.7 177.88Q414.7 176.88 414.31 176.19Q413.92 175.5 413.29 175.17Q412.66 174.83 411.93 174.83Q411.18 174.83 410.55 175.17Q409.93 175.5 409.56 176.19Q409.18 176.88 409.18 177.88Q409.18 178.88 409.55 179.57Q409.91 180.26 410.53 180.6Q411.14 180.94 411.88 180.94Q412.62 180.94 413.26 180.59Q413.9 180.25 414.3 179.56Q414.7 178.87 414.7 177.88ZM425.86 177.16V182H424.51V177.35Q424.51 176.12 423.89 175.47Q423.28 174.81 422.21 174.81Q421.13 174.81 420.5 175.49Q419.86 176.16 419.86 177.46V182H418.49V173.78H419.86V174.95Q420.26 174.32 420.96 173.97Q421.66 173.63 422.5 173.63Q424 173.63 424.93 174.54Q425.86 175.44 425.86 177.16Z" fill="#4A5568"/><g class="lp_CAR"><g class="lp_CARX"><g class="lp_CARY"><g class="lp_CARS"><path d="M-12 -19.8 L12.2 0 L-12 19.8" fill="none" stroke="#B8975A" stroke-width="9.9" stroke-linecap="round" stroke-linejoin="round"/></g></g></g></g></g></svg></div></header>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-in" aria-selected="true" aria-controls="f-in">Masuk</button>
+      <button class="tab" role="tab" id="tab-up" aria-selected="false" aria-controls="f-up">Daftar</button>
+    </div>
+
+    <form id="f-in" novalidate>
+      <div class="field"><label for="in-wa">ID (nomor WhatsApp)</label><input id="in-wa" type="tel" inputmode="tel" autocomplete="username" placeholder="08xxxxxxxxxx"></div>
+      <div class="field"><label for="in-pass">Kata sandi</label><input id="in-pass" type="password" autocomplete="current-password" placeholder="Kata sandi buatanmu"></div>
+      <button class="btn" type="submit">Masuk</button>
+      <p class="err" id="err-in" role="alert"></p>
+      <a class="linkbtn" id="forgot" href="#" target="_blank" rel="noopener">Lupa kata sandi? Minta kode lewat WhatsApp</a>
+    </form>
+
+    <form id="f-up" novalidate hidden>
+      <div class="field"><label for="up-code">Kode pendaftaran</label>
+        <input id="up-code" class="code" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCDEFGH">
+        <span class="hint">8 huruf, sekali pakai. Dapatkan dari admin lewat WhatsApp.</span></div>
+      <div class="field"><label for="up-nama">Nama</label><input id="up-nama" type="text" autocomplete="name" placeholder="Nama lengkap"></div>
+      <div class="field"><label for="up-wa">Nomor WhatsApp</label><input id="up-wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx"><span class="hint">Nomor ini menjadi ID masukmu.</span></div>
+      <div class="field"><label for="up-pass">Buat kata sandi</label><input id="up-pass" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter"></div>
+      <button class="btn" type="submit">Daftar dan masuk</button>
+      <p class="err" id="err-up" role="alert"></p>
+    </form>
+
+    <div class="wa-card">
+      <h3>Belum punya kode atau kurang paham?</h3>
+      <p>Chat admin lewat WhatsApp. Kami kirim kode pendaftaran dan bantu pesankan.</p>
+      <a class="btn wa" id="wa-code" href="#" target="_blank" rel="noopener">Minta kode pendaftaran</a>
+      <a class="btn ghost" id="wa-auth" href="#" target="_blank" rel="noopener">Tanya dulu lewat WhatsApp</a>
+    </div>
+  </section>
+
+  <!-- APLIKASI -->
+  <section id="v-app" hidden>
+    <header class="top"><button type="button" class="brandlogo" id="brandlogo" aria-label="Cirgo. Ketuk untuk memutar ulang animasi"><svg class="logo lgb lgh" viewBox="0 0 510.75 232" role="img" aria-label="Cirgo - Jemputin dan Nganterin"><g class="lb_EMB"><g class="lb_ECR"><path d="M143.08 80.89 A48.4 48.4 0 1 0 143.08 143.11" fill="none" stroke-width="9.9" stroke-linecap="round" style="stroke:var(--logo-ink,#0F1B2D)"/></g><g class="lb_EBOB"><g class="lb_EROT"><path d="M106 92.2 L130.2 112 L106 131.8" fill="none" stroke="#B8975A" stroke-width="9.9" stroke-linecap="round" stroke-linejoin="round"/></g></g></g><path class="lb_L0" d="M245.63 44.42Q256.29 44.42 264.59 49.65Q272.9 54.88 276.64 64.48H263.49Q260.9 59.2 256.29 56.61Q251.68 54.02 245.63 54.02Q239.01 54.02 233.82 56.99Q228.64 59.97 225.71 65.54Q222.78 71.1 222.78 78.5Q222.78 85.89 225.71 91.46Q228.64 97.02 233.82 100.05Q239.01 103.07 245.63 103.07Q251.68 103.07 256.29 100.48Q260.9 97.89 263.49 92.61H276.64Q272.9 102.21 264.59 107.39Q256.29 112.58 245.63 112.58Q236.22 112.58 228.45 108.21Q220.67 103.84 216.11 96.06Q211.55 88.29 211.55 78.5Q211.55 68.7 216.11 60.93Q220.67 53.15 228.5 48.78Q236.32 44.42 245.63 44.42Z" style="fill:var(--logo-ink,#0F1B2D)"/><path class="lb_L1" d="M287.97 45.09Q287.97 42.11 289.98 40.1Q292 38.08 294.98 38.08Q297.86 38.08 299.87 40.1Q301.89 42.11 301.89 45.09Q301.89 48.06 299.87 50.08Q297.86 52.1 294.98 52.1Q292 52.1 289.98 50.08Q287.97 48.06 287.97 45.09ZM300.35 59.1V112H289.41V59.1Z" style="fill:var(--logo-ink,#0F1B2D)"/><path class="lb_L2" d="M341.54 58.24V69.57H338.75Q332.32 69.57 329.01 72.83Q325.7 76.1 325.7 84.16V112H314.75V59.1H325.7V66.78Q328.1 62.75 332.08 60.5Q336.06 58.24 341.54 58.24Z" style="fill:var(--logo-ink,#0F1B2D)"/><path class="lb_L3" d="M391.26 66.78V59.1H402.3V112.86Q402.3 120.16 399.23 125.87Q396.16 131.58 390.35 134.85Q384.54 138.11 376.48 138.11Q365.73 138.11 358.62 133.07Q351.52 128.03 350.56 119.39H361.41Q362.66 123.52 366.74 126.06Q370.82 128.61 376.48 128.61Q383.1 128.61 387.18 124.58Q391.26 120.54 391.26 112.86V104.03Q388.48 107.78 383.73 110.32Q378.98 112.86 372.93 112.86Q366.02 112.86 360.3 109.36Q354.59 105.86 351.28 99.57Q347.97 93.28 347.97 85.31Q347.97 77.34 351.28 71.2Q354.59 65.06 360.3 61.65Q366.02 58.24 372.93 58.24Q379.07 58.24 383.82 60.69Q388.58 63.14 391.26 66.78ZM375.23 67.74Q371.01 67.74 367.36 69.81Q363.71 71.87 361.46 75.86Q359.2 79.84 359.2 85.31Q359.2 90.78 361.46 94.91Q363.71 99.04 367.41 101.2Q371.1 103.36 375.23 103.36Q379.46 103.36 383.1 101.25Q386.75 99.14 389.01 95.06Q391.26 90.98 391.26 85.5Q391.26 80.03 389.01 76Q386.75 71.97 383.1 69.86Q379.46 67.74 375.23 67.74Z" style="fill:var(--logo-ink,#0F1B2D)"/><path class="lb_L4" d="M413.15 85.5Q413.15 77.44 416.7 71.2Q420.26 64.96 426.4 61.6Q432.54 58.24 440.13 58.24Q447.71 58.24 453.86 61.6Q460 64.96 463.55 71.2Q467.1 77.44 467.1 85.5Q467.1 93.57 463.46 99.81Q459.81 106.05 453.52 109.46Q447.23 112.86 439.65 112.86Q432.16 112.86 426.11 109.46Q420.06 106.05 416.61 99.86Q413.15 93.66 413.15 85.5ZM455.87 85.5Q455.87 79.74 453.66 75.76Q451.46 71.78 447.81 69.76Q444.16 67.74 439.94 67.74Q435.71 67.74 432.11 69.76Q428.51 71.78 426.4 75.76Q424.29 79.74 424.29 85.5Q424.29 94.05 428.66 98.7Q433.02 103.36 439.65 103.36Q443.87 103.36 447.57 101.34Q451.26 99.33 453.57 95.3Q455.87 91.26 455.87 85.5Z" style="fill:var(--logo-ink,#0F1B2D)"/><rect class="lb_LINE" x="208" y="128" width="56" height="3" fill="#B8975A"/><path class="lb_TAG1" d="M214.36 148.27V155.28Q214.36 156.59 213.56 157.34Q212.77 158.1 211.49 158.1Q210.2 158.1 209.41 157.34Q208.62 156.59 208.62 155.28H210.23Q210.24 155.93 210.56 156.31Q210.87 156.68 211.49 156.68Q212.1 156.68 212.42 156.3Q212.75 155.91 212.75 155.28V148.27ZM222.74 149.56V152.41H226.1V153.72H222.74V156.7H226.52V158H221.15V148.26H226.52V149.56ZM242.93 148.27V158H241.33V151.34L238.37 158H237.26L234.28 151.34V158H232.68V148.27H234.4L237.82 155.9L241.22 148.27ZM252.59 154.05H250.83V158H249.23V148.27H252.59Q253.71 148.27 254.49 148.66Q255.26 149.04 255.65 149.7Q256.03 150.36 256.03 151.17Q256.03 151.91 255.68 152.57Q255.33 153.23 254.56 153.64Q253.79 154.05 252.59 154.05ZM254.4 151.17Q254.4 149.57 252.59 149.57H250.83V152.75H252.59Q253.5 152.75 253.95 152.34Q254.4 151.92 254.4 151.17ZM263.34 148.27V154.47Q263.34 155.58 263.92 156.14Q264.5 156.7 265.54 156.7Q266.59 156.7 267.17 156.14Q267.75 155.58 267.75 154.47V148.27H269.35V154.44Q269.35 155.63 268.83 156.46Q268.31 157.29 267.44 157.69Q266.58 158.1 265.53 158.1Q264.48 158.1 263.62 157.69Q262.75 157.29 262.25 156.46Q261.75 155.63 261.75 154.44V148.27ZM281.91 148.27V149.57H279.32V158H277.72V149.57H275.12V148.27ZM289.31 148.27V158H287.72V148.27ZM303.61 158H302.01L297.21 150.73V158H295.61V148.26H297.21L302.01 155.51V148.26H303.61ZM317.42 153.31Q317.42 152.88 317.72 152.58Q318.01 152.29 318.45 152.29Q318.87 152.29 319.16 152.58Q319.45 152.88 319.45 153.31Q319.45 153.74 319.16 154.04Q318.87 154.33 318.45 154.33Q318.01 154.33 317.72 154.04Q317.42 153.74 317.42 153.31ZM341.2 158H339.6L334.8 150.73V158H333.2V148.26H334.8L339.6 155.51V148.26H341.2ZM354.54 151.07Q354.16 150.34 353.49 149.97Q352.82 149.6 351.93 149.6Q350.97 149.6 350.21 150.03Q349.46 150.47 349.03 151.27Q348.6 152.06 348.6 153.11Q348.6 154.16 349.03 154.97Q349.46 155.77 350.21 156.21Q350.97 156.64 351.93 156.64Q353.24 156.64 354.05 155.91Q354.86 155.19 355.04 153.94H351.39V152.67H356.75V153.91Q356.6 155.05 355.94 156Q355.29 156.95 354.25 157.52Q353.21 158.08 351.93 158.08Q350.56 158.08 349.43 157.45Q348.29 156.81 347.63 155.68Q346.96 154.54 346.96 153.11Q346.96 151.69 347.63 150.55Q348.29 149.42 349.43 148.78Q350.58 148.14 351.93 148.14Q353.49 148.14 354.7 148.91Q355.91 149.67 356.46 151.07ZM368.38 156.01H364.31L363.61 158H361.94L365.43 148.26H367.28L370.76 158H369.08ZM367.94 154.71 366.35 150.19 364.76 154.71ZM384.47 158H382.87L378.07 150.73V158H376.48V148.26H378.07L382.87 155.51V148.26H384.47ZM397.06 148.27V149.57H394.47V158H392.87V149.57H390.27V148.27ZM404.46 149.56V152.41H407.82V153.72H404.46V156.7H408.24V158H402.87V148.26H408.24V149.56ZM419.46 158 417.22 154.11H416V158H414.4V148.27H417.76Q418.88 148.27 419.66 148.66Q420.44 149.05 420.82 149.71Q421.21 150.37 421.21 151.18Q421.21 152.13 420.65 152.91Q420.1 153.69 418.95 153.97L421.36 158ZM416 152.83H417.76Q418.66 152.83 419.11 152.39Q419.57 151.94 419.57 151.18Q419.57 150.43 419.12 150Q418.67 149.57 417.76 149.57H416ZM429.05 148.27V158H427.45V148.27ZM443.34 158H441.74L436.94 150.73V158H435.35V148.26H436.94L441.74 155.51V148.26H443.34Z" style="fill:var(--logo-gold,#7F6329)"/><path class="lb_TAG2" d="M215.34 179.68H210.78L209.94 182H208.5L212.28 171.6H213.85L217.62 182H216.18ZM214.94 178.56 213.06 173.28 211.16 178.56ZM227.23 177.16V182H225.88V177.35Q225.88 176.12 225.26 175.47Q224.65 174.81 223.59 174.81Q222.5 174.81 221.87 175.49Q221.23 176.16 221.23 177.46V182H219.87V173.78H221.23V174.95Q221.64 174.32 222.33 173.97Q223.03 173.63 223.87 173.63Q225.37 173.63 226.3 174.54Q227.23 175.44 227.23 177.16ZM231.73 174.91V179.75Q231.73 180.35 231.99 180.6Q232.24 180.84 232.87 180.84H233.88V182H232.65Q231.5 182 230.94 181.47Q230.37 180.95 230.37 179.75V174.91H229.3V173.78H230.37V171.71H231.73V173.78H233.88V174.91ZM239.51 173.65Q240.59 173.65 241.39 174.11Q242.19 174.57 242.57 175.28V173.78H243.95V182H242.57V180.47Q242.17 181.19 241.37 181.66Q240.56 182.13 239.5 182.13Q238.41 182.13 237.52 181.59Q236.63 181.06 236.12 180.08Q235.62 179.1 235.62 177.86Q235.62 176.6 236.12 175.65Q236.63 174.69 237.53 174.17Q238.42 173.65 239.51 173.65ZM239.78 174.83Q239.02 174.83 238.39 175.19Q237.76 175.55 237.38 176.24Q237.01 176.93 237.01 177.86Q237.01 178.81 237.38 179.5Q237.76 180.2 238.39 180.57Q239.02 180.94 239.78 180.94Q240.55 180.94 241.19 180.57Q241.82 180.2 242.2 179.5Q242.57 178.81 242.57 177.88Q242.57 176.94 242.2 176.25Q241.82 175.56 241.19 175.2Q240.55 174.83 239.78 174.83ZM250.89 173.63V175.04H250.53Q248.23 175.04 248.23 177.53V182H246.87V173.78H248.23V175.12Q248.59 174.41 249.26 174.02Q249.93 173.63 250.89 173.63ZM258.76 175.93V177.08H252.77V175.93ZM261.75 171.51Q261.75 171.12 262.01 170.86Q262.27 170.59 262.66 170.59Q263.05 170.59 263.31 170.86Q263.57 171.12 263.57 171.51Q263.57 171.91 263.31 172.18Q263.05 172.44 262.66 172.44Q262.27 172.44 262.01 172.18Q261.75 171.91 261.75 171.51ZM263.33 183.78Q263.33 184.88 262.78 185.39Q262.22 185.9 261.16 185.9H260.37V184.75H260.94Q261.5 184.75 261.74 184.52Q261.97 184.29 261.97 183.75V173.78H263.33ZM273.7 178.4H267.13Q267.2 179.62 267.96 180.3Q268.72 180.98 269.8 180.98Q270.69 180.98 271.28 180.57Q271.87 180.16 272.11 179.47H273.58Q273.25 180.65 272.26 181.39Q271.27 182.13 269.8 182.13Q268.63 182.13 267.71 181.61Q266.78 181.09 266.26 180.12Q265.73 179.15 265.73 177.88Q265.73 176.6 266.25 175.64Q266.75 174.68 267.68 174.16Q268.6 173.65 269.8 173.65Q270.97 173.65 271.87 174.16Q272.77 174.66 273.26 175.56Q273.74 176.45 273.74 177.57Q273.74 177.97 273.7 178.4ZM269.74 174.8Q268.7 174.8 267.98 175.46Q267.25 176.12 267.14 177.29H272.33Q272.33 176.51 271.99 175.95Q271.64 175.38 271.05 175.09Q270.46 174.8 269.74 174.8ZM289.36 177.16V182H288.01V177.35Q288.01 176.12 287.4 175.47Q286.79 174.81 285.76 174.81Q284.69 174.81 284.06 175.5Q283.43 176.18 283.43 177.47V182H282.08V177.35Q282.08 176.12 281.48 175.47Q280.87 174.81 279.83 174.81Q278.77 174.81 278.14 175.5Q277.51 176.18 277.51 177.47V182H276.14V173.78H277.51V174.97Q277.91 174.32 278.6 173.97Q279.28 173.63 280.1 173.63Q281.14 173.63 281.93 174.09Q282.73 174.56 283.12 175.46Q283.46 174.59 284.26 174.11Q285.05 173.63 286.03 173.63Q286.99 173.63 287.74 174.03Q288.49 174.43 288.92 175.22Q289.36 176.01 289.36 177.16ZM296.63 173.65Q297.73 173.65 298.62 174.17Q299.51 174.69 300.02 175.65Q300.53 176.6 300.53 177.86Q300.53 179.1 300.02 180.08Q299.51 181.06 298.62 181.59Q297.73 182.13 296.63 182.13Q295.58 182.13 294.78 181.66Q293.98 181.19 293.56 180.49V185.9H292.19V173.78H293.56V175.29Q293.96 174.59 294.77 174.12Q295.57 173.65 296.63 173.65ZM296.35 174.83Q295.6 174.83 294.96 175.2Q294.32 175.56 293.94 176.26Q293.56 176.96 293.56 177.88Q293.56 178.81 293.94 179.5Q294.32 180.2 294.96 180.57Q295.6 180.94 296.35 180.94Q297.11 180.94 297.75 180.57Q298.39 180.2 298.76 179.5Q299.14 178.81 299.14 177.86Q299.14 176.93 298.76 176.24Q298.39 175.55 297.75 175.19Q297.11 174.83 296.35 174.83ZM310.22 173.78V182H308.86V180.78Q308.47 181.41 307.77 181.77Q307.07 182.12 306.23 182.12Q305.27 182.12 304.51 181.72Q303.74 181.32 303.3 180.53Q302.86 179.74 302.86 178.59V173.78H304.21V178.41Q304.21 179.63 304.82 180.28Q305.44 180.94 306.5 180.94Q307.6 180.94 308.23 180.26Q308.86 179.59 308.86 178.29V173.78ZM314.8 174.91V179.75Q314.8 180.35 315.05 180.6Q315.31 180.84 315.94 180.84H316.94V182H315.71Q314.57 182 314 181.47Q313.43 180.95 313.43 179.75V174.91H312.37V173.78H313.43V171.71H314.8V173.78H316.94V174.91ZM329.47 182 325.16 177.23V182H323.8V171.54H325.16V176.39L329.48 171.54H331.21L326.47 176.78L331.25 182ZM332.87 177.88Q332.87 176.62 333.42 175.65Q333.97 174.68 334.91 174.16Q335.86 173.65 337.03 173.65Q338.2 173.65 339.14 174.16Q340.09 174.68 340.64 175.64Q341.18 176.6 341.18 177.88Q341.18 179.15 340.62 180.12Q340.06 181.09 339.1 181.61Q338.14 182.13 336.97 182.13Q335.81 182.13 334.88 181.61Q333.94 181.09 333.41 180.12Q332.87 179.15 332.87 177.88ZM339.79 177.88Q339.79 176.88 339.4 176.19Q339.01 175.5 338.38 175.17Q337.75 174.83 337.01 174.83Q336.26 174.83 335.64 175.17Q335.02 175.5 334.64 176.19Q334.27 176.88 334.27 177.88Q334.27 178.88 334.64 179.57Q335 180.26 335.62 180.6Q336.23 180.94 336.97 180.94Q337.7 180.94 338.35 180.59Q338.99 180.25 339.39 179.56Q339.79 178.87 339.79 177.88ZM345.25 174.91V179.75Q345.25 180.35 345.5 180.6Q345.76 180.84 346.39 180.84H347.39V182H346.16Q345.02 182 344.45 181.47Q343.88 180.95 343.88 179.75V174.91H342.82V173.78H343.88V171.71H345.25V173.78H347.39V174.91ZM353.03 173.65Q354.11 173.65 354.91 174.11Q355.7 174.57 356.09 175.28V173.78H357.47V182H356.09V180.47Q355.69 181.19 354.89 181.66Q354.08 182.13 353.02 182.13Q351.92 182.13 351.04 181.59Q350.15 181.06 349.64 180.08Q349.13 179.1 349.13 177.86Q349.13 176.6 349.64 175.65Q350.15 174.69 351.05 174.17Q351.94 173.65 353.03 173.65ZM353.3 174.83Q352.54 174.83 351.91 175.19Q351.28 175.55 350.9 176.24Q350.53 176.93 350.53 177.86Q350.53 178.81 350.9 179.5Q351.28 180.2 351.91 180.57Q352.54 180.94 353.3 180.94Q354.07 180.94 354.71 180.57Q355.34 180.2 355.72 179.5Q356.09 178.81 356.09 177.88Q356.09 176.94 355.72 176.25Q355.34 175.56 354.71 175.2Q354.07 174.83 353.3 174.83ZM369.7 171.41Q371.41 171.41 372.68 172.24Q373.96 173.06 374.54 174.57H372.91Q372.47 173.63 371.66 173.12Q370.84 172.61 369.7 172.61Q368.6 172.61 367.73 173.12Q366.86 173.63 366.37 174.57Q365.88 175.5 365.88 176.76Q365.88 178.01 366.37 178.95Q366.86 179.88 367.73 180.39Q368.6 180.91 369.7 180.91Q370.84 180.91 371.66 180.4Q372.47 179.9 372.91 178.96H374.54Q373.96 180.46 372.68 181.27Q371.41 182.09 369.7 182.09Q368.25 182.09 367.05 181.41Q365.86 180.72 365.17 179.51Q364.48 178.29 364.48 176.76Q364.48 175.24 365.17 174.01Q365.86 172.79 367.05 172.1Q368.25 171.41 369.7 171.41ZM376.94 171.51Q376.94 171.12 377.22 170.86Q377.49 170.59 377.88 170.59Q378.25 170.59 378.51 170.86Q378.77 171.12 378.77 171.51Q378.77 171.91 378.51 172.18Q378.25 172.44 377.88 172.44Q377.49 172.44 377.22 172.18Q376.94 171.91 376.94 171.51ZM378.53 173.78V182H377.17V173.78ZM385.48 173.63V175.04H385.12Q382.82 175.04 382.82 177.53V182H381.46V173.78H382.82V175.12Q383.19 174.41 383.85 174.02Q384.52 173.63 385.48 173.63ZM395.11 178.4H388.54Q388.62 179.62 389.37 180.3Q390.13 180.98 391.21 180.98Q392.1 180.98 392.69 180.57Q393.28 180.16 393.52 179.47H394.99Q394.66 180.65 393.67 181.39Q392.68 182.13 391.21 182.13Q390.04 182.13 389.12 181.61Q388.19 181.09 387.67 180.12Q387.14 179.15 387.14 177.88Q387.14 176.6 387.65 175.64Q388.17 174.68 389.09 174.16Q390.01 173.65 391.21 173.65Q392.38 173.65 393.28 174.16Q394.18 174.66 394.67 175.56Q395.15 176.45 395.15 177.57Q395.15 177.97 395.11 178.4ZM391.15 174.8Q390.12 174.8 389.39 175.46Q388.66 176.12 388.56 177.29H393.75Q393.75 176.51 393.4 175.95Q393.06 175.38 392.46 175.09Q391.87 174.8 391.15 174.8ZM402 173.65Q403.1 173.65 403.99 174.17Q404.88 174.69 405.38 175.65Q405.89 176.6 405.89 177.86Q405.89 179.1 405.38 180.08Q404.88 181.06 403.98 181.59Q403.09 182.13 402 182.13Q400.93 182.13 400.13 181.67Q399.32 181.21 398.92 180.49V182H397.55V170.9H398.92V175.31Q399.34 174.57 400.15 174.11Q400.96 173.65 402 173.65ZM401.71 174.83Q400.96 174.83 400.32 175.2Q399.69 175.56 399.3 176.26Q398.92 176.96 398.92 177.88Q398.92 178.81 399.3 179.5Q399.69 180.2 400.32 180.57Q400.96 180.94 401.71 180.94Q402.47 180.94 403.11 180.57Q403.75 180.2 404.12 179.5Q404.5 178.81 404.5 177.86Q404.5 176.93 404.12 176.24Q403.75 175.55 403.11 175.19Q402.47 174.83 401.71 174.83ZM407.78 177.88Q407.78 176.62 408.33 175.65Q408.88 174.68 409.82 174.16Q410.77 173.65 411.94 173.65Q413.11 173.65 414.06 174.16Q415 174.68 415.55 175.64Q416.09 176.6 416.09 177.88Q416.09 179.15 415.53 180.12Q414.97 181.09 414.01 181.61Q413.05 182.13 411.88 182.13Q410.72 182.13 409.79 181.61Q408.85 181.09 408.32 180.12Q407.78 179.15 407.78 177.88ZM414.7 177.88Q414.7 176.88 414.31 176.19Q413.92 175.5 413.29 175.17Q412.66 174.83 411.93 174.83Q411.18 174.83 410.55 175.17Q409.93 175.5 409.56 176.19Q409.18 176.88 409.18 177.88Q409.18 178.88 409.55 179.57Q409.91 180.26 410.53 180.6Q411.14 180.94 411.88 180.94Q412.62 180.94 413.26 180.59Q413.9 180.25 414.3 179.56Q414.7 178.87 414.7 177.88ZM425.86 177.16V182H424.51V177.35Q424.51 176.12 423.89 175.47Q423.28 174.81 422.21 174.81Q421.13 174.81 420.5 175.49Q419.86 176.16 419.86 177.46V182H418.49V173.78H419.86V174.95Q420.26 174.32 420.96 173.97Q421.66 173.63 422.5 173.63Q424 173.63 424.93 174.54Q425.86 175.44 425.86 177.16Z" style="fill:var(--logo-sub,#4A5568)"/></svg></button><button type="button" class="themebtn" id="themebtn" aria-label="Ganti tema"><svg viewBox="0 0 24 24" class="i-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg><svg viewBox="0 0 24 24" class="i-ivory"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg><svg viewBox="0 0 24 24" class="i-moon"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span class="tn" id="themename">Putih</span></button></header>
+
+    <div class="pane" id="p-home">
+      <div class="greetrow"><div class="hi" id="greet">Selamat pagi</div><div class="nm" id="uname">Nama</div></div>
+      <div class="svcbanner" role="status" hidden></div>
+      
+      <button class="route-hero" type="button" data-go="order" aria-label="Pesan antar-jemput">
+        <svg class="watermark" viewBox="0 0 200 200" aria-hidden="true"><path d="M150 52A68 68 0 1 0 150 148" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/></svg>
+        <span class="rh-title">Mau ke mana?</span>
+        <span class="rh-route" aria-hidden="true">
+          <i class="dot a"></i><i class="line"></i><i class="dot b"></i>
+          <span class="s1"><small>Jemput</small>Pilih kelurahan</span>
+          <span class="s2"><small>Tujuan</small>Pilih kelurahan</span>
+        </span>
+        <span class="rh-go">Pesan sekarang<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </button>
+      <div class="rows">
+        <button class="row2" type="button" id="c-sched">
+          <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+          <span class="tx"><b>Jadwalkan jemput</b><span class="t">Untuk kondangan atau acara, pilih tanggal dan jam</span></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+        <button class="row2" type="button" data-go="tarif">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg></span>
+          <span class="tx"><b>Tarif</b><span class="t">Harga flat per rute dan cara bayar</span></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+        <a class="row2" id="wa-home" href="#" target="_blank" rel="noopener">
+          <span class="ic wa"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span>
+          <span class="tx"><b>Chat WhatsApp</b><span class="t">Bingung? Admin siap membantu</span></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+        <button class="row2" type="button" id="c-terms">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg></span>
+          <span class="tx"><b>Ketentuan layanan</b><span class="t">Aturan pesan, batal, dan tunggu</span></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="pane" id="p-orders" hidden>
+      <div id="o-list">
+        <h1>Pesanan</h1>
+        <p class="sub" id="o-sub">Pesanan yang sedang berjalan dan riwayatmu.</p>
+        <div id="o-active"></div>
+        <h2 class="hs" id="o-hist-h" hidden>Riwayat</h2>
+        <div id="o-hist" class="hist"></div>
+        <div class="emptyo" id="o-empty" hidden><b>Belum ada pesanan</b><span>Pesanan pertamamu akan muncul di sini.</span><button type="button" class="btn" data-go="order">Pesan sekarang</button></div>
+      </div>
+      <section id="s-track" class="panel" hidden>
+        <button type="button" class="back" id="tk-back">&larr; Semua pesanan</button>
+        <div class="scene s-new" id="scene" aria-hidden="true">
+<svg class="cgsvg" viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg" focusable="false">
+<defs>
+<linearGradient id="cg-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--cg-s0)"/><stop offset=".45" style="stop-color:var(--cg-s1)"/><stop offset=".78" style="stop-color:var(--cg-s2)"/><stop offset="1" style="stop-color:var(--cg-s3)"/></linearGradient>
+<radialGradient id="cg-glow"><stop offset="0" style="stop-color:var(--cg-sun)" stop-opacity=".9"/><stop offset="1" style="stop-color:var(--cg-sun)" stop-opacity="0"/></radialGradient>
+<linearGradient id="cg-mt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--cg-m1)"/><stop offset="1" style="stop-color:var(--cg-m2)"/></linearGradient>
+<linearGradient id="cg-hzg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--cg-hz)" stop-opacity="0"/><stop offset="1" style="stop-color:var(--cg-hz)" stop-opacity=".5"/></linearGradient><linearGradient id="cg-rd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--cg-r0)"/><stop offset="1" style="stop-color:var(--cg-r1)"/></linearGradient>
+<pattern id="cg-br" width="8" height="6" patternUnits="userSpaceOnUse"><rect width="8" height="6" fill="#B04A33"/><path d="M0 .5H8M4 .5V3.5M0 3.5H8" stroke="#7E301F" stroke-width=".6" fill="none"/></pattern>
+<path id="cg-cl" d="M-46 14 C-52 -2 -34 -10 -22 -4 C-20 -26 14 -30 22 -10 C42 -22 62 -2 50 14 Z" fill="none" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+<g id="cg-mm">
+ <g transform="translate(60,34) scale(.95)"><use href="#cg-cl" style="stroke:var(--cg-c1)"/><use href="#cg-cl" transform="scale(.78)" style="stroke:var(--cg-c2)"/><use href="#cg-cl" transform="scale(.58)" style="stroke:var(--cg-c3)"/><use href="#cg-cl" transform="scale(.38)" style="stroke:var(--cg-c1)"/></g>
+ <g transform="translate(215,22) scale(.7)"><use href="#cg-cl" style="stroke:var(--cg-c1)"/><use href="#cg-cl" transform="scale(.78)" style="stroke:var(--cg-c2)"/><use href="#cg-cl" transform="scale(.58)" style="stroke:var(--cg-c3)"/><use href="#cg-cl" transform="scale(.38)" style="stroke:var(--cg-c1)"/></g>
+ <g transform="translate(335,52) scale(1.1)"><use href="#cg-cl" style="stroke:var(--cg-c1)"/><use href="#cg-cl" transform="scale(.78)" style="stroke:var(--cg-c2)"/><use href="#cg-cl" transform="scale(.58)" style="stroke:var(--cg-c3)"/><use href="#cg-cl" transform="scale(.38)" style="stroke:var(--cg-c1)"/></g>
+</g>
+<g id="cg-tw"><path d="M0 0V-14H5V-26H10V-38H15V-50H21V0Z" fill="url(#cg-br)" stroke="#6E2A1E" stroke-width=".8"/><path d="M15 -50L18 -57L21 -50Z" fill="#7E301F"/><circle cx="18" cy="-60" r="1.6" fill="#FFD27A"/></g>
+<clipPath id="cg-wc"><path d="M10 17L12 9Q14 6 20 6L26 6V17Z M30 6H52V17H30Z M56 6H82Q89 6 92 9L103 17H56Z"/></clipPath>
+</defs>
+
+<rect width="400" height="210" fill="url(#cg-sky)"/>
+<g class="cg-stars" fill="#fff"><circle class="cg-tw" cx="40" cy="14" r=".9"/><circle class="cg-tw t1" cx="150" cy="10" r=".9"/><circle class="cg-tw t2" cx="250" cy="18" r=".9"/><circle class="cg-tw" cx="372" cy="12" r=".9"/><circle class="cg-tw t1" cx="290" cy="30" r=".9"/><circle class="cg-tw t2" cx="100" cy="30" r=".9"/></g>
+<circle class="cg-pulse" cx="62" cy="50" r="38" fill="url(#cg-glow)"/><circle cx="62" cy="50" r="12" style="fill:var(--cg-sunc)"/>
+<g class="cg-drift" opacity=".7"><use href="#cg-mm"/><use href="#cg-mm" x="400"/></g>
+<path d="M-20 152L40 112L92 78L124 46L152 80L202 120L272 152Z" fill="url(#cg-mt)"/>
+<path d="M220 152L274 118L330 100L400 130L420 152Z" style="fill:var(--cg-m3)" opacity=".85"/>
+<rect y="108" width="400" height="44" fill="url(#cg-hzg)"/>
+<g class="cg-fly" fill="none" stroke-width="1.1" stroke-linecap="round" style="stroke:var(--cg-bird)"><path d="M0 70q3-4 6 0q3-4 6 0"/><path d="M22 78q2.5-3 5 0q2.5-3 5 0"/></g>
+<!-- masjid beratap tumpang -->
+<g style="fill:var(--cg-sil)"><path d="M168 108L176 98L184 108Z"/><path d="M162 122L176 106L190 122Z"/><path d="M156 138L176 116L196 138Z"/><rect x="158" y="136" width="36" height="16"/><rect x="175" y="88" width="2" height="9"/></g>
+<circle cx="176" cy="87" r="1.6" fill="#FFD27A"/>
+<path class="cg-lit" d="M170 152V142Q176 135 182 142V152Z" fill="#FFD27A"/>
+<!-- keraton: candi bentar bata merah (tujuan) -->
+<g id="cg-gate">
+ <rect x="268" y="136" width="46" height="16" fill="url(#cg-br)" stroke="#6E2A1E" stroke-width=".7"/>
+ <rect x="360" y="136" width="46" height="16" fill="url(#cg-br)" stroke="#6E2A1E" stroke-width=".7"/>
+ <use href="#cg-tw" transform="translate(314,152)"/>
+ <use href="#cg-tw" transform="translate(360,152) scale(-1 1)"/>
+ <path class="cg-door" d="M329 152V132Q337 122 345 132V152Z" fill="#FFD27A" opacity=".35"/>
+ <circle class="cg-door" cx="337" cy="138" r="22" fill="url(#cg-glow)" opacity=".35"/>
+</g>
+<!-- pohon -->
+<g style="fill:var(--cg-tree)"><rect x="18" y="128" width="4" height="24"/><circle cx="20" cy="122" r="14"/><circle cx="9" cy="130" r="9"/><circle cx="31" cy="130" r="9"/></g>
+<!-- lampu jalan -->
+<rect x="112" y="124" width="2" height="28" style="fill:var(--cg-sil)"/><circle class="cg-pulse" cx="113" cy="122" r="10" fill="url(#cg-glow)"/><circle cx="113" cy="122" r="2.2" fill="#FFE9A8"/>
+<rect x="250" y="124" width="2" height="28" style="fill:var(--cg-sil)"/><circle class="cg-pulse" cx="251" cy="122" r="10" fill="url(#cg-glow)"/><circle cx="251" cy="122" r="2.2" fill="#FFE9A8"/>
+<!-- jalan -->
+<rect y="150" width="400" height="70" fill="url(#cg-rd)"/><rect y="150" width="400" height="5" style="fill:var(--cg-curb)"/>
+<line class="cg-dash" x1="0" y1="200" x2="400" y2="200" style="stroke:var(--cg-lane)" stroke-width="2" opacity=".75"/>
+<!-- rute menyala: dari mobil ke tujuan -->
+<line class="cg-route" x1="0" y1="186" x2="400" y2="186" style="stroke:var(--cg-route)" stroke-width="2.2" stroke-linecap="round"/>
+
+<!-- titik jemput: cincin terisi saat mobil mendekat, pin muncul -->
+<g class="cg-pickup" transform="translate(222,176)">
+ <ellipse rx="17" ry="5.5" fill="none" style="stroke:var(--cg-ringbg)" stroke-width="2"/>
+ <ellipse class="cg-ring" rx="17" ry="5.5" fill="none" style="stroke:var(--cg-ring)" stroke-width="2.4" stroke-linecap="round" pathLength="100"/>
+ <ellipse class="cg-rip" rx="17" ry="5.5" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/>
+ <g class="cg-pinbob"><path d="M0 -4C-7 -13 -9 -17 -9 -21a9 9 0 1 1 18 0c0 4-2 8-9 17z" style="fill:var(--cg-pin)"/><circle cy="-21" r="3.4" fill="#fff"/></g>
+</g>
+<!-- titik tujuan di gerbang keraton -->
+<g class="cg-dest" transform="translate(337,176)">
+ <ellipse rx="21" ry="6" fill="none" style="stroke:var(--cg-ringbg)" stroke-width="2"/>
+ <ellipse class="cg-ring" rx="21" ry="6" fill="none" style="stroke:var(--cg-ring)" stroke-width="2.4" stroke-linecap="round" pathLength="100"/>
+ <ellipse class="cg-rip" rx="21" ry="6" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/>
+ <g class="cg-pinbob"><path d="M0 -4C-7 -13 -9 -17 -9 -21a9 9 0 1 1 18 0c0 4-2 8-9 17z" style="fill:var(--cg-pin2)"/><rect x="-3" y="-25" width="6" height="6" fill="#fff" rx="1"/></g>
+</g>
+<!-- mencari pengemudi (status baru) -->
+<g class="cg-ping" transform="translate(200,166)"><circle r="8" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/><circle class="p2" r="8" fill="none" style="stroke:var(--cg-ring)" stroke-width="1.6"/></g>
+
+<!-- mobil Cirgo (tanpa merek lain) -->
+<g class="cg-car"><g class="cg-bob"><g transform="translate(0,-6) scale(.55)">
+ <ellipse cx="64" cy="49" rx="66" ry="4" fill="#000" opacity=".4"/>
+ <polygon class="cg-beam" points="124,26 190,14 190,44" fill="#FFE9A8" opacity=".3"/>
+ <path d="M4 36L3 21Q3 10 11 7L18 5Q22 3 30 3H82Q92 3 97 7L110 19Q121 22 126 28Q128 31 128 36Z" fill="#F4F0E6" stroke="#CFC8BA" stroke-width=".6"/>
+ <path d="M3 31H125Q128 32 128 35V39H4Z" fill="#1B2630"/><path d="M6 30.5H122" stroke="#B8975A" stroke-width="1.4"/>
+ <path d="M10 17L12 9Q14 6 20 6H26V17Z M30 6H52V17H30Z M56 6H82Q89 6 92 9L103 17H56Z" fill="#1E3340" stroke="#12181F" stroke-width="1.2"/>
+ <g clip-path="url(#cg-wc)"><g fill="#5B7186"><circle cx="46" cy="11.5" r="3.2"/><ellipse cx="46" cy="19" rx="5" ry="5"/><circle cx="76" cy="11.5" r="3.2"/><ellipse cx="76" cy="19" rx="5" ry="5"/></g><g fill="#3B5163"><circle cx="39" cy="11" r="3.6"/><ellipse cx="39" cy="19" rx="5.5" ry="5.5"/></g></g>
+ <path d="M28 17V30M54 17V30M94 17V30" stroke="#CFC8BA" stroke-width=".7"/><rect x="36" y="21" width="7" height="1.6" rx=".8" fill="#BDB6A8"/><rect x="62" y="21" width="7" height="1.6" rx=".8" fill="#BDB6A8"/>
+ <path d="M1 6L14 2L17 5L3 9Z" fill="#1B2630"/><rect class="cg-brk" x="2" y="14" width="4" height="9" rx="1" fill="#FF4D4D"/>
+ <path d="M110 22L124 27L123 30L109 26Z" fill="#FFFBE0" stroke="#9BB4C7" stroke-width=".6"/>
+ <g><circle cx="28" cy="36" r="12.5" fill="#1B2630"/><circle cx="28" cy="36" r="10" fill="#11171D"/><circle cx="28" cy="36" r="6.8" fill="#2B353E" stroke="#8FA0AD"/><circle class="cg-spin" cx="28" cy="36" r="4" fill="none" stroke="#AEBBC6" stroke-width="2.4"/><circle cx="28" cy="36" r="1.6" fill="#8FA0AD"/></g>
+ <g><circle cx="100" cy="36" r="12.5" fill="#1B2630"/><circle cx="100" cy="36" r="10" fill="#11171D"/><circle cx="100" cy="36" r="6.8" fill="#2B353E" stroke="#8FA0AD"/><circle class="cg-spin" cx="100" cy="36" r="4" fill="none" stroke="#AEBBC6" stroke-width="2.4"/><circle cx="100" cy="36" r="1.6" fill="#8FA0AD"/></g>
+</g></g></g>
+</svg>
+</div>
+        <div class="status" id="tk-status" aria-live="polite"></div>
+        <h2 id="tk-title"></h2>
+        <p id="tk-sub"></p>
+        <div class="bk" id="bk"></div>
+        <div class="steps" id="steps" aria-hidden="true"></div>
+        <div class="list" id="summary"></div>
+        <div class="paybox" id="pay-box" hidden>
+          <div class="pb-h">Cara bayar</div>
+          <div class="seg" role="group" aria-label="Cara bayar"><button type="button" data-pm="cash">Tunai</button><button type="button" data-pm="qris">QRIS</button></div>
+          <div id="pm-cash" hidden><p>Siapkan uang pas <b id="cash-amt"></b>. Bayar langsung ke pengemudi.</p></div>
+          <div id="pm-qris" hidden>
+            <div class="qrbox"><img id="qris-img" src="qris.png" alt="QRIS Cirgo"><p class="qr-miss" id="qris-miss" hidden>Gambar QRIS belum dipasang. Minta pengemudi menunjukkan QRIS-nya.</p></div>
+            <p class="qr-amt">Bayar <b id="qris-amt"></b></p>
+            <p class="hint">Scan dengan e-wallet atau mobile banking, ketik nominal persis seperti di atas, lalu tunjukkan bukti ke pengemudi.</p>
+          </div>
+        </div>
+        <div class="paybox" id="pay2" hidden>
+          <div class="pb-h">Pembayaran non-tunai</div>
+          <div class="p2cd" id="p2-cd"></div>
+          <div class="seg seg3 sm" id="p2-seg" role="group" aria-label="Metode bayar"><button type="button" data-m="qris">QRIS</button><button type="button" data-m="bank">Transfer bank</button><button type="button" data-m="ewallet">E-wallet</button></div>
+          <div id="p2-body"></div>
+          <button type="button" class="btn" id="p2-claim">Saya sudah bayar</button>
+          <p class="hint" id="p2-hint"></p>
+        </div>
+        <p class="hint" id="tk-pay"></p>
+        <div class="row">
+          <a class="btn wa" id="wa-done" href="#" target="_blank" rel="noopener">Chat admin lewat WhatsApp</a>
+          <button type="button" class="btn ghost" id="tk-cancel">Batalkan pesanan</button>
+          <button type="button" class="btn" id="tk-new" hidden>Pesan lagi</button>
+        </div>
+        <p class="err" id="tk-msg" role="alert"></p>
+      </section>
+    </div>
+
+    <!-- Pesan -->
+    <div class="pane" id="p-order" hidden>
+      <div id="s-form">
+        <div class="svcbanner" role="status" hidden></div>
+        <h1>Pesan antar-jemput</h1>
+        <p class="sub">Pilih dari daftar kelurahan. Harga tidak berubah karena rute atau macet.</p>
+        <form id="f" novalidate>
+          <fieldset>
+            <legend>Rute</legend>
+            <div class="route">
+              <div class="field"><label for="from">Kelurahan jemput</label><select id="from"></select></div>
+              <div class="field"><label for="to">Kelurahan tujuan</label><select id="to"></select></div>
+              <button type="button" class="swap" id="swap" aria-label="Tukar jemput dan tujuan">Tukar arah</button>
+            </div>
+          </fieldset>
+          <div id="price" class="price empty" aria-live="polite">
+            <div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p>
+          </div>
+          <fieldset>
+            <legend>Data pemesan</legend>
+            <div class="field"><label for="nama">Nama</label><input id="nama" type="text" autocomplete="name"></div>
+            <div class="field"><label for="wa">Nomor WhatsApp</label><input id="wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx"></div>
+            <div class="field"><label for="det-from">Alamat atau patokan jemput</label><input id="det-from" type="text" placeholder="Nama jalan, perumahan, atau patokan"><span class="hint">Untuk pengemudi. Tidak memengaruhi harga.</span></div>
+            <div class="field"><label for="det-to">Alamat atau patokan tujuan <span class="hint">(boleh dikosongkan)</span></label><input id="det-to" type="text" placeholder="Nama jalan, gedung, atau patokan"></div>
+            <div class="field"><label for="when">Waktu jemput</label><select id="when"><option value="now">Secepatnya</option><option value="later">Jadwalkan</option></select></div>
+            <div class="field" id="when-wrap" hidden><label for="when-at">Tanggal dan jam</label><input id="when-at" type="datetime-local"><span class="hint">Admin akan mengonfirmasi jadwal ini.</span></div>
+          </fieldset>
+          <fieldset>
+            <legend>Cara bayar</legend>
+            <div class="seg" id="pp" role="group" aria-label="Cara bayar"><button type="button" data-pp="cash" aria-pressed="true">Tunai</button><button type="button" data-pp="noncash" aria-pressed="false">Non-tunai</button></div>
+            <span class="hint pp-hint" id="pp-hint">Bayar tunai ke pengemudi saat perjalanan selesai.</span>
+          </fieldset>
+          <button type="submit" class="btn" id="go">Kirim pesanan</button>
+          <p class="err" id="err" role="alert"></p>
+          <p class="help-inline">Bingung mengisi? <a href="#" id="wa-order" target="_blank" rel="noopener" style="color:var(--gold-ink);font-weight:700">Chat admin lewat WhatsApp</a></p>
+        </form>
+      </div>
+    </div>
+
+    <div class="pane" id="p-tarif" hidden>
+      <h1>Tarif</h1>
+      <p class="sub">Tarif flat berdasarkan kelurahan jemput dan tujuan. Harga yang tertera saat memesan bersifat mutlak.</p>
+      <table>
+        <thead><tr><th>Rute</th><th>Tarif</th></tr></thead>
+        <tbody>
+          <tr><td>Satu kecamatan (Zona 1)</td><td class="n">Rp15.000 <span class="hint">contoh</span></td></tr>
+          <tr><td>Beda kecamatan (Zona 1)</td><td class="n">Rp20.000 <span class="hint">contoh</span></td></tr>
+          <tr><td>Zona 2 dan luar daftar</td><td class="n">Hubungi kami</td></tr>
+        </tbody>
+      </table>
+      <div class="list" style="margin-top:18px">
+        <div class="kv"><span>Pembayaran</span><span>Tunai ke pengemudi saat perjalanan selesai, atau non-tunai (QRIS, transfer bank, e-wallet) setelah admin mengonfirmasi jemputan.</span></div>
+        <div class="kv"><span>Pembatalan</span><span>Bisa dibatalkan sendiri di aplikasi selama pengemudi belum berangkat.</span></div>
+        <div class="kv"><span>Tunggu</span><span>Gratis 10 menit, lalu Rp1.500 per menit.</span></div>
+        <div class="kv"><span>Force majeure</span><span>Jarak tempuh 50% atau lebih: biaya 50% tarif dasar. Di bawah 50%: dikembalikan penuh.</span></div>
+      </div>
+      <button class="btn" type="button" data-go="order">Cek tarif rute saya</button>
+    </div>
+
+    <div class="pane" id="p-wa" hidden>
+      <h1>Langsung chat saja</h1>
+      <p class="sub">Tidak paham cara pakai aplikasi? Tidak apa-apa. Pilih salah satu di bawah, WhatsApp terbuka dengan pesan yang sudah terisi.</p>
+      <div class="row">
+        <a class="btn wa" id="wa-1" href="#" target="_blank" rel="noopener">Saya mau pesan, tolong dibantu</a>
+        <a class="btn ghost" id="wa-2" href="#" target="_blank" rel="noopener">Tanya tarif</a>
+        <a class="btn ghost" id="wa-4" href="#" target="_blank" rel="noopener">Tanya atau batalkan pesanan</a>
+        <a class="btn ghost" id="wa-3" href="#" target="_blank" rel="noopener">Ada kendala atau keluhan</a>
+      </div>
+    </div>
+
+    <div class="pane" id="p-profil" hidden>
+      <h1>Profil</h1>
+      <p class="sub">Akun yang kamu pakai untuk memesan.</p>
+      <div class="pfcard" id="pfcard">
+      <div class="list">
+        <div class="kv"><span>Nama</span><span id="pf-nama"></span></div>
+        <div class="kv"><span>ID Cirgo</span><span id="pf-id"></span></div>
+        <div class="kv"><span>WhatsApp</span><span id="pf-wa" role="button" tabindex="0" aria-label="Nomor WhatsApp, ketuk untuk menampilkan"></span></div>
+      </div></div>
+      <p class="hint" style="margin:6px 4px 0">Ketuk nomor WhatsApp untuk melihatnya sebentar.</p>
+      <a class="row2 standalone" href="#" data-go="wa"><span class="ic wa"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><span class="tx"><b>Bantuan lewat WhatsApp</b><span class="t">Tanya, pesan, atau batalkan lewat admin</span></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+      <details class="pwcard" id="pw-box"><summary>Ganti kata sandi</summary>
+        <div class="field"><label for="pw-new">Kata sandi baru</label><input id="pw-new" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter"></div>
+        <div class="field"><label for="pw-new2">Ulangi kata sandi baru</label><input id="pw-new2" type="password" autocomplete="new-password"></div>
+        <button type="button" class="btn" id="pw-save">Simpan kata sandi</button><p class="err" id="pw-msg" role="alert"></p></details>
+      <button type="button" class="btn ghost" id="logout" style="margin-top:14px">Keluar</button>
+    </div>
+
+    <nav class="nav" aria-label="Menu utama">
+      <button type="button" data-go="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Beranda</span></button>
+      <button type="button" data-go="orders" id="nav-orders"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg><i class="badge" id="nav-badge" hidden></i><span>Pesanan</span></button>
+      <button type="button" class="plus" data-go="order" aria-label="Pesan"><span class="dot"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span>Pesan</span></button>
+      <button type="button" data-go="tarif"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span>Tarif</span></button>
+      <button type="button" data-go="profil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Profil</span></button>
+    </nav>
+  </section>
+</div>
+
+<div class="overlay" id="ov" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="t-title">
+    <h2 id="t-title">Ketentuan layanan</h2>
+    <p class="ver">Versi draf-2. Baca sebelum memesan.</p>
+    <ol>
+      <li><b>Tarif flat.</b> Harga mengikuti zona jemput dan tujuan sesuai daftar kelurahan. Tarif yang tertera saat memesan bersifat mutlak dan tidak berubah karena rute atau macet.</li>
+      <li><b>Konfirmasi dan pembayaran.</b> Pesanan berlaku setelah dikonfirmasi admin, yang juga memberi perkiraan waktu jemput untuk pesanan "Secepatnya". Pembayaran langsung kepada pengemudi saat perjalanan selesai, kecuali admin menginformasikan lain.</li>
+      <li><b>Waktu tunggu.</b> Gratis 10 menit di titik jemput. Setelahnya Rp1.500 per menit.</li>
+      <li><b>Perubahan rute.</b> Pengemudi berhak mengubah rute dalam keadaan darurat.</li>
+      <li><b>Pembatalan.</b> Pesanan bisa dibatalkan sendiri lewat aplikasi selama pengemudi belum berangkat. Setelah itu, hubungi admin lewat WhatsApp.</li>
+      <li><b>Force majeure.</b> Jika jarak tempuh sudah 50% atau lebih, biaya 50% dari tarif dasar dan sisanya dikembalikan. Di bawah 50%, dikembalikan penuh.</li>
+      <li><b>Di luar daftar.</b> Rute di luar tarif otomatis tetap bisa dipesan; tarifnya ditetapkan dan dikonfirmasi admin sebelum pengemudi berangkat.</li>
+    </ol>
+    <div id="agree-wrap">
+      <label class="agree" for="agree"><input type="checkbox" id="agree"><span>Saya sudah membaca dan menyetujui ketentuan layanan.</span></label>
+      <div class="row"><button type="button" class="btn" id="ok" disabled>Setuju, lanjut</button><button type="button" class="btn ghost" id="close">Kembali</button></div>
+    </div>
+    <button type="button" class="btn ghost" id="close2" hidden>Tutup</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  /* ====== PENGATURAN ====== */
+  var SUPABASE_URL='https://lsswxpywagnloqscwoda.supabase.co';
+  var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3d4cHl3YWdubG9xc2N3b2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNzY2OTUsImV4cCI6MjEwODg1MjY5NX0.e6tJ_5jJVWhF_5RjIEyyARIylX-MYt0zr1B7f6-83Kk'; // kunci anon (publik, aman di web)
+  var WA_NUMBER='';            // isi nomor Cirgo, contoh 62812xxxxxxx; kosong = WhatsApp membuka pilihan kontak
+  var WA_DOMAIN='wa.cirgo.app'; // harus sama dengan DOMAIN di fungsi register
+  var TERMS_VERSION='draft-2';
+  var REFUND_MIN=60;
+  /* ======================== */
+  var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  function waLink(t){return 'https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(t)}
+  function rp(n){return 'Rp'+String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.')}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function normWa(v){var d=String(v).replace(/\D/g,''); if(d.charAt(0)==='0') d='62'+d.slice(1); return d}
+  function validWa(d){return /^62[0-9]{8,12}$/.test(d)}
+  function showWa(d){return d.indexOf('62')===0? '0'+d.slice(2) : d}
+  var user=null;
+
+  function setWaLinks(){
+  ['wa-code','wa-auth','forgot','wa-home','wa-order','wa-1','wa-2','wa-3','wa-4'].forEach(function(id){
+    var T={'wa-code':'Halo Cirgo, saya mau daftar. Mohon kirim kode pendaftaran.','wa-auth':'Halo Cirgo, saya belum paham cara pakai aplikasinya. Mohon dibantu.','forgot':'Halo Cirgo, saya lupa kata sandi. Mohon dibantu atur ulang.','wa-home':'Halo Cirgo, saya butuh bantuan.','wa-order':'Halo Cirgo, saya mau pesan antar-jemput tapi bingung mengisinya. Mohon dibantu.','wa-1':'Halo Cirgo, saya mau pesan antar-jemput. Tolong dibantu.','wa-2':'Halo Cirgo, saya mau tanya tarif.','wa-3':'Halo Cirgo, saya ada kendala atau keluhan.','wa-4':'Halo Cirgo, saya mau membatalkan pesanan.'}[id];
+    if($(id)) $(id).href=waLink(T);
+  });
+  }
+  setWaLinks();
+
+  /* ---------- masuk / daftar ---------- */
+  function tab(up){
+    $('tab-in').setAttribute('aria-selected',String(!up)); $('tab-up').setAttribute('aria-selected',String(up));
+    $('f-in').hidden=up; $('f-up').hidden=!up;
+  }
+  $('tab-in').addEventListener('click',function(){tab(false)});
+  $('tab-up').addEventListener('click',function(){tab(true)});
+  $('up-code').addEventListener('input',function(){ this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'') });
+  function busy(form,on){ var b=form.querySelector('button[type=submit]'); if(b){b.disabled=on} }
+
+  function signIn(wa,pw){ return sb.auth.signInWithPassword({email:wa+'@'+WA_DOMAIN,password:pw}) }
+
+  $('f-in').addEventListener('submit',function(e){
+    e.preventDefault(); var id=normWa($('in-wa').value), pw=$('in-pass').value, E=$('err-in'), f=this;
+    if(!validWa(id)||!pw){E.textContent='Isi nomor WhatsApp dan kata sandi.';return}
+    E.textContent=''; busy(f,true);
+    signIn(id,pw).then(function(r){
+      busy(f,false);
+      if(r.error){E.textContent='Nomor atau kata sandi salah. Belum terdaftar? Daftar dengan kode dari admin.';return}
+      loadUser();
+    },function(){busy(f,false);E.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.'});
+  });
+  $('f-up').addEventListener('submit',function(e){
+    e.preventDefault(); var code=$('up-code').value, n=$('up-nama').value.trim(), id=normWa($('up-wa').value), pw=$('up-pass').value, E=$('err-up'), f=this;
+    if(code.length!==8){E.textContent='Kode pendaftaran terdiri dari 8 huruf.';return}
+    if(!n){E.textContent='Isi nama.';return}
+    if(!validWa(id)){E.textContent='Isi nomor WhatsApp yang valid.';return}
+    if(pw.length<6){E.textContent='Kata sandi minimal 6 karakter.';return}
+    E.textContent=''; busy(f,true);
+    sb.functions.invoke('register',{body:{code:code,nama:n,wa:id,password:pw}}).then(function(r){
+      var d=r.data;
+      if(r.error||!d){busy(f,false);E.textContent='Pendaftaran belum bisa diproses. Coba lagi sebentar.';return}
+      if(!d.ok){busy(f,false);E.textContent=d.error||'Pendaftaran gagal.';return}
+      signIn(id,pw).then(function(s){busy(f,false); if(s.error){E.textContent='Akun dibuat. Silakan masuk.';tab(false)} else loadUser()});
+    },function(){busy(f,false);E.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.'});
+  });
+
+  function greet(){var h=new Date().getHours(); return h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam'}
+  function loadUser(){
+    sb.auth.getUser().then(function(r){
+      if(!r.data||!r.data.user){showAuth();return}
+      var uid=r.data.user.id;
+      sb.from('profiles').select('nama,wa,short_id').eq('user_id',uid).maybeSingle().then(function(p){
+        if(!p.data){ sb.auth.signOut(); showAuth(); $('err-in').textContent='Akun belum lengkap. Hubungi admin lewat WhatsApp.'; return }
+        enter({id:uid,nama:p.data.nama,wa:p.data.wa,sid:p.data.short_id});
+      });
+    });
+  }
+  function showAuth(){ $('v-app').hidden=true; $('v-auth').hidden=false }
+  function enter(u){
+    user=u; $('v-auth').hidden=true; $('v-app').hidden=false;
+    $('greet').textContent=greet(); $('uname').textContent=u.nama;
+    $('pf-nama').textContent=u.nama; $('pf-id').textContent=u.sid||u.wa.slice(-5); pfSetWa(showWa(u.wa));
+    $('nama').value=u.nama; $('wa').value=showWa(u.wa);
+    loadAreas(); resetOrder(); go('home'); restoreActive(); loadService();
+  }
+  $('pw-save').addEventListener('click',function(){
+    var a=$('pw-new').value,b=$('pw-new2').value,M=$('pw-msg'); M.style.color='';
+    if(a.length<6){ M.textContent='Kata sandi minimal 6 karakter.'; return }
+    if(a!==b){ M.textContent='Kedua kata sandi harus sama.'; return }
+    var btn=this; btn.disabled=true; M.textContent='';
+    sb.auth.updateUser({password:a}).then(function(r){ btn.disabled=false;
+      if(r.error){ M.textContent='Belum berhasil. Coba lagi, atau masuk ulang lalu ganti sandi.'; return }
+      $('pw-new').value=''; $('pw-new2').value=''; M.style.color='var(--ok)'; M.textContent='Kata sandi sudah diganti.' },function(){ btn.disabled=false; M.textContent='Tidak bisa terhubung.' });
+  });
+  $('logout').addEventListener('click',function(){
+    stopTimer(); order=null; sb.auth.signOut().then(function(){ user=null; showAuth(); $('in-pass').value=''; tab(false); window.scrollTo(0,0) });
+  });
+
+  /* ---------- navigasi ---------- */
+  var openingTrack=false;
+  var panes=['home','order','orders','tarif','wa','profil'];
+  function go(name){
+    panes.forEach(function(p){ $('p-'+p).hidden = p!==name });
+    var nm0=(name==='wa')?'profil':name;
+    document.querySelectorAll('.nav button').forEach(function(b){
+      if(b.getAttribute('data-go')===nm0) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+    });
+    if(name==='orders'&&!openingTrack){ showListView(); loadList(); }
+    window.scrollTo(0,0);
+  }
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-go]'); if(t&&t.getAttribute('data-go')) go(t.getAttribute('data-go'));
+    if(e.target.closest('[data-again]')) resetOrder();
+  });
+  $('c-sched').addEventListener('click',function(){ go('order'); $('when').value='later'; $('when-wrap').hidden=false });
+
+  /* ---------- daftar kelurahan dari database ---------- */
+  var from=$('from'),to=$('to'),price=$('price'), areas=[], byId={}, loaded=false, OTHER='other';
+  function loadAreas(){
+    if(loaded) return;
+    sb.from('areas').select('id,name,level,parent_id,wilayah,zone').order('name').then(function(r){
+      if(r.error||!r.data){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Daftar belum termuat</div><p class="note">Muat ulang halaman, atau pesan lewat WhatsApp.</p>'; return }
+      r.data.forEach(function(a){byId[a.id]=a});
+      areas=r.data.filter(function(a){return a.level==='kelurahan'||a.level==='desa'});
+      loaded=true; fill(from); fill(to); calc(); if(order&&viewing){ } loadList();
+    });
+  }
+  function fill(sel){
+    sel.innerHTML='';
+    var o=document.createElement('option'); o.value=''; o.textContent='Pilih kelurahan'; sel.appendChild(o);
+    var groups={};
+    areas.forEach(function(a){
+      var p=byId[a.parent_id], key=p?p.name:(a.wilayah==='kota'?'Kota Cirebon':'Kabupaten Cirebon');
+      var og=groups[key]; if(!og){og=document.createElement('optgroup'); og.label=key; groups[key]=og; sel.appendChild(og)}
+      var op=document.createElement('option'); op.value=a.id; op.textContent=a.name; og.appendChild(op);
+    });
+    var last=document.createElement('option'); last.value=OTHER; last.textContent='Lokasi lain di luar daftar (hubungi kami)'; sel.appendChild(last);
+  }
+  function nm(v){ return v===OTHER?'Lokasi lain':(byId[v]?byId[v].name:'') }
+  var cur=null, calcSeq=0;
+  function resetPrice(){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p>' }
+  function showContact(){
+    price.className='price contact';
+    price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Dikonfirmasi admin</div><p class="note">Rute ini di luar tarif otomatis. Kirim pesanan, admin akan menetapkan tarif sebelum pengemudi berangkat.</p><span class="pill warn">Tarif menyusul</span>';
+  }
+  function calc(){
+    var a=from.value,b=to.value; cur=null;
+    if(!a||!b){resetPrice();return}
+    if(a===OTHER||b===OTHER){cur={contact:true,a:a,b:b};showContact();return}
+    var seq=++calcSeq; price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Menghitung...</div>';
+    sb.rpc('fare_quote',{p_pickup:+a,p_dropoff:+b}).then(function(r){
+      if(seq!==calcSeq) return;
+      var row=r.data&&r.data[0];
+      if(r.error||!row){cur=null; price.className='price contact'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Belum bisa dihitung</div><p class="note">Coba lagi, atau pesan lewat WhatsApp.</p>'; return}
+      if(row.price==null){cur={contact:true,a:a,b:b};showContact();return}
+      cur={contact:false,amt:row.price,a:a,b:b}; price.className='price ok';
+      price.innerHTML='<div class="lbl">Tarif flat</div><div class="amt">'+rp(row.price)+'</div><p class="note">'+esc(nm(a))+' ke '+esc(nm(b))+'. Harga pasti, tidak berubah di jalan.</p>';
+    },function(){ if(seq===calcSeq){cur=null; resetPrice()} });
+  }
+  from.addEventListener('change',calc); to.addEventListener('change',calc);
+  $('swap').addEventListener('click',function(){var t=from.value; from.value=to.value; to.value=t; calc()});
+  $('when').addEventListener('change',function(){ $('when-wrap').hidden = this.value!=='later' });
+
+  /* ---------- validasi + ketentuan ---------- */
+  var err=$('err');
+  /* jam layanan dari pengaturan admin */
+  var svc=null;
+  function fmtShifts(x){ return String(x||'').split(',').map(function(t){ return t.replace(/:/g,'.').replace('-','\u2013') }).join(' dan ')+' WIB' }
+  function svcMsg(){ if(!svc) return ''; return (svc.message||'Layanan sedang tutup.')+(svc.shifts?' Jam layanan: '+fmtShifts(svc.shifts)+'.':'') }
+  function drawSvc(){ var closed=!!(svc&&!svc.open); document.querySelectorAll('.svcbanner').forEach(function(b){ b.hidden=!closed; if(closed) b.textContent=svcMsg() }) }
+  function loadService(){ sb.rpc('service_status').then(function(r){ if(r.error||!r.data) return; svc=r.data; if(svc.wa&&svc.wa!==WA_NUMBER){ WA_NUMBER=svc.wa; setWaLinks() } drawSvc() },function(){}) }
+  setInterval(function(){ if(user&&!document.hidden) loadService() },60000);
+  function pickupAt(){ if($('when').value!=='later') return null; var v=$('when-at').value; var d=v?new Date(v):null; return d&&!isNaN(d)?d:null }
+  function validate(){
+    if(!cur) return 'Pilih kelurahan jemput dan tujuan.';
+    if($('when').value==='now'&&svc&&!svc.open) return svcMsg()+' Atau pilih jemput terjadwal di jam layanan.';
+    if(!$('nama').value.trim()) return 'Isi nama pemesan.';
+    if($('wa').value.replace(/\D/g,'').length<9) return 'Isi nomor WhatsApp yang valid.';
+    if(!$('det-from').value.trim()) return 'Isi alamat atau patokan jemput.';
+    if($('when').value==='later'){ var p=pickupAt(); if(!p) return 'Pilih tanggal dan jam jemput.'; if(p.getTime()<=Date.now()) return 'Pilih waktu jemput di masa depan.' }
+    return '';
+  }
+  var ov=$('ov'), agree=$('agree'), ok=$('ok'), lastFocus=null;
+  function openT(readonly){
+    lastFocus=document.activeElement; agree.checked=false; ok.disabled=true;
+    $('agree-wrap').hidden=!!readonly; $('close2').hidden=!readonly;
+    ov.hidden=false; document.body.style.overflow='hidden'; (readonly?$('close2'):agree).focus();
+  }
+  function closeT(){ ov.hidden=true; document.body.style.overflow=''; if(lastFocus&&lastFocus.focus) lastFocus.focus() }
+  $('c-terms').addEventListener('click',function(){openT(true)});
+  $('f').addEventListener('submit',function(e){ e.preventDefault(); var m=validate(); err.textContent=m; if(m) return; openT(false) });
+  agree.addEventListener('change',function(){ ok.disabled=!agree.checked });
+  $('close').addEventListener('click',closeT); $('close2').addEventListener('click',closeT);
+  ov.addEventListener('click',function(e){ if(e.target===ov) closeT() });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!ov.hidden) closeT() });
+  function whenText(){
+    var p=pickupAt(); if($('when').value==='now') return 'Secepatnya';
+    return p? p.toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}) : 'Dijadwalkan';
+  }
+
+  /* ---------- pesanan: daftar, pelacakan, cara bayar ---------- */
+  var order=null, poll=null, listTimer=null, viewing=false;
+  var ACTIVE=['offered','new','confirmed','ontheway','arrived','ontrip'];
+  var COLS_OLD='id,status,quoted_price,eta_note,pickup_area_id,dropoff_area_id,pickup_text,dropoff_text,pickup_at,created_at,payment_method,payment_status';
+  var COLS=COLS_OLD+',eta_at,offer_expires_at,pay_pref,pay_claimed_at,pay_expires_at,cancel_reason,cancelled_by';
+  var ST={
+    new:{n:0,badge:'Menunggu konfirmasi',title:'Pesanan terkirim',sub:'Admin akan mengonfirmasi dan memberi perkiraan waktu jemput. Halaman ini berubah sendiri.'},
+    offered:{n:0,badge:'Menunggu jawabanmu',title:'Ada tawaran jemputan',sub:'Admin sudah memberi perkiraan jemput. Jawab Setuju atau Tidak pada jendela yang muncul.'},
+    confirmed:{n:1,badge:'Dikonfirmasi',title:'Pesanan dikonfirmasi',sub:'Pengemudi akan segera berangkat menjemput.'},
+    ontheway:{n:2,badge:'Menuju lokasi jemput',title:'Pengemudi dalam perjalanan',sub:'Pengemudi sedang menuju titik jemput. Siapkan diri di lokasi.'},
+    arrived:{n:3,badge:'Pengemudi tiba',title:'Pengemudi sudah tiba',sub:'Pengemudi menunggu di titik jemput. Tunggu gratis 10 menit.'},
+    ontrip:{n:4,badge:'Dalam perjalanan',title:'Dalam perjalanan ke tujuan',sub:'Selamat jalan. Semoga nyaman.'},
+    done:{n:5,badge:'Selesai',title:'Perjalanan selesai',sub:'Terima kasih sudah memakai Cirgo.'},
+    cancelled:{n:5,badge:'Dibatalkan',title:'Pesanan dibatalkan',sub:'Kamu bisa membuat pesanan baru kapan saja.'}
+  };
+  function qb(fn){
+    return fn(COLS).then(function(r){
+      if(r.error&&COLS!==COLS_OLD&&(/column|permission|schema/i.test(r.error.message||'')||r.error.code==='42703'||r.error.code==='42501'||r.error.code==='PGRST204')){
+        COLS=COLS_OLD; return fn(COLS);
+      }
+      return r;
+    });
+  }
+  function payBadge(st,pref,ps){
+    if(st==='confirmed'&&pref==='noncash'){
+      if(ps==='unpaid') return {b:'Menunggu pembayaran',t:'Selesaikan pembayaran',s:'Pilih cara bayar di bawah dan bayar sebelum waktu habis. Setelah itu tekan "Saya sudah bayar".'};
+      if(ps==='claimed') return {b:'Memeriksa pembayaran',t:'Pembayaran sedang diperiksa',s:'Admin sedang memeriksa pembayaranmu. Halaman ini berubah sendiri.'};
+    }
+    return null;
+  }
+  function payText(o){
+    if(o.paid) return 'Pembayaran sudah diterima. Terima kasih.';
+    if(o.status==='cancelled') return '';
+    if(o.pref==='noncash') return o.status==='offered'||o.status==='new'?'Non-tunai: pembayaran dibuka setelah kamu menyetujui tawaran jemputan.':'';
+    return 'Pembayaran saat perjalanan selesai, tunai atau QRIS.';
+  }
+  function stopTimer(){ if(poll){clearInterval(poll); poll=null} }
+  function resetOrder(){ stopTimer(); order=null; viewing=false; $('s-track').hidden=true; $('o-list').hidden=false; $('tk-msg').textContent='' }
+  function shortCode(id){ return 'CG-'+String(id).replace(/-/g,'').slice(0,6).toUpperCase() }
+  function kv(a,b){return '<div class="kv"><span>'+a+'</span><span>'+b+'</span></div>'}
+  function nm2(id){ return byId[id]?byId[id].name:'Lokasi lain' }
+  function fromRow(d){
+    return {id:d.id,code:shortCode(d.id),status:d.status,amt:d.quoted_price,eta:d.eta_note,a:nm2(d.pickup_area_id),b:nm2(d.dropoff_area_id),
+      dfrom:d.pickup_text||'',dto:d.dropoff_text||'',pickup:d.pickup_at,created:d.created_at,pm:d.payment_method,paid:d.payment_status==='paid',ps:d.payment_status,pref:d.pay_pref||'cash',
+      etaAt:d.eta_at||null,offerExp:d.offer_expires_at||null,payExp:d.pay_expires_at||null,cby:d.cancelled_by||null,creason:d.cancel_reason||null}
+  }
+  function showListView(){ viewing=false; $('s-track').hidden=true; $('o-list').hidden=false; stopTimer() }
+  function openTrack(){ openingTrack=true; go('orders'); openingTrack=false; viewing=true; $('o-list').hidden=true; $('s-track').hidden=false; render(); window.scrollTo(0,0); if(!poll&&ACTIVE.indexOf(order.status)>-1) poll=setInterval(refreshOrder,5000) }
+  var lastStatus=null;
+  function render(){
+    var o=order, S=ST[o.status]||ST.new;
+    $('tk-status').className='status'+(o.status==='done'?' ok':''); $('tk-status').textContent=S.badge;
+    $('tk-title').textContent=S.title; var xb=payBadge(o.status,o.pref,o.ps); if(xb){ $('tk-status').textContent=xb.b; $('tk-title').textContent=xb.t }
+    var sb2=S.sub; if(o.eta&&(o.status==='new'||o.status==='confirmed')) sb2='Perkiraan jemput: '+o.eta+'. '+sb2;
+    $('tk-sub').textContent=xb?xb.s:sb2;
+    var filled=o.status==='cancelled'?0:(o.status==='done'?5:S.n+1), st='';
+    for(var i=0;i<5;i++) st+='<i'+(i<filled?' class="on"':'')+'></i>';
+    $('bk').textContent=o.code; $('steps').innerHTML=st;
+    $('scene').className='scene s-'+o.status; $('scene').hidden=(o.status==='cancelled');
+    if(lastStatus!==o.status){ lastStatus=o.status; var t=$('tk-title'); t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop') }
+    $('summary').innerHTML=kv('Jemput',esc(o.a)+(o.dfrom?' - '+esc(o.dfrom):''))+kv('Tujuan',esc(o.b)+(o.dto?' - '+esc(o.dto):''))
+      +kv('Waktu',o.pickup?esc(new Date(o.pickup).toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})):'Secepatnya')
+      +kv('Tarif',o.amt!=null?rp(o.amt):'Dikonfirmasi admin');
+    var showPay=(o.status!=='new'&&o.status!=='offered'&&o.status!=='cancelled'&&o.amt!=null&&o.pref!=='noncash'); renderPay2(o);
+    $('pay-box').hidden=!showPay;
+    if(showPay){
+      document.querySelectorAll('#pay-box [data-pm]').forEach(function(b){ b.setAttribute('aria-pressed',String(o.pm===b.dataset.pm)); b.disabled=o.paid });
+      $('pm-cash').hidden=o.pm!=='cash'; $('pm-qris').hidden=o.pm!=='qris';
+      $('cash-amt').textContent=rp(o.amt); $('qris-amt').textContent=rp(o.amt);
+      if(o.paid){ $('pm-cash').hidden=true; $('pm-qris').hidden=true }
+    }
+    $('tk-pay').textContent=payText(o);
+    $('wa-done').href=waLink('Halo Cirgo, soal pesanan '+o.code+' ('+o.a+' ke '+o.b+').');
+    var canCancel=(o.status==='new'||o.status==='offered'||o.status==='confirmed')&&o.ps!=='claimed', fin=(o.status==='done'||o.status==='cancelled');
+    $('tk-cancel').hidden=!canCancel; $('tk-new').hidden=!fin; $('wa-done').hidden=fin;
+    if(fin) stopTimer();
+  }
+  function refreshOrder(){
+    if(!order) return;
+    qb(function(c){return sb.from('bookings').select(c).eq('id',order.id).single()}).then(function(r){
+      if(r.data){ var old=order.status; order=fromRow(r.data); if(viewing) render(); if(old!==order.status&&navigator.vibrate){try{navigator.vibrate(120)}catch(e){}} setBadge() }
+    },function(){});
+  }
+  /* daftar pesanan */
+  var cache=[];
+  function setBadge(){ var n=cache.filter(function(b){return ACTIVE.indexOf(b.status)>-1}).length; var bd=$('nav-badge'); bd.hidden=!n; bd.textContent=n||'' }
+  function itemHtml(b,active){
+    var S=ST[b.status]||ST.new, d=new Date(b.created_at), pc=b.status==='done'?' ok':(b.status==='cancelled'?' bad':'');
+    return '<button type="button" class="oi'+(active?' act':'')+'" data-id="'+b.id+'"><span class="oi-top"><b>'+esc(shortCode(b.id))+'</b><span class="chip'+pc+'">'+esc((payBadge(b.status,b.pay_pref,b.payment_status)||{b:S.badge}).b)+'</span></span>'
+      +'<span class="oi-route">'+esc(nm2(b.pickup_area_id))+' <i>&rarr;</i> '+esc(nm2(b.dropoff_area_id))+'</span>'
+      +'<span class="oi-meta">'+d.toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+(b.quoted_price!=null?' &middot; '+rp(b.quoted_price):'')+(active&&b.eta_note?' &middot; '+esc(b.eta_note):'')+'</span></button>';
+  }
+  function loadList(cb){
+    if(!user) return;
+    qb(function(c){return sb.from('bookings').select(c).order('created_at',{ascending:false}).limit(40)}).then(function(r){
+      cache=r.data||[]; setBadge();
+      if(r.error){ $('o-active').innerHTML='<p class="muted">Gagal memuat pesanan. Tarik ke bawah untuk memuat ulang.</p>'; return }
+      var act=cache.filter(function(b){return ACTIVE.indexOf(b.status)>-1}), hist=cache.filter(function(b){return ACTIVE.indexOf(b.status)===-1});
+      $('o-active').innerHTML=act.length?'<h2 class="hs">Sedang berjalan</h2>'+act.map(function(b){return itemHtml(b,true)}).join(''):'';
+      $('o-hist-h').hidden=!hist.length; $('o-hist').innerHTML=hist.map(function(b){return itemHtml(b,false)}).join('');
+      $('o-empty').hidden=!!cache.length;
+      if(typeof cb==='function') cb(act);
+    },function(){});
+  }
+  $('o-list').addEventListener('click',function(e){
+    var it=e.target.closest('.oi'); if(!it) return;
+    var b=cache.filter(function(x){return x.id===it.dataset.id})[0]; if(!b) return;
+    order=fromRow(b); lastStatus=null; openTrack();
+  });
+  $('tk-back').addEventListener('click',function(){ showListView(); loadList() });
+  listTimer=setInterval(function(){ if(user&&!$('p-orders').hidden&&!viewing) loadList() },8000);
+  function restoreActive(){
+    loadList(function(act){ if(act&&act[0]){ order=fromRow(act[0]); lastStatus=null; openTrack() } });
+  }
+  /* kirim pesanan */
+  ok.addEventListener('click',function(){
+    closeT(); var p=pickupAt();
+    var ptxt=$('det-from').value.trim(), dtxt=$('det-to').value.trim();
+    var row={customer_name:$('nama').value.trim(),customer_phone:normWa($('wa').value),
+      pickup_area_id:cur.a===OTHER?null:+cur.a,dropoff_area_id:cur.b===OTHER?null:+cur.b,
+      pickup_text:(cur.a===OTHER?'[Lokasi lain] ':'')+ptxt,dropoff_text:((cur.b===OTHER?'[Lokasi lain] ':'')+dtxt).trim()||null,
+      pickup_at:p?p.toISOString():null,terms_version:TERMS_VERSION,terms_accepted_at:new Date().toISOString()};
+    if(payPref==='noncash') row.pay_pref='noncash';
+    qb(function(c){return sb.from('bookings').insert(row).select(c).single()}).then(function(r){
+      if(r.error&&payPref==='noncash'&&/pay_pref|column/i.test(r.error.message||'')){ err.textContent='Non-tunai belum tersedia. Pilih tunai atau pesan lewat WhatsApp.'; return }
+      if(r.error&&/layanan_tutup/.test(r.error.message||'')){ loadService(); err.textContent='Waktu jemput itu di luar jam layanan.'+(svc&&svc.shifts?' Jam layanan: '+fmtShifts(svc.shifts)+'.':''); return }
+      if(r.error||!r.data){ err.textContent='Pesanan belum tersimpan. Coba lagi, atau pesan lewat WhatsApp.'; return }
+      order=fromRow(r.data); lastStatus=null; openTrack(); loadList();
+      $('det-from').value=''; $('det-to').value='';
+    },function(){ err.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.' });
+  });
+  $('tk-cancel').addEventListener('click',function(){
+    if(!order||!confirm('Batalkan pesanan ini?')) return; var M=$('tk-msg'); M.textContent='';
+    var rq=order.status==='offered'?sb.rpc('customer_answer_offer',{p_id:order.id,p_accept:false}):sb.rpc('cancel_booking',{p_booking:order.id});
+    rq.then(function(r){
+      if(r.error||(r.data!=='ok'&&r.data!=='ditolak')){ M.textContent=r.data==='sudah_berjalan'?'Pengemudi sudah berangkat. Hubungi admin lewat WhatsApp.':'Belum bisa dibatalkan. Coba lagi atau hubungi admin lewat WhatsApp.' }
+      refreshOrder();
+    });
+  });
+  $('tk-new').addEventListener('click',function(){ resetOrder(); go('order') });
+  document.querySelectorAll('#pay-box [data-pm]').forEach(function(b){ b.addEventListener('click',function(){
+    if(!order) return; var m=b.dataset.pm; order.pm=m; render();
+    sb.rpc('set_payment_method',{p_booking:order.id,p_method:m}).then(function(r){ if(r.error||r.data!=='ok') refreshOrder() },function(){});
+  })});
+  var qn=['qris.png','qris.jpg','qris.jpeg','qris.webp'],qi=0;
+  $('qris-img').addEventListener('error',function(){ qi++; if(qi<qn.length){ this.src=qn[qi] } else { this.hidden=true; $('qris-miss').hidden=false } });
+  $('qris-img').addEventListener('load',function(){ this.hidden=false; $('qris-miss').hidden=true });
+
+
+  /* tema: Putih -> Gading -> Gelap, diingat di ponsel */
+  var THEMES=['light','ivory','dark'],TNAME={light:'Putih',ivory:'Gading',dark:'Gelap'},TCOL={light:'#F3F6FB',ivory:'#F6F3EC',dark:'#0A121F'};
+  function curTheme(){ var t=document.documentElement.getAttribute('data-theme'); return TNAME[t]?t:'light' }
+  function applyTheme(t){ document.documentElement.setAttribute('data-theme',t); var m=document.querySelector('meta[name=theme-color]'); if(m) m.content=TCOL[t];
+    ['themebtn','themebtn2'].forEach(function(id){ var b=$(id); if(b){ b.setAttribute('aria-label','Tema '+TNAME[t]+'. Ketuk untuk ganti'); b.title='Tema '+TNAME[t]; var n=b.querySelector('.tn'); if(n) n.textContent=TNAME[t] } }) }
+  applyTheme(curTheme());
+  ['themebtn','themebtn2'].forEach(function(id){ var b=$(id); if(b) b.addEventListener('click',function(){ var n=THEMES[(THEMES.indexOf(curTheme())+1)%3]; applyTheme(n); try{localStorage.setItem('cirgo_theme',n)}catch(e){} }) });
+  /* logo header: ketuk untuk memutar ulang animasi */
+  (function(){ var bl=$('brandlogo'); if(!bl) return; var sv=bl.querySelector('svg');
+    function replay(){ sv.classList.remove('lgh'); void sv.getBoundingClientRect(); sv.classList.add('lgh') }
+    bl.addEventListener('click',replay); document.addEventListener('visibilitychange',function(){ if(!document.hidden) replay() }) })();
+
+  /* tombol mata untuk kata sandi */
+  document.querySelectorAll('input[type=password]').forEach(function(inp){
+    var b=document.createElement('button'); b.type='button'; b.className='eye'; b.setAttribute('aria-label','Tampilkan kata sandi');
+    var on='<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var off='<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6A17 17 0 0 0 2 12s3.6 7 10 7a9.8 9.8 0 0 0 4.2-.9M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+    b.innerHTML=on;
+    b.addEventListener('click',function(){ var show=inp.type==='password'; inp.type=show?'text':'password'; inp.classList.toggle('pwshow',show); b.innerHTML=show?off:on; b.setAttribute('aria-label',show?'Sembunyikan kata sandi':'Tampilkan kata sandi'); });
+    inp.parentNode.appendChild(b);
+  });
+
+  /* mulai: pulihkan sesi bila ada */
+  sb.auth.getSession().then(function(r){ if(r.data&&r.data.session) loadUser(); else showAuth() },showAuth);
+
+/* profil: nomor disamarkan + garis emas berputar */
+var pfFull='',pfT=0;
+function pfMask(w){return w.length>7?w.slice(0,4)+new Array(w.length-6).join('x')+w.slice(-3):w}
+function pfSetWa(w){pfFull=w;$('pf-wa').textContent=pfMask(w)}
+function pfReveal(){if(!pfFull)return;$('pf-wa').textContent=pfFull;clearTimeout(pfT);pfT=setTimeout(function(){$('pf-wa').textContent=pfMask(pfFull)},5000)}
+$('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pfReveal()}});
+
+  /* ===== CgF: bingkai komet panjang + panah + bintang + percikan/kembang api ===== */
+  var REDUCE=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches);
+  var NS='http://www.w3.org/2000/svg';
+  function mk(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e}
+  function CgF(el,o){
+    o=o||{}; var period=o.period||7000, LAY=[.56,.45,.34,.24,.14,.06], dead=false;
+    var svg=mk('svg',{'class':'cg-bd','aria-hidden':'true'}); el.insertBefore(svg,el.firstChild);
+    var base=mk('path',{'class':'base'}); svg.appendChild(base);
+    var trs=LAY.map(function(f,i){var p=mk('path',{'class':'tr'});p.style.opacity=(.16+i*.14).toFixed(2);p.style.strokeWidth=(1.6+i*.5).toFixed(1);svg.appendChild(p);return p});
+    var star=mk('path',{'class':'st',d:'M0 -9L2.2 -2.2L9 0L2.2 2.2L0 9L-2.2 2.2L-9 0L-2.2 -2.2Z'});
+    var ar=mk('path',{'class':'ar',d:'M-6 -6L4 0L-6 6Z'});
+    var N=26, pts=[], pi=0, i;
+    for(i=0;i<N;i++){var c=mk('circle',{'class':'pt',r:'1.8',cx:'0',cy:'0'});svg.appendChild(c);pts.push({e:c,x:0,y:0,vx:0,vy:0,age:9,life:1})}
+    svg.appendChild(ar); svg.appendChild(star);
+    var P=0,W=0,H=0,t0=null,lt=0,lastEmit=0,lastFire=0;
+    function build(){
+      var w=el.clientWidth,h=el.clientHeight; if(!w||!h) return false; if(w===W&&h===H&&P) return true; W=w;H=h;
+      var r=Math.min(parseFloat(getComputedStyle(el).borderTopLeftRadius)||20,w/2,h/2);
+      var d='M'+r+' 0H'+(w-r)+'A'+r+' '+r+' 0 0 1 '+w+' '+r+'V'+(h-r)+'A'+r+' '+r+' 0 0 1 '+(w-r)+' '+h+'H'+r+'A'+r+' '+r+' 0 0 1 0 '+(h-r)+'V'+r+'A'+r+' '+r+' 0 0 1 '+r+' 0Z';
+      base.setAttribute('d',d); P=base.getTotalLength();
+      trs.forEach(function(p,k){var L=P*LAY[k];p.setAttribute('d',d);p.style.strokeDasharray=L+' '+(P-L)});
+      return true;
+    }
+    function pos(l){var m=((l%P)+P)%P,a=base.getPointAtLength(m),b=base.getPointAtLength((m+2)%P);return {x:a.x,y:a.y,a:Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI}}
+    function spawn(x,y,sp,life,ang){
+      var q=pts[pi++%N], t=ang!=null?ang:Math.random()*6.283, v=sp*(.4+Math.random()*.8);
+      q.x=x;q.y=y;q.vx=Math.cos(t)*v;q.vy=Math.sin(t)*v;q.age=0;q.life=life*(.6+Math.random()*.6);
+    }
+    function burst(n,x,y,sp){ if(REDUCE||!P) return; if(x==null){x=W/2;y=0} for(var k=0;k<n;k++) spawn(x,y,sp||150,.9) }
+    function draw(head){
+      trs.forEach(function(p,k){var L=P*LAY[k],s=(((head-L)%P)+P)%P;p.style.strokeDashoffset=-s});
+      var a=pos(head-7),b=pos(head+3);
+      ar.setAttribute('transform','translate('+a.x+' '+a.y+') rotate('+a.a+')');
+      return b;
+    }
+    function frame(ts){
+      if(dead||!document.body.contains(el)) return;
+      if(el.getClientRects().length&&build()){
+        if(t0===null){t0=ts;lt=ts}
+        var dt=Math.min((ts-lt)/1000,.05);lt=ts;
+        var head=(REDUCE?.3:(((ts-t0)/period)%1))*P, b=draw(head);
+        var sc=REDUCE?1:.8+.45*Math.sin(ts/130);
+        star.setAttribute('transform','translate('+b.x+' '+b.y+') scale('+sc.toFixed(2)+') rotate('+((ts/9)%360).toFixed(0)+')');
+        if(!REDUCE){
+          if(ts-lastEmit>55){lastEmit=ts;spawn(b.x,b.y,38,.7)}
+          if(o.fire&&ts-lastFire>2400){lastFire=ts;var f=pos(Math.random()*P);for(var k=0;k<12;k++) spawn(f.x,f.y,110,.8,(k/12)*6.283)}
+          for(var j=0;j<N;j++){var q=pts[j];
+            if(q.age<q.life){q.age+=dt;q.x+=q.vx*dt;q.y+=q.vy*dt;q.vx*=.97;q.vy*=.97;var u=1-q.age/q.life;q.e.setAttribute('cx',q.x.toFixed(1));q.e.setAttribute('cy',q.y.toFixed(1));q.e.style.opacity=Math.max(u,0).toFixed(2);q.e.setAttribute('r',(1+1.4*u).toFixed(1))}
+            else q.e.style.opacity=0}
+        }
+      }
+      if(!REDUCE) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame); if(REDUCE) setTimeout(function(){requestAnimationFrame(frame)},400);
+    return {burst:burst,stop:function(){dead=true;if(svg.parentNode)svg.parentNode.removeChild(svg)}};
+  }
+  window.CgF=CgF;
+
+  /* ===== pop-up umum ===== */
+  function popup(html,onReady){
+    var ov=document.createElement('div'); ov.className='overlay cgpop';
+    ov.innerHTML='<div class="cgbox"><div class="sheet" role="dialog" aria-modal="true">'+html+'</div></div>';
+    document.body.appendChild(ov);
+    var pop=ov.firstChild, fx=CgF(pop,{period:6500,fire:true});
+    setTimeout(function(){ fx.burst(18,pop.clientWidth/2,0,170) },250);
+    var api={el:ov,close:function(){fx.stop();if(ov.parentNode)ov.parentNode.removeChild(ov)}};
+    if(onReady) onReady(api,ov); return api;
+  }
+  function fmtClock(d){ return d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}).replace(':','.') }
+  function mmss(ms){ if(ms<0) ms=0; var m=Math.floor(ms/60000),s=Math.floor(ms/1000)%60; return (m<10?'0':'')+m+':'+(s<10?'0':'')+s }
+
+  /* ===== pilihan tunai / non-tunai di form pesan ===== */
+  var payPref='cash';
+  document.querySelectorAll('#pp [data-pp]').forEach(function(b){ b.addEventListener('click',function(){
+    payPref=b.dataset.pp;
+    document.querySelectorAll('#pp [data-pp]').forEach(function(x){ x.setAttribute('aria-pressed',String(x===b)) });
+    $('pp-hint').textContent=payPref==='cash'?'Bayar tunai ke pengemudi saat perjalanan selesai.':'Admin menentukan perkiraan jemput dulu. Setelah kamu setuju, pilih QRIS, transfer bank, atau e-wallet dan bayar sebelum waktu habis.';
+  })});
+
+  /* ===== layar bayar non-tunai ===== */
+  var PI=null, cdTimer=null, cdFired=false;
+  function loadPI(cb){ if(PI) return cb(PI); sb.rpc('pay_info').then(function(r){ if(r&&r.data) PI=r.data; cb(PI||{}) },function(){ cb({}) }) }
+  function copyTxt(t,btn){
+    function done(){ var o=btn.textContent; btn.textContent='Tersalin'; setTimeout(function(){btn.textContent=o},1400) }
+    try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,done); return } }catch(e){}
+    var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy')}catch(e){} document.body.removeChild(ta); done();
+  }
+  function p2row(k,v,copy){ return '<div class="p2row"><span>'+k+'</span><span><b>'+esc(v)+'</b>'+(copy?' <button type="button" class="p2copy" data-copy="'+esc(copy)+'">Salin</button>':'')+'</span></div>' }
+  function stopCd(){ if(cdTimer){clearInterval(cdTimer);cdTimer=null} }
+  function renderPay2(o){
+    var box=$('pay2'), show=(o.pref==='noncash'&&o.status==='confirmed'&&(o.ps==='unpaid'||o.ps==='claimed'));
+    box.hidden=!show; if(!show){ stopCd(); return }
+    var claimed=o.ps==='claimed', body=$('p2-body');
+    $('p2-seg').hidden=claimed; $('p2-claim').hidden=claimed; $('p2-cd').hidden=claimed;
+    document.querySelectorAll('#p2-seg [data-m]').forEach(function(b){ b.setAttribute('aria-pressed',String(o.pm===b.dataset.m)) });
+    $('p2-claim').disabled=!o.pm || ['qris','bank','ewallet'].indexOf(o.pm)<0;
+    if(claimed){
+      stopCd(); body.innerHTML='<p>Terima kasih. Admin sedang memeriksa pembayaranmu sebesar <b>'+rp(o.amt)+'</b>.</p>';
+      $('p2-hint').textContent='Bila lebih dari beberapa menit, hubungi admin lewat WhatsApp.'; return;
+    }
+    $('p2-hint').textContent='Tekan "Saya sudah bayar" hanya setelah pembayaran berhasil.';
+    var m=o.pm;
+    if(!m||['qris','bank','ewallet'].indexOf(m)<0){ body.innerHTML='<p class="hint">Pilih salah satu cara bayar di atas.</p>' }
+    else if(m==='qris'){
+      body.innerHTML='<div class="qrbox"><img src="qris.png" alt="QRIS Cirgo"><p class="qr-miss" hidden>Gambar QRIS belum dipasang. Pilih cara lain atau hubungi admin.</p></div><p class="qr-amt">Bayar <b>'+rp(o.amt)+'</b></p><p class="hint">Scan dengan e-wallet atau mobile banking, ketik nominal persis seperti di atas.</p>';
+      var im=body.querySelector('img'); im.onerror=function(){ im.style.display='none'; body.querySelector('.qr-miss').hidden=false };
+    } else {
+      body.innerHTML='<p class="hint">Memuat data rekening...</p>';
+      loadPI(function(pi){
+        if(!order||order.id!==o.id||order.pm!==m) return;
+        var nm=m==='bank'?pi.bank_name:pi.ew_name, no=m==='bank'?pi.bank_no:pi.ew_no;
+        if(!no){ body.innerHTML='<p>Data '+(m==='bank'?'rekening':'e-wallet')+' belum diisi admin. Pilih cara lain atau hubungi admin.</p>'; return }
+        body.innerHTML='<div class="list">'+p2row(m==='bank'?'Bank':'E-wallet',nm||'-')+p2row(m==='bank'?'No. rekening':'Nomor',no,no)
+          +(m==='bank'&&pi.bank_holder?p2row('Atas nama',pi.bank_holder):'')+p2row('Jumlah',rp(o.amt),String(o.amt))+'</div><p class="hint">Transfer persis sesuai jumlah.</p>';
+        body.querySelectorAll('.p2copy').forEach(function(b){ b.addEventListener('click',function(){ copyTxt(b.dataset.copy,b) }) });
+      });
+    }
+    stopCd(); cdFired=false;
+    if(o.payExp){
+      var tk=function(){
+        var left=new Date(o.payExp).getTime()-Date.now(), cd=$('p2-cd');
+        if(left<=0){ cd.textContent='Waktu bayar habis'; cd.classList.add('low'); if(!cdFired){cdFired=true; setTimeout(function(){refreshOrder();monitor()},1500)} }
+        else { cd.textContent='Sisa waktu bayar '+mmss(left); cd.classList.toggle('low',left<120000) }
+      };
+      tk(); cdTimer=setInterval(tk,1000);
+    } else $('p2-cd').hidden=true;
+  }
+  document.querySelectorAll('#p2-seg [data-m]').forEach(function(b){ b.addEventListener('click',function(){
+    if(!order) return; var m=b.dataset.m; order.pm=m; render();
+    sb.rpc('customer_choose_payment',{p_id:order.id,p_method:m}).then(function(r){ if(r.error||r.data!=='ok') refreshOrder() },function(){});
+  })});
+  $('p2-claim').addEventListener('click',function(){
+    if(!order) return; var btn=$('p2-claim'), M=$('tk-msg'); M.textContent=''; btn.disabled=true;
+    sb.rpc('customer_claim_paid',{p_id:order.id}).then(function(r){
+      if(r.error||r.data!=='ok'){
+        M.textContent=r.data==='kedaluwarsa'?'Waktu bayar sudah habis.':(r.data==='pilih_metode'?'Pilih cara bayar dulu.':'Belum bisa dikirim. Coba lagi atau hubungi admin lewat WhatsApp.');
+      }
+      refreshOrder();
+    },function(){ btn.disabled=false; M.textContent='Tidak bisa terhubung. Coba lagi.' });
+  });
+
+  /* ===== pop-up tawaran jemput ===== */
+  var offerPop=null, offerId=null, offerTimer=null;
+  function closeOffer(){ if(offerTimer){clearInterval(offerTimer);offerTimer=null} if(offerPop){offerPop.close();offerPop=null} offerId=null }
+  function showOffer(b){
+    var o=fromRow(b); if(offerPop&&offerId===o.id) return; closeOffer(); offerId=o.id;
+    var when='';
+    if(o.etaAt){
+      var d=new Date(o.etaAt), mins=Math.round((d.getTime()-Date.now())/60000);
+      when=o.pickup?'Admin mengusulkan jadwal jemput:<br><b>'+esc(d.toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}))+'</b>'
+        :'Perkiraan jemput <b>pukul '+fmtClock(d)+'</b>'+(mins>0?' (sekitar '+mins+' menit lagi)':'');
+    } else if(o.eta){ when='Perkiraan jemput: <b>'+esc(o.eta)+'</b>' }
+    var how=o.pref==='noncash'?'Non-tunai. Setelah kamu setuju, pilih QRIS, transfer bank, atau e-wallet.':'Tunai ke pengemudi saat perjalanan selesai.';
+    offerPop=popup('<h2>Ada tawaran jemputan</h2><p>'+when+'</p>'
+      +'<div class="list">'+kv('Jemput',esc(o.a))+kv('Tujuan',esc(o.b))+kv('Tarif',o.amt!=null?rp(o.amt):'-')+'</div>'
+      +'<p class="hint">'+how+'</p><div class="cdn" id="of-cd"></div>'
+      +'<button type="button" class="btn" id="of-yes">Setuju, lanjutkan</button>'
+      +'<button type="button" class="btn ghost" id="of-no">Tidak, batalkan</button><p class="pmsg" id="of-msg" role="alert"></p>',
+      function(api,ov){
+        function answer(acc){
+          var y=ov.querySelector('#of-yes'), n=ov.querySelector('#of-no'); y.disabled=n.disabled=true; ov.querySelector('#of-msg').textContent='';
+          sb.rpc('customer_answer_offer',{p_id:o.id,p_accept:acc}).then(function(r){
+            if(r.error){ y.disabled=n.disabled=false; ov.querySelector('#of-msg').textContent='Belum terkirim. Coba lagi.'; return }
+            closeOffer(); if(acc&&r.data==='ok'){ order=null; loadList(function(act){ var t=cache.filter(function(x){return x.id===o.id})[0]; if(t){ order=fromRow(t); lastStatus=null; openTrack() } }) }
+            else { loadList(); if(order&&order.id===o.id) refreshOrder() }
+            monitor();
+          },function(){ y.disabled=n.disabled=false; ov.querySelector('#of-msg').textContent='Tidak bisa terhubung. Coba lagi.' });
+        }
+        ov.querySelector('#of-yes').addEventListener('click',function(){ answer(true) });
+        ov.querySelector('#of-no').addEventListener('click',function(){ answer(false) });
+        var cd=ov.querySelector('#of-cd');
+        function tk(){
+          if(!o.offerExp){ cd.textContent=''; return }
+          var left=new Date(o.offerExp).getTime()-Date.now();
+          if(left<=0){ cd.textContent='Waktu menjawab habis'; cd.classList.add('low'); clearInterval(offerTimer); offerTimer=null; setTimeout(monitor,1500) }
+          else { cd.textContent='Jawab dalam '+mmss(left); cd.classList.toggle('low',left<30000) }
+        }
+        tk(); offerTimer=setInterval(tk,1000);
+      });
+  }
+
+  /* ===== pop-up pesanan dibatalkan ===== */
+  var cxPop=null;
+  function seenCx(){ try{ return JSON.parse(localStorage.getItem('cirgo_cx')||'[]') }catch(e){ return [] } }
+  function markCx(ids){ try{ var a=seenCx(); ids.forEach(function(i){ if(a.indexOf(i)<0) a.push(i) }); localStorage.setItem('cirgo_cx',JSON.stringify(a.slice(-60))) }catch(e){} }
+  var MASCOT='<svg class="mascot" viewBox="0 0 132 92" role="img" aria-label="Maskot Cirgo sedih"><g fill="none" stroke-linecap="round" stroke-linejoin="round">'
+    +'<ellipse cx="66" cy="84" rx="44" ry="4" fill="rgba(0,0,0,.12)" stroke="none"/>'
+    +'<path d="M16 62V50c0-6 4-10 10-12l12-18c3-4 7-6 12-6h32c5 0 9 2 12 6l12 18c6 2 10 6 10 12v12c0 3-2 5-5 5H21c-3 0-5-2-5-5Z" fill="#F2C95C" stroke="#7F6329" stroke-width="3"/>'
+    +'<path d="M45 22h42l10 16H35Z" fill="#CFEFF8" stroke="#7F6329" stroke-width="2.5"/>'
+    +'<circle cx="52" cy="50" r="6" fill="#fff" stroke="#7F6329" stroke-width="2"/><circle cx="80" cy="50" r="6" fill="#fff" stroke="#7F6329" stroke-width="2"/>'
+    +'<circle cx="53" cy="52" r="2.4" fill="#0F1B2D" stroke="none"/><circle cx="79" cy="52" r="2.4" fill="#0F1B2D" stroke="none"/>'
+    +'<path d="M45 46l8-4M87 46l-8-4" stroke="#7F6329" stroke-width="2.5"/>'
+    +'<path d="M58 62q8-6 16 0" stroke="#7F6329" stroke-width="2.5"/>'
+    +'<path class="tear" d="M52 59c-2 3-3 5-3 6.5a3 3 0 006 0c0-1.5-1-3.5-3-6.5Z" fill="#6EC1F0" stroke="none"/>'
+    +'<circle cx="38" cy="72" r="9" fill="#2B3A4E" stroke="#0F1B2D" stroke-width="2"/><circle cx="94" cy="72" r="9" fill="#2B3A4E" stroke="#0F1B2D" stroke-width="2"/>'
+    +'<circle cx="38" cy="72" r="3" fill="#9DAAC8" stroke="none"/><circle cx="94" cy="72" r="3" fill="#9DAAC8" stroke="none"/></g></svg>';
+  function showCancel(b){
+    if(cxPop) return; var o=fromRow(b), msg;
+    if(o.cby==='admin') msg='Karena permintaan sedang sangat penuh, kami belum bisa memproses pesananmu. Silakan pesan di jam lain, atau hubungi admin.';
+    else if(o.creason==='unpaid') msg='Batas waktu pembayaran sudah lewat, jadi pesanan kami tutup. Jika kamu sudah membayar, segera hubungi admin.';
+    else if(o.creason==='offer_expired') msg='Tawaran jemputan belum dijawab sampai batas waktu, jadi pesanan kami tutup. Kamu bisa memesan lagi kapan saja.';
+    else msg='Pesananmu dibatalkan. Kamu bisa memesan lagi kapan saja, atau hubungi admin.';
+    markCx([o.id]);
+    cxPop=popup(MASCOT+'<h2>Maaf, pesananmu belum bisa kami proses</h2><p>'+msg+'</p><p class="hint">'+esc(o.code)+' &middot; '+esc(o.a)+' &rarr; '+esc(o.b)+'</p>'
+      +'<a class="btn wa" id="cx-wa" href="'+esc(waLink('Halo Cirgo, soal pesanan '+o.code+' yang dibatalkan.'))+'" target="_blank" rel="noopener">Hubungi admin</a>'
+      +'<button type="button" class="btn" id="cx-new">Pesan di jam lain</button><button type="button" class="btn ghost" id="cx-x">Tutup</button>',
+      function(api,ov){
+        function done(){ api.close(); cxPop=null }
+        ov.querySelector('#cx-x').addEventListener('click',done);
+        ov.querySelector('#cx-new').addEventListener('click',function(){ done(); resetOrder(); go('order') });
+        ov.querySelector('#cx-wa').addEventListener('click',function(){ setTimeout(done,200) });
+      });
+  }
+
+  /* ===== pemantau global: tawaran, pembatalan, sinkron pesanan ===== */
+  var sig='', monBusy=false, rtOn=false;
+  function startRT(){ if(rtOn||!user) return; rtOn=true; try{ sb.channel('cirgo-bk').on('postgres_changes',{event:'*',schema:'public',table:'bookings'},function(){ monitor() }).subscribe() }catch(e){} }
+  function monitor(){
+    if(!user||monBusy) return; monBusy=true; startRT();
+    qb(function(c){return sb.from('bookings').select(c).order('created_at',{ascending:false}).limit(20)}).then(function(r){
+      monBusy=false; if(r.error||!r.data) return; var rows=r.data;
+      var sg=rows.map(function(x){return x.id+x.status+x.payment_status+(x.pay_expires_at||'')}).join('|');
+      if(sg!==sig){ sig=sg; loadList(); if(viewing&&order){ var cur2=rows.filter(function(x){return x.id===order.id})[0]; if(cur2){ order=fromRow(cur2); render() } } }
+      var off=rows.filter(function(x){return x.status==='offered'&&(!x.offer_expires_at||new Date(x.offer_expires_at).getTime()>Date.now())})[0];
+      if(offerPop&&(!off||off.id!==offerId)) closeOffer();
+      if(off&&!offerPop){ if(cxPop){cxPop.close();cxPop=null} showOffer(off); return }
+      if(!offerPop&&!cxPop){
+        var seen=seenCx(), now=Date.now();
+        var cx=rows.filter(function(x){return x.status==='cancelled'&&(x.cancelled_by==='admin'||x.cancelled_by==='system')&&seen.indexOf(x.id)<0&&now-new Date(x.created_at).getTime()<86400000})[0];
+        var ids=rows.filter(function(x){return x.status==='cancelled'}).map(function(x){return x.id});
+        if(cx){ showCancel(cx); markCx(ids) } else markCx(ids);
+      }
+    },function(){ monBusy=false });
+  }
+  setInterval(monitor,6000); setTimeout(monitor,1500);
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) monitor() });
+  CgF($('pfcard'),{period:7500});
+
+})();
+
+
+</script>
+</body>
+</html>
