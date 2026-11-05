@@ -410,9 +410,20 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
   @keyframes tear{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(16px);opacity:0}}
 }
 
+.route-hero.live{cursor:default;margin-bottom:14px}
+.route-hero.live .rh-title{font-size:32px}
+.rh-route label{position:relative;display:block;cursor:pointer}
+.rh-route label::after{content:'\25BE';position:absolute;right:50px;bottom:12px;opacity:.7;pointer-events:none}
+.rh-route select{appearance:none;-webkit-appearance:none;width:100%;min-height:0;margin:0;padding:2px 64px 0 0;border:0;border-radius:0;background:transparent;color:inherit;font:inherit;outline:0;text-overflow:ellipsis}
+.rh-route select option{color:#0F1B2D;background:#fff}
+.rh-route .s1,.rh-route .s2{padding-right:0}
+.rh-swap{position:absolute;right:0;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1.5px solid currentColor;background:transparent;color:inherit;opacity:.75;font-size:20px;line-height:1;cursor:pointer;z-index:2}
+.route-hero .price{margin:0}
+.route-hero .price.empty{display:none}
+button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
+#rh-hint{margin:0;min-height:0;color:#FFB4A9}
+:root[data-theme="light"] #rh-hint{color:#B3261E}
 .homeform{padding:18px 16px 16px;border:1px solid var(--line);border-radius:22px;background:var(--surface);margin-bottom:14px}
-.homeform h1{margin:0 0 4px;font:500 28px/1.1 var(--f-display)}
-#s-form .svcbanner{display:none}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 
@@ -462,23 +473,22 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
       <div class="greetrow"><div class="hi" id="greet">Selamat pagi</div><div class="nm" id="uname">Nama</div></div>
       <div class="svcbanner" role="status" hidden></div>
       
-      <section class="homeform" id="homeform"><div id="s-form">
-        <div class="svcbanner" role="status" hidden></div>
-        <h1>Mau ke mana?</h1>
-        <p class="sub">Pilih dari daftar kelurahan. Harga tidak berubah karena rute atau macet.</p>
-        <form id="f" novalidate>
-          <fieldset>
-            <legend>Rute</legend>
-            <div class="route">
-              <div class="field"><label for="from">Kelurahan jemput</label><select id="from"></select></div>
-              <div class="field"><label for="to">Kelurahan tujuan</label><select id="to"></select></div>
-              <button type="button" class="swap" id="swap" aria-label="Tukar jemput dan tujuan">Tukar arah</button>
-            </div>
-          </fieldset>
-          <div id="price" class="price empty" aria-live="polite">
-            <div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p>
-          </div>
-          <fieldset>
+      <form id="f" novalidate>
+      <section class="route-hero live" id="s-form">
+        <svg class="watermark" viewBox="0 0 200 200" aria-hidden="true"><path d="M150 52A68 68 0 1 0 150 148" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/></svg>
+        <span class="rh-title">Mau ke mana?</span>
+        <div class="rh-route">
+          <i class="dot a"></i><i class="line"></i><i class="dot b"></i>
+          <label class="s1"><small>Jemput</small><select id="from" aria-label="Kelurahan jemput"></select></label>
+          <label class="s2"><small>Tujuan</small><select id="to" aria-label="Kelurahan tujuan"></select></label>
+          <button type="button" class="rh-swap" id="swap" aria-label="Tukar jemput dan tujuan">&#8645;</button>
+        </div>
+        <div id="price" class="price empty" aria-live="polite"><div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p></div>
+        <button type="button" class="rh-go" id="rh-go">Pesan sekarang<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <p class="err" id="rh-hint" role="alert"></p>
+      </section>
+      <div class="homeform" id="f-more" hidden>
+<fieldset>
             <legend>Detail jemput</legend>
             <div class="field" style="display:none"><label for="nama">Nama</label><input id="nama" type="text" autocomplete="name"></div>
             <div class="field" style="display:none"><label for="wa">Nomor WhatsApp</label><input id="wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx"></div>
@@ -495,8 +505,8 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
           <button type="submit" class="btn" id="go">Kirim pesanan</button>
           <p class="err" id="err" role="alert"></p>
           <p class="help-inline">Bingung mengisi? <a href="#" id="wa-order" target="_blank" rel="noopener" style="color:var(--gold-ink);font-weight:700">Chat admin lewat WhatsApp</a></p>
-        </form>
-      </div></section>
+              </div>
+    </form>
       <div class="rows">
         <button class="row2" type="button" id="c-sched">
           <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
@@ -844,7 +854,7 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
     var t=e.target.closest('[data-go]'); if(t&&t.getAttribute('data-go')) go(t.getAttribute('data-go'));
     if(e.target.closest('[data-again]')) resetOrder();
   });
-  $('c-sched').addEventListener('click',function(){ go('order'); $('when').value='later'; $('when-wrap').hidden=false });
+  $('c-sched').addEventListener('click',function(){ go('order'); $('when').value='later'; $('when-wrap').hidden=false; openMore() });
 
   /* ---------- daftar kelurahan dari database ---------- */
   var from=$('from'),to=$('to'),price=$('price'), areas=[], byId={}, loaded=false, OTHER='other';
@@ -1058,7 +1068,7 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
       if(r.error&&/layanan_tutup/.test(r.error.message||'')){ loadService(); err.textContent='Waktu jemput itu di luar jam layanan.'+(svc&&svc.shifts?' Jam layanan: '+fmtShifts(svc.shifts)+'.':''); return }
       if(r.error||!r.data){ err.textContent='Pesanan belum tersimpan. Coba lagi, atau pesan lewat WhatsApp.'; return }
       order=fromRow(r.data); lastStatus=null; openTrack(); loadList();
-      $('det-from').value=''; $('det-to').value='';
+      $('det-from').value=''; $('det-to').value=''; closeMore();
     },function(){ err.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.' });
   });
   $('tk-cancel').addEventListener('click',function(){
@@ -1183,6 +1193,10 @@ $('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydo
   function mmss(ms){ if(ms<0) ms=0; var m=Math.floor(ms/60000),s=Math.floor(ms/1000)%60; return (m<10?'0':'')+m+':'+(s<10?'0':'')+s }
 
   /* ===== pilihan tunai / non-tunai di form pesan ===== */
+  function openMore(){ var m=$('f-more'); if(!m.hidden) return; m.hidden=false; $('rh-go').hidden=true; setTimeout(function(){ try{ m.scrollIntoView({block:'start',behavior:'smooth'}) }catch(e){ m.scrollIntoView() } },60) }
+  function closeMore(){ $('f-more').hidden=true; $('rh-go').hidden=false; $('rh-hint').textContent='' }
+  $('rh-go').addEventListener('click',function(){ var h=$('rh-hint'); h.textContent=''; if(!$('from').value||!$('to').value){ h.textContent='Pilih kelurahan jemput dan tujuan dulu.'; return } openMore() });
+  ['from','to'].forEach(function(id){ $(id).addEventListener('change',function(){ $('rh-hint').textContent='' }) });
   var payPref='cash', cashSet={};
   document.querySelectorAll('#pp [data-pp]').forEach(function(b){ b.addEventListener('click',function(){
     payPref=b.dataset.pp;
