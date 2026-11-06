@@ -448,8 +448,16 @@ body.has-chfab::after{content:"";display:block;height:72px}
 .chm small{display:block;margin-top:2px;font-size:11px;opacity:.65}
 .chm.me{align-self:flex-end;background:#0F1B2D;color:#F6F3EC;border-bottom-right-radius:4px}
 .chm.them{align-self:flex-start;background:#F3EBDD;color:#0F1B2D;border-bottom-left-radius:4px}
-.ch-f{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
-.ch-f input{min-width:0;margin:0}.ch-f .btn{min-height:0;padding:0 16px;width:auto}
+.ch-f{display:grid;grid-template-columns:auto 1fr auto;gap:8px;margin-top:10px;align-items:stretch}
+.ch-att{width:44px;height:44px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
+.ch-att svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ch-prev{position:relative;display:inline-block;margin-top:10px}
+.ch-prev img{display:block;max-height:96px;max-width:180px;border-radius:12px;border:1px solid var(--line)}
+.ch-prev button{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border:0;border-radius:50%;background:#0F1B2D;color:#fff;font-size:17px;line-height:1;cursor:pointer}
+.chimg{display:block;max-width:100%;max-height:220px;border-radius:10px;cursor:zoom-in;margin-bottom:4px;background:#e8e2d5;min-height:48px;min-width:48px}
+#ch-lb{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(6,12,26,.9);padding:12px;cursor:zoom-out}
+#ch-lb[hidden]{display:none}#ch-lb img{max-width:100%;max-height:100%;border-radius:8px}
+.ch-f input{min-width:0;margin:0}.ch-f .btn{min-height:44px;padding:0 16px;width:auto}
 /* titik jemput GPS */
 .gps{margin-top:10px}
 .gps-c{display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font:600 14.5px/1.3 var(--f-body);color:var(--ink)}
@@ -798,12 +806,14 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   </div>
 </div>
 
+<div id="ch-lb" hidden><img alt="Foto"></div>
 <button type="button" class="chfab" id="ch-fab" hidden aria-label="Buka chat dengan driver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/></svg><b class="chb" id="ch-badge" hidden></b></button>
 <div class="dpm" id="ch-pop" hidden role="dialog" aria-modal="true" aria-labelledby="ch-t"><div class="dpm-card" id="ch-card"><div class="dpm-box">
   <div class="dpm-head"><h2 id="ch-t">Chat dengan driver</h2><button type="button" class="dpm-x" id="ch-x" aria-label="Tutup">&times;</button></div>
   <p class="ch-note">Hanya aktif selama pesanan berjalan. Pesan terhapus setelah pesanan selesai.</p>
   <div class="ch-l" id="ch-l" aria-live="polite"></div>
-  <form class="ch-f" id="ch-f" novalidate><input id="ch-in" type="text" maxlength="500" autocomplete="off" placeholder="Tulis pesan untuk driver" aria-label="Pesan untuk driver"><button type="submit" class="btn" id="ch-s">Kirim</button></form>
+  <div class="ch-prev" id="ch-prev" hidden><img id="ch-pimg" alt="Foto yang akan dikirim"><button type="button" id="ch-pdel" aria-label="Hapus foto">&times;</button></div>
+  <form class="ch-f" id="ch-f" novalidate><button type="button" class="ch-att" id="ch-att" aria-label="Lampirkan foto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.6-2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.2"/></svg></button><input id="ch-file" type="file" accept="image/*" hidden><input id="ch-in" type="text" maxlength="500" autocomplete="off" placeholder="Tulis pesan untuk driver" aria-label="Pesan untuk driver"><button type="submit" class="btn" id="ch-s">Kirim</button></form>
   <p class="err" id="ch-e" role="alert"></p>
 </div></div></div>
 <script>
@@ -1152,7 +1162,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   }
   function chatStop(){
     chClose(); if(chatCh){ try{ sb.removeChannel(chatCh) }catch(e){} chatCh=null } if(chatT){ clearInterval(chatT); chatT=null }
-    chatBk=null; chatSeen={}; chatReady=false; chUnread=0; $('ch-l').innerHTML=''; chFab();
+    chatBk=null; chatSeen={}; chatReady=false; chUnread=0; $('ch-l').innerHTML=''; chPhotoClear(); chFab();
   }
   function chNotify(){
     try{ navigator.vibrate&&navigator.vibrate([150,80,150]) }catch(e){}
@@ -1162,15 +1172,34 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     if(busy){ chFab(); return }
     chOpen(false);
   }
+  var chUrl={};
+  function chLb(u){ var l=$('ch-lb'); l.firstChild.src=u; l.hidden=false }
+  $('ch-lb').addEventListener('click',function(){ this.hidden=true; this.firstChild.removeAttribute('src') });
+  function chImg(path){
+    var im=document.createElement('img'); im.className='chimg'; im.alt='Foto lampiran';
+    var set=function(u){ im.src=u; im.addEventListener('click',function(){ chLb(u) }) };
+    if(chUrl[path]) set(chUrl[path]);
+    else sb.storage.from('chat-photos').createSignedUrl(path,3600).then(function(r){
+      if(r.error||!r.data){ var t=document.createElement('span'); t.textContent='Foto tidak bisa dimuat'; if(im.parentNode) im.parentNode.replaceChild(t,im); return }
+      chUrl[path]=r.data.signedUrl; set(r.data.signedUrl);
+    },function(){});
+    return im;
+  }
   function chatAdd(m){
     if(!m||chatSeen[m.id]) return; chatSeen[m.id]=1;
     var l=$('ch-l'), d=document.createElement('div'), t=new Date(m.created_at);
-    d.className='chm '+(m.sender==='penumpang'?'me':'them'); d.textContent=m.body;
+    d.className='chm '+(m.sender==='penumpang'?'me':'them');
+    if(m.photo_path) d.appendChild(chImg(m.photo_path));
+    if(!(m.photo_path&&m.body==='\uD83D\uDCF7 Foto')){ var tx=document.createElement('span'); tx.textContent=m.body; d.appendChild(tx) }
     var sm=document.createElement('small'); sm.textContent=isNaN(t)?'':t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}).replace(':','.'); d.appendChild(sm);
     l.appendChild(d); l.scrollTop=l.scrollHeight;
     if(chatReady&&m.sender==='driver') chNotify();
   }
-  function chatLoad(){ if(!chatBk) return; var id=chatBk; sb.from('booking_messages').select('id,sender,body,created_at').eq('booking_id',id).order('created_at').limit(200).then(function(r){ if(id!==chatBk) return; if(!r.error&&r.data) r.data.forEach(chatAdd); chatReady=true },function(){}) }
+  function chQuery(id){
+    var q=function(c){ return sb.from('booking_messages').select(c).eq('booking_id',id).order('created_at').limit(200) };
+    return q('id,sender,body,created_at,photo_path').then(function(r){ return r.error?q('id,sender,body,created_at'):r });
+  }
+  function chatLoad(){ if(!chatBk) return; var id=chatBk; chQuery(id).then(function(r){ if(id!==chatBk) return; if(!r.error&&r.data) r.data.forEach(chatAdd); chatReady=true },function(){}) }
   function chatStart(id){
     chatStop(); chatBk=id; chFab(); chatLoad();
     try{ chatCh=sb.channel('cirgo-chat-'+id).on('postgres_changes',{event:'INSERT',schema:'public',table:'booking_messages',filter:'booking_id=eq.'+id},function(p){ chatAdd(p.new) }).subscribe() }catch(e){}
@@ -1184,14 +1213,51 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   $('ch-x').addEventListener('click',chClose);
   $('ch-pop').addEventListener('click',function(e){ if(e.target===this) chClose() });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!$('ch-pop').hidden&&ov.hidden) chClose() });
+  function shrinkImg(file){
+    return new Promise(function(res,rej){
+      if(!file||!/^image\//.test(file.type||'')||file.size>25*1024*1024){rej(new Error('bukan foto'));return}
+      var url=URL.createObjectURL(file),im=new Image();
+      im.onload=function(){
+        var W=im.naturalWidth,H=im.naturalHeight,tries=[[1280,.72],[1024,.6],[800,.5]],i=0;
+        URL.revokeObjectURL(url);
+        (function go(){
+          var m=tries[i][0],k=Math.min(1,m/Math.max(W,H)),c=document.createElement('canvas');
+          c.width=Math.max(1,Math.round(W*k));c.height=Math.max(1,Math.round(H*k));
+          var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);
+          c.toBlob(function(b){
+            if(!b){rej(new Error('gagal'));return}
+            if(b.size>900*1024&&i<tries.length-1){i++;go();return}
+            res(b)},'image/jpeg',tries[i][1])})()};
+      im.onerror=function(){URL.revokeObjectURL(url);rej(new Error('bukan foto'))};
+      im.src=url})}
+  var chPhoto=null;
+  function chPhotoClear(){ chPhoto=null; var im=$('ch-pimg'); if(im.src&&im.src.indexOf('blob:')===0) URL.revokeObjectURL(im.src); im.removeAttribute('src'); $('ch-prev').hidden=true }
+  function chTrash(path){ try{ sb.from('chat_photo_trash').insert({path:path}).then(function(){},function(){}) }catch(e){} }
+  function chErr(e){ var m=(e&&e.message)||''; return /chat_penuh/.test(m)?'Chat sudah penuh. Hubungi admin lewat WhatsApp.':(/foto_penuh/.test(m)?'Batas 6 foto per pesanan sudah tercapai.':(/row-level|policy|violates/i.test(m)?'Chat sudah ditutup karena pesanan tidak berjalan.':'Pesan belum terkirim. Coba lagi.')) }
+  $('ch-att').addEventListener('click',function(){ $('ch-file').click() });
+  $('ch-file').addEventListener('change',function(){
+    var f=this.files&&this.files[0]; this.value=''; if(!f) return; $('ch-e').textContent='';
+    shrinkImg(f).then(function(b){ chPhotoClear(); chPhoto=b; $('ch-pimg').src=URL.createObjectURL(b); $('ch-prev').hidden=false },function(){ $('ch-e').textContent='File itu bukan foto yang bisa dibaca.' });
+  });
+  $('ch-pdel').addEventListener('click',chPhotoClear);
   $('ch-f').addEventListener('submit',function(e){
-    e.preventDefault(); var t=$('ch-in').value.trim(); if(!t||!chatBk) return;
-    var btn=$('ch-s'), er=$('ch-e'); btn.disabled=true; er.textContent='';
-    sb.from('booking_messages').insert({booking_id:chatBk,sender:'penumpang',body:t.slice(0,500)}).select('id,sender,body,created_at').single().then(function(r){
-      btn.disabled=false;
-      if(r.error){ er.textContent=/chat_penuh/.test(r.error.message||'')?'Chat sudah penuh. Hubungi admin lewat WhatsApp.':(/row-level|policy/i.test(r.error.message||'')?'Chat sudah ditutup karena pesanan tidak berjalan.':'Pesan belum terkirim. Coba lagi.'); return }
-      $('ch-in').value=''; chatAdd(r.data);
-    },function(){ btn.disabled=false; er.textContent='Tidak bisa terhubung. Periksa sinyal.' });
+    e.preventDefault(); var t=$('ch-in').value.trim(); if((!t&&!chPhoto)||!chatBk) return;
+    var btn=$('ch-s'), er=$('ch-e'), bk=chatBk, ph=chPhoto; btn.disabled=true; er.textContent='';
+    var fin=function(){ btn.disabled=false }, net=function(){ fin(); er.textContent='Tidak bisa terhubung. Periksa sinyal.' };
+    var send=function(path){
+      var row={booking_id:bk,sender:'penumpang',body:(t||'\uD83D\uDCF7 Foto').slice(0,500)}; if(path) row.photo_path=path;
+      return sb.from('booking_messages').insert(row).select('*').single().then(function(r){
+        fin();
+        if(r.error){ if(path) chTrash(path); er.textContent=chErr(r.error); return }
+        $('ch-in').value=''; chPhotoClear(); chatAdd(r.data);
+      });
+    };
+    if(!ph){ send(null).then(null,net); return }
+    var path=bk+'/'+Date.now().toString(36)+Math.random().toString(36).slice(2,8)+'.jpg';
+    sb.storage.from('chat-photos').upload(path,ph,{contentType:'image/jpeg',upsert:false}).then(function(u){
+      if(u.error){ fin(); er.textContent=/row-level|policy|violates/i.test(u.error.message||'')?'Chat sudah ditutup karena pesanan tidak berjalan.':'Foto belum terkirim. Coba lagi.'; return }
+      return send(path);
+    }).then(null,net);
   });
   function openTrack(){ openingTrack=true; go('orders'); openingTrack=false; viewing=true; $('o-list').hidden=true; $('s-track').hidden=false; render(); window.scrollTo(0,0); if(!poll&&ACTIVE.indexOf(order.status)>-1) poll=setInterval(refreshOrder,5000) }
   var lastStatus=null;
