@@ -432,6 +432,18 @@ select,input[type=text],input[type=tel],input[type=password],input[type=datetime
 .dpm-sum{margin:0 0 12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;display:grid;gap:2px}
 .dpm-sum b{font:600 16px/1.3 var(--f-body)}
 .dpm-sum span{font-size:13.5px;color:var(--muted)}
+/* chat sementara */
+.chbox{margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:18px;background:var(--surface)}
+.ch-h{display:grid;gap:2px;margin-bottom:10px}.ch-h b{font:600 16px var(--f-body)}.ch-h span{font-size:12.5px;color:var(--muted)}
+.ch-l{display:flex;flex-direction:column;gap:6px;max-height:240px;min-height:56px;overflow:auto;padding:2px}
+.ch-l:empty::before{content:"Belum ada pesan.";color:var(--muted);font-size:13.5px;margin:auto}
+.chm{max-width:82%;padding:8px 11px;border-radius:14px;font-size:15px;line-height:1.35;word-break:break-word;white-space:pre-wrap}
+.chm small{display:block;margin-top:2px;font-size:11px;opacity:.65}
+.chm.me{align-self:flex-end;background:#0F1B2D;color:#F6F3EC;border-bottom-right-radius:4px}
+.chm.them{align-self:flex-start;background:#F3EBDD;color:#0F1B2D;border-bottom-left-radius:4px}
+.ch-f{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
+.ch-f input{min-width:0;margin:0}.ch-f .btn{min-height:0;padding:0 16px;width:auto}
+
 
 .route-hero.live .rh-title{font-size:32px}
 .rh-route label{position:relative;display:block;cursor:pointer}
@@ -517,8 +529,8 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
             <legend>Detail jemput</legend>
             <div class="field" style="display:none"><label for="nama">Nama</label><input id="nama" type="text" autocomplete="name"></div>
             <div class="field" style="display:none"><label for="wa">Nomor WhatsApp</label><input id="wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx"></div>
-            <div class="field"><label for="det-from">Alamat atau patokan jemput</label><input id="det-from" type="text" placeholder="Nama jalan, perumahan, atau patokan"><span class="hint">Untuk pengemudi. Tidak memengaruhi harga.</span></div>
-            <div class="field"><label for="det-to">Alamat atau patokan tujuan <span class="hint">(boleh dikosongkan)</span></label><input id="det-to" type="text" placeholder="Nama jalan, gedung, atau patokan"></div>
+            <div class="field"><label for="det-from">Alamat atau patokan jemput</label><input id="det-from" type="text" placeholder="Nama jalan, perumahan, atau patokan"><span class="hint">Tulis nama tempat atau jalan seperti yang tampil di Google Maps supaya pengemudi mudah menemukan. Tidak memengaruhi harga.</span></div>
+            <div class="field"><label for="det-to">Alamat atau patokan tujuan <span class="hint">(boleh dikosongkan)</span></label><input id="det-to" type="text" placeholder="Nama jalan, gedung, atau patokan"><span class="hint">Tulis seperti yang tampil di Google Maps agar titiknya tidak terlalu jauh.</span></div>
             <div class="field"><label for="when">Waktu jemput</label><select id="when"><option value="now">Secepatnya</option><option value="later">Jadwalkan</option></select></div>
             <div class="field" id="when-wrap" hidden><label for="when-at">Tanggal dan jam</label><input id="when-at" type="datetime-local"><span class="hint">Admin akan mengonfirmasi jadwal ini.</span></div>
           </fieldset>
@@ -671,6 +683,12 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
           <button type="button" class="btn" id="p2-claim">Saya sudah bayar</button>
           <p class="hint" id="p2-hint"></p>
         </div>
+        <section class="chbox" id="ch-box" hidden aria-label="Chat dengan driver">
+          <div class="ch-h"><b>Chat dengan driver</b><span>Hanya aktif selama pesanan berjalan. Pesan terhapus setelah selesai.</span></div>
+          <div class="ch-l" id="ch-l" aria-live="polite"></div>
+          <form class="ch-f" id="ch-f" novalidate><input id="ch-in" type="text" maxlength="500" autocomplete="off" placeholder="Tulis pesan untuk driver" aria-label="Pesan untuk driver"><button type="submit" class="btn" id="ch-s">Kirim</button></form>
+          <p class="err" id="ch-e" role="alert"></p>
+        </section>
         <p class="hint" id="tk-pay"></p>
         <div class="row">
           <a class="btn wa" id="wa-done" href="#" target="_blank" rel="noopener">Chat admin lewat WhatsApp</a>
@@ -1066,11 +1084,43 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       dfrom:d.pickup_text||'',dto:d.dropoff_text||'',pickup:d.pickup_at,created:d.created_at,pm:d.payment_method,paid:d.payment_status==='paid',ps:d.payment_status,pref:d.pay_pref||'cash',
       etaAt:d.eta_at||null,offerExp:d.offer_expires_at||null,payExp:d.pay_expires_at||null,cby:d.cancelled_by||null,creason:d.cancel_reason||null}
   }
-  function showListView(){ viewing=false; $('s-track').hidden=true; $('o-list').hidden=false; stopTimer() }
+  function showListView(){ chatStop(); viewing=false; $('s-track').hidden=true; $('o-list').hidden=false; stopTimer() }
+
+  /* ---------- chat sementara dengan driver ---------- */
+  var CHAT_OPEN=['confirmed','ontheway','arrived','ontrip'], chatBk=null, chatCh=null, chatT=null, chatSeen={};
+  function chatStop(){ if(chatCh){ try{ sb.removeChannel(chatCh) }catch(e){} chatCh=null } if(chatT){ clearInterval(chatT); chatT=null } chatBk=null; chatSeen={}; var l=$('ch-l'); if(l) l.innerHTML='' }
+  function chatAdd(m){
+    if(!m||chatSeen[m.id]) return; chatSeen[m.id]=1;
+    var l=$('ch-l'), d=document.createElement('div'), t=new Date(m.created_at);
+    d.className='chm '+(m.sender==='penumpang'?'me':'them'); d.textContent=m.body;
+    var sm=document.createElement('small'); sm.textContent=isNaN(t)?'':t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}).replace(':','.'); d.appendChild(sm);
+    l.appendChild(d); l.scrollTop=l.scrollHeight;
+  }
+  function chatLoad(){ if(!chatBk) return; var id=chatBk; sb.from('booking_messages').select('id,sender,body,created_at').eq('booking_id',id).order('created_at').limit(200).then(function(r){ if(id!==chatBk||r.error||!r.data) return; r.data.forEach(chatAdd) },function(){}) }
+  function chatStart(id){
+    chatStop(); chatBk=id; chatLoad();
+    try{ chatCh=sb.channel('cirgo-chat-'+id).on('postgres_changes',{event:'INSERT',schema:'public',table:'booking_messages',filter:'booking_id=eq.'+id},function(p){ chatAdd(p.new) }).subscribe() }catch(e){}
+    chatT=setInterval(chatLoad,15000);
+  }
+  function chatSync(){
+    var o=order, show=!!(o&&CHAT_OPEN.indexOf(o.status)>-1);
+    $('ch-box').hidden=!show;
+    if(!show){ chatStop(); return }
+    if(chatBk!==o.id) chatStart(o.id);
+  }
+  $('ch-f').addEventListener('submit',function(e){
+    e.preventDefault(); var t=$('ch-in').value.trim(); if(!t||!chatBk) return;
+    var btn=$('ch-s'), er=$('ch-e'); btn.disabled=true; er.textContent='';
+    sb.from('booking_messages').insert({booking_id:chatBk,sender:'penumpang',body:t.slice(0,500)}).select('id,sender,body,created_at').single().then(function(r){
+      btn.disabled=false;
+      if(r.error){ er.textContent=/chat_penuh/.test(r.error.message||'')?'Chat sudah penuh. Hubungi admin lewat WhatsApp.':(/row-level|policy/i.test(r.error.message||'')?'Chat sudah ditutup karena pesanan tidak berjalan.':'Pesan belum terkirim. Coba lagi.'); return }
+      $('ch-in').value=''; chatAdd(r.data);
+    },function(){ btn.disabled=false; er.textContent='Tidak bisa terhubung. Periksa sinyal.' });
+  });
   function openTrack(){ openingTrack=true; go('orders'); openingTrack=false; viewing=true; $('o-list').hidden=true; $('s-track').hidden=false; render(); window.scrollTo(0,0); if(!poll&&ACTIVE.indexOf(order.status)>-1) poll=setInterval(refreshOrder,5000) }
   var lastStatus=null;
   function render(){
-    var o=order, S=ST[o.status]||ST.new;
+    var o=order, S=ST[o.status]||ST.new; chatSync();
     $('tk-status').className='status'+(o.status==='done'?' ok':''); $('tk-status').textContent=S.badge;
     $('tk-title').textContent=S.title; var xb=payBadge(o.status,o.pref,o.ps); if(xb){ $('tk-status').textContent=xb.b; $('tk-title').textContent=xb.t }
     var sb2=S.sub; if(o.eta&&(o.status==='new'||o.status==='confirmed')) sb2='Perkiraan jemput: '+o.eta+'. '+sb2;
