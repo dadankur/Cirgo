@@ -454,6 +454,11 @@ body.has-chfab::after{content:"";display:block;height:72px}
 .ch-prev{position:relative;display:inline-block;margin-top:10px}
 .ch-prev img{display:block;max-height:96px;max-width:180px;border-radius:12px;border:1px solid var(--line)}
 .ch-prev button{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border:0;border-radius:50%;background:#0F1B2D;color:#fff;font-size:17px;line-height:1;cursor:pointer}
+.tk-chat{position:relative;width:100%}
+.tk-chat-s{margin:6px 0 10px;font-size:13px;color:var(--muted);text-align:center}
+.tk-chat .chb2{display:inline-block;margin-left:8px;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:#B3261E;color:#fff;font:600 12px/20px var(--f-body);text-align:center}
+.tk-chat.new{animation:chpulse 1.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.tk-chat.new{animation:none}}
 .chimg{display:block;max-width:100%;max-height:220px;border-radius:10px;cursor:zoom-in;margin-bottom:4px;background:#e8e2d5;min-height:48px;min-width:48px}
 #ch-lb{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(6,12,26,.9);padding:12px;cursor:zoom-out}
 #ch-lb[hidden]{display:none}#ch-lb img{max-width:100%;max-height:100%;border-radius:8px}
@@ -713,6 +718,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
         </div>
         <p class="hint" id="tk-pay"></p>
         <div class="row">
+          <div id="tk-chatw" hidden><button type="button" class="btn tk-chat" id="tk-chat">Chat dengan admin (online)<b class="chb2" id="tk-chat-b" hidden></b></button><p class="tk-chat-s">Balasan muncul langsung di sini, tanpa pindah aplikasi.</p></div>
           <a class="btn wa" id="wa-done" href="#" target="_blank" rel="noopener">Chat admin lewat WhatsApp</a>
           <button type="button" class="btn ghost" id="tk-cancel">Batalkan pesanan</button>
           <button type="button" class="btn" id="tk-new" hidden>Pesan lagi</button>
@@ -810,7 +816,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
 <button type="button" class="chfab" id="ch-fab" hidden aria-label="Buka chat dengan driver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/></svg><b class="chb" id="ch-badge" hidden></b></button>
 <div class="dpm" id="ch-pop" hidden role="dialog" aria-modal="true" aria-labelledby="ch-t"><div class="dpm-card" id="ch-card"><div class="dpm-box">
   <div class="dpm-head"><h2 id="ch-t">Chat dengan driver</h2><button type="button" class="dpm-x" id="ch-x" aria-label="Tutup">&times;</button></div>
-  <p class="ch-note">Hanya aktif selama pesanan berjalan. Pesan terhapus setelah pesanan selesai.</p>
+  <p class="ch-note" id="ch-note"></p>
   <div class="ch-l" id="ch-l" aria-live="polite"></div>
   <div class="ch-prev" id="ch-prev" hidden><img id="ch-pimg" alt="Foto yang akan dikirim"><button type="button" id="ch-pdel" aria-label="Hapus foto">&times;</button></div>
   <form class="ch-f" id="ch-f" novalidate><button type="button" class="ch-att" id="ch-att" aria-label="Lampirkan foto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.6-2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.2"/></svg></button><input id="ch-file" type="file" accept="image/*" hidden><input id="ch-in" type="text" maxlength="500" autocomplete="off" placeholder="Tulis pesan untuk driver" aria-label="Pesan untuk driver"><button type="submit" class="btn" id="ch-s">Kirim</button></form>
@@ -1150,29 +1156,19 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       return r;
     });
   }
-  /* ---------- chat sementara dengan driver (pop up) ---------- */
-  var CHAT_OPEN=['confirmed','ontheway','arrived','ontrip'], chatBk=null, chatCh=null, chatT=null, chatSeen={}, chatReady=false, chUnread=0, chFx=null;
-  function chFab(){ var f=$('ch-fab'), b=$('ch-badge'); f.hidden=!chatBk||!$('ch-pop').hidden; document.body.classList.toggle('has-chfab',!f.hidden); b.hidden=!chUnread; b.textContent=chUnread||''; f.classList.toggle('new',chUnread>0) }
-  function chClose(){ if(chFx){ chFx.stop(); chFx=null } var m=$('ch-pop'); if(!m.hidden){ m.hidden=true; document.body.style.overflow='' } chFab() }
-  function chOpen(focus){
-    var m=$('ch-pop'); if(!m.hidden||!chatBk) return;
-    chUnread=0; m.hidden=false; document.body.style.overflow='hidden'; chFab();
-    var cd=$('ch-card'); chFx=CgF(cd,{period:6500,fire:true}); setTimeout(function(){ if(chFx) chFx.burst(14,cd.clientWidth/2,0,170) },250);
-    var l=$('ch-l'); l.scrollTop=l.scrollHeight; if(focus) setTimeout(function(){ $('ch-in').focus() },120);
+  /* ---------- chat sementara dengan admin dan driver (pop up) ---------- */
+  var DRV_OPEN=['confirmed','ontheway','arrived','ontrip'], ADM_OPEN=['new','offered'].concat(DRV_OPEN);
+  var chatAct={}, CHM={}, chLoaded={}, chatCh=null, chatT=null, chUn={}, chFx=null, chCur={bk:null,ch:'driver'}, chUrl={}, chPhoto=null;
+  function chUnTotal(){ var n=0,k; for(k in chUn) n+=chUn[k]; return n }
+  function chFab(){
+    var f=$('ch-fab'), b=$('ch-badge'), n=chUnTotal(), drv=false, id;
+    for(id in chatAct) if(DRV_OPEN.indexOf(chatAct[id])>-1) drv=true;
+    f.hidden=!(drv||n>0)||!$('ch-pop').hidden;
+    document.body.classList.toggle('has-chfab',!f.hidden);
+    b.hidden=!n; b.textContent=n||''; f.classList.toggle('new',n>0);
+    var w=$('tk-chatw'), o=order;
+    if(w){ w.hidden=!(o&&ADM_OPEN.indexOf(o.status)>-1); var u=o?(chUn[o.id+':admin']||0):0; $('tk-chat-b').hidden=!u; $('tk-chat-b').textContent=u||''; $('tk-chat').classList.toggle('new',u>0) }
   }
-  function chatStop(){
-    chClose(); if(chatCh){ try{ sb.removeChannel(chatCh) }catch(e){} chatCh=null } if(chatT){ clearInterval(chatT); chatT=null }
-    chatBk=null; chatSeen={}; chatReady=false; chUnread=0; $('ch-l').innerHTML=''; chPhotoClear(); chFab();
-  }
-  function chNotify(){
-    try{ navigator.vibrate&&navigator.vibrate([150,80,150]) }catch(e){}
-    if(!$('ch-pop').hidden) return;
-    chUnread++;
-    var busy=!$('f-more').hidden||!ov.hidden||offerPop||cxPop;
-    if(busy){ chFab(); return }
-    chOpen(false);
-  }
-  var chUrl={};
   function chLb(u){ var l=$('ch-lb'); l.firstChild.src=u; l.hidden=false }
   $('ch-lb').addEventListener('click',function(){ this.hidden=true; this.firstChild.removeAttribute('src') });
   function chImg(path){
@@ -1185,31 +1181,86 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     },function(){});
     return im;
   }
-  function chatAdd(m){
-    if(!m||chatSeen[m.id]) return; chatSeen[m.id]=1;
-    var l=$('ch-l'), d=document.createElement('div'), t=new Date(m.created_at);
+  function chBubble(m){
+    var d=document.createElement('div'), t=new Date(m.created_at);
     d.className='chm '+(m.sender==='penumpang'?'me':'them');
     if(m.photo_path) d.appendChild(chImg(m.photo_path));
     if(!(m.photo_path&&m.body==='\uD83D\uDCF7 Foto')){ var tx=document.createElement('span'); tx.textContent=m.body; d.appendChild(tx) }
     var sm=document.createElement('small'); sm.textContent=isNaN(t)?'':t.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}).replace(':','.'); d.appendChild(sm);
-    l.appendChild(d); l.scrollTop=l.scrollHeight;
-    if(chatReady&&m.sender==='driver') chNotify();
+    return d;
   }
-  function chQuery(id){
-    var q=function(c){ return sb.from('booking_messages').select(c).eq('booking_id',id).order('created_at').limit(200) };
-    return q('id,sender,body,created_at,photo_path').then(function(r){ return r.error?q('id,sender,body,created_at'):r });
+  function chRender(){
+    var l=$('ch-l'); l.innerHTML='';
+    (CHM[chCur.bk]||[]).forEach(function(m){ if((m.channel||'driver')===chCur.ch) l.appendChild(chBubble(m)) });
+    l.scrollTop=l.scrollHeight;
   }
-  function chatLoad(){ if(!chatBk) return; var id=chatBk; chQuery(id).then(function(r){ if(id!==chatBk) return; if(!r.error&&r.data) r.data.forEach(chatAdd); chatReady=true },function(){}) }
-  function chatStart(id){
-    chatStop(); chatBk=id; chFab(); chatLoad();
-    try{ chatCh=sb.channel('cirgo-chat-'+id).on('postgres_changes',{event:'INSERT',schema:'public',table:'booking_messages',filter:'booking_id=eq.'+id},function(p){ chatAdd(p.new) }).subscribe() }catch(e){}
-    chatT=setInterval(chatLoad,15000);
+  function chShow(bk,ch,focus){
+    var m=$('ch-pop'); chCur={bk:bk,ch:ch}; delete chUn[bk+':'+ch];
+    $('ch-t').textContent=ch==='admin'?'Chat dengan admin':'Chat dengan driver';
+    $('ch-note').textContent='Pesanan '+shortCode(bk)+(ch==='admin'?'. Admin membalas secepatnya.':'. Hanya aktif selama pesanan berjalan.')+' Pesan terhapus setelah pesanan selesai.';
+    chPhotoClear(); $('ch-e').textContent='';
+    chRender();
+    if(m.hidden){
+      m.hidden=false; document.body.style.overflow='hidden';
+      var cd=$('ch-card'); if(chFx) chFx.stop(); chFx=CgF(cd,{period:6500,fire:true}); setTimeout(function(){ if(chFx) chFx.burst(14,cd.clientWidth/2,0,170) },250);
+    }
+    chFab(); if(focus) setTimeout(function(){ $('ch-in').focus() },120);
+  }
+  function chClose(){ if(chFx){ chFx.stop(); chFx=null } var m=$('ch-pop'); if(!m.hidden){ m.hidden=true; document.body.style.overflow='' } chCur.bk=null; chPhotoClear(); chFab() }
+  function chNotify(bk,ch){
+    try{ navigator.vibrate&&navigator.vibrate([150,80,150]) }catch(e){}
+    if(!$('ch-pop').hidden&&chCur.bk===bk&&chCur.ch===ch) return;
+    chUn[bk+':'+ch]=(chUn[bk+':'+ch]||0)+1;
+    var busy=!$('f-more').hidden||!ov.hidden||offerPop||cxPop||!$('ch-pop').hidden;
+    if(busy){ chFab(); return }
+    chShow(bk,ch,false);
+  }
+  function chIn(m){
+    if(!m||!m.booking_id||!chatAct[m.booking_id]) return;
+    var arr=CHM[m.booking_id]||(CHM[m.booking_id]=[]), i;
+    for(i=0;i<arr.length;i++) if(arr[i].id===m.id) return;
+    arr.push(m); arr.sort(function(a,b){ return a.id-b.id });
+    var ch=m.channel||'driver';
+    if(!$('ch-pop').hidden&&chCur.bk===m.booking_id&&chCur.ch===ch) chRender();
+    if(chLoaded[m.booking_id]&&m.sender!=='penumpang') chNotify(m.booking_id,ch);
+  }
+  function chLoadAll(){
+    var ids=Object.keys(chatAct); if(!ids.length) return;
+    sb.from('booking_messages').select('*').in('booking_id',ids).order('created_at').limit(500).then(function(r){
+      if(r.error||!r.data) return;
+      r.data.forEach(chIn); ids.forEach(function(id){ chLoaded[id]=true });
+    },function(){});
+  }
+  function chatStart(){
+    try{ chatCh=sb.channel('cirgo-chat-all').on('postgres_changes',{event:'INSERT',schema:'public',table:'booking_messages'},function(p){ chIn(p.new) }).subscribe() }catch(e){}
+    chLoadAll(); chatT=setInterval(chLoadAll,15000);
+  }
+  function chatStop(){
+    chClose(); if(chatCh){ try{ sb.removeChannel(chatCh) }catch(e){} chatCh=null } if(chatT){ clearInterval(chatT); chatT=null }
+    chatAct={}; CHM={}; chLoaded={}; chUn={}; chFab();
   }
   function chatEnsure(rows){
-    var cr=rows.filter(function(x){ return CHAT_OPEN.indexOf(x.status)>-1 })[0];
-    if(cr){ if(chatBk!==cr.id) chatStart(cr.id) } else if(chatBk) chatStop();
+    var n={}, any=false, added=false, id;
+    rows.forEach(function(x){ if(ADM_OPEN.indexOf(x.status)>-1){ n[x.id]=x.status; any=true; if(!(x.id in chatAct)) added=true } });
+    chatAct=n;
+    for(id in CHM) if(!n[id]){ delete CHM[id]; delete chLoaded[id] }
+    Object.keys(chUn).forEach(function(k){ if(!n[k.split(':')[0]]) delete chUn[k] });
+    if(chCur.bk&&!n[chCur.bk]) chClose();
+    if(!any){ if(chatCh||chatT) chatStop(); else chFab(); return }
+    if(!chatCh) chatStart(); else if(added) chLoadAll();
+    chFab();
   }
-  $('ch-fab').addEventListener('click',function(){ chOpen(true) });
+  $('tk-chat').addEventListener('click',function(){
+    var o=order; if(!o) return;
+    if(!(o.id in chatAct)){ chatAct[o.id]=o.status; if(!chatCh) chatStart(); else chLoadAll() }
+    chShow(o.id,'admin',true);
+  });
+  $('ch-fab').addEventListener('click',function(){
+    var k=Object.keys(chUn)[0], bk=null, ch='driver', id;
+    if(k){ bk=k.split(':')[0]; ch=k.split(':')[1] }
+    else for(id in chatAct){ if(DRV_OPEN.indexOf(chatAct[id])>-1){ bk=id; break } }
+    if(bk) chShow(bk,ch,true);
+  });
   $('ch-x').addEventListener('click',chClose);
   $('ch-pop').addEventListener('click',function(e){ if(e.target===this) chClose() });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!$('ch-pop').hidden&&ov.hidden) chClose() });
@@ -1230,10 +1281,16 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
             res(b)},'image/jpeg',tries[i][1])})()};
       im.onerror=function(){URL.revokeObjectURL(url);rej(new Error('bukan foto'))};
       im.src=url})}
-  var chPhoto=null;
   function chPhotoClear(){ chPhoto=null; var im=$('ch-pimg'); if(im.src&&im.src.indexOf('blob:')===0) URL.revokeObjectURL(im.src); im.removeAttribute('src'); $('ch-prev').hidden=true }
   function chTrash(path){ try{ sb.from('chat_photo_trash').insert({path:path}).then(function(){},function(){}) }catch(e){} }
-  function chErr(e){ var m=(e&&e.message)||''; return /chat_penuh/.test(m)?'Chat sudah penuh. Hubungi admin lewat WhatsApp.':(/foto_penuh/.test(m)?'Batas 6 foto per pesanan sudah tercapai.':(/row-level|policy|violates/i.test(m)?'Chat sudah ditutup karena pesanan tidak berjalan.':'Pesan belum terkirim. Coba lagi.')) }
+  function chErr(e){ var m=(e&&e.message)||''; return /chat_penuh/.test(m)?'Chat sudah penuh. Hubungi admin lewat WhatsApp.':(/foto_penuh/.test(m)?'Batas 6 foto per pesanan sudah tercapai.':(/channel|sender/i.test(m)?'Fitur chat dengan admin belum aktif.':(/row-level|policy|violates/i.test(m)?'Chat sudah ditutup karena pesanan tidak berjalan.':'Pesan belum terkirim. Coba lagi.'))) }
+  function chIns(row){
+    var go=function(r){ return sb.from('booking_messages').insert(r).select('*').single() };
+    return go(row).then(function(x){
+      if(x.error&&/channel/i.test(x.error.message||'')&&row.channel==='driver'){ var r2=Object.assign({},row); delete r2.channel; return go(r2) }
+      return x;
+    });
+  }
   $('ch-att').addEventListener('click',function(){ $('ch-file').click() });
   $('ch-file').addEventListener('change',function(){
     var f=this.files&&this.files[0]; this.value=''; if(!f) return; $('ch-e').textContent='';
@@ -1241,15 +1298,15 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   });
   $('ch-pdel').addEventListener('click',chPhotoClear);
   $('ch-f').addEventListener('submit',function(e){
-    e.preventDefault(); var t=$('ch-in').value.trim(); if((!t&&!chPhoto)||!chatBk) return;
-    var btn=$('ch-s'), er=$('ch-e'), bk=chatBk, ph=chPhoto; btn.disabled=true; er.textContent='';
+    e.preventDefault(); var t=$('ch-in').value.trim(); if((!t&&!chPhoto)||!chCur.bk) return;
+    var btn=$('ch-s'), er=$('ch-e'), bk=chCur.bk, ch=chCur.ch, ph=chPhoto; btn.disabled=true; er.textContent='';
     var fin=function(){ btn.disabled=false }, net=function(){ fin(); er.textContent='Tidak bisa terhubung. Periksa sinyal.' };
     var send=function(path){
-      var row={booking_id:bk,sender:'penumpang',body:(t||'\uD83D\uDCF7 Foto').slice(0,500)}; if(path) row.photo_path=path;
-      return sb.from('booking_messages').insert(row).select('*').single().then(function(r){
+      var row={booking_id:bk,sender:'penumpang',channel:ch,body:(t||'\uD83D\uDCF7 Foto').slice(0,500)}; if(path) row.photo_path=path;
+      return chIns(row).then(function(r){
         fin();
         if(r.error){ if(path) chTrash(path); er.textContent=chErr(r.error); return }
-        $('ch-in').value=''; chPhotoClear(); chatAdd(r.data);
+        $('ch-in').value=''; chPhotoClear(); chIn(r.data);
       });
     };
     if(!ph){ send(null).then(null,net); return }
@@ -1262,7 +1319,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   function openTrack(){ openingTrack=true; go('orders'); openingTrack=false; viewing=true; $('o-list').hidden=true; $('s-track').hidden=false; render(); window.scrollTo(0,0); if(!poll&&ACTIVE.indexOf(order.status)>-1) poll=setInterval(refreshOrder,5000) }
   var lastStatus=null;
   function render(){
-    var o=order, S=ST[o.status]||ST.new;
+    var o=order, S=ST[o.status]||ST.new; chFab();
     $('tk-status').className='status'+(o.status==='done'?' ok':''); $('tk-status').textContent=S.badge;
     $('tk-title').textContent=S.title; var xb=payBadge(o.status,o.pref,o.ps); if(xb){ $('tk-status').textContent=xb.b; $('tk-title').textContent=xb.t }
     var sb2=S.sub; if(o.eta&&(o.status==='new'||o.status==='confirmed')) sb2='Perkiraan jemput: '+o.eta+'. '+sb2;
