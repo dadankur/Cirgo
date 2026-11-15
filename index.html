@@ -1298,6 +1298,29 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   dstL.addEventListener('click',function(e){ var x=e.target.closest('li[data-i]'); if(x) dstPick(x.dataset.i) });
   $('dst-back').addEventListener('click',function(){ dstKelMode(false) });
 
+  /* contoh yang diketik sendiri di kolom Tujuan (berhenti saat diketuk, ada isi, atau tab tidak terlihat) */
+  (function(){
+    var DEF=['CSB Mall','Grage Mall','Grage City','RS Ciremai'], pre='Cari tujuan, mis. ', i=0, j=0, del=false;
+    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce){ dstT.placeholder=pre+DEF[0]; return }
+    function names(){ var L=popularPlaces().map(function(p){ return p.name }); return L.length>=2?L.slice(0,5):DEF }
+    function idle(){ return document.hidden||document.activeElement===dstT||!!dstT.value||!dstT.offsetParent }
+    function tick(){
+      var L=names(), w=L[i%L.length]||DEF[0];
+      if(idle()){ if(!dstT.value) dstT.placeholder=pre+w; j=0; del=false; setTimeout(tick,700); return }
+      if(!del){
+        j++; dstT.placeholder=pre+w.slice(0,j)+'|';
+        if(j>=w.length){ dstT.placeholder=pre+w; setTimeout(function(){ del=true; tick() },1600); return }
+        setTimeout(tick,85+Math.random()*50);
+      } else {
+        j--; dstT.placeholder=pre+w.slice(0,j)+'|';
+        if(j<=0){ del=false; i++; setTimeout(tick,350); return }
+        setTimeout(tick,35);
+      }
+    }
+    setTimeout(tick,900);
+  })();
+
   /* pop up lokasi jemput */
   var pkEl=$('pk'), pkFocus=null;
   $('pk-price').appendChild(price);   /* kartu tarif pindah ke pop up jemput */
@@ -1325,7 +1348,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     pkKelShow(!gps&&!ptSel&&!!from.value); pkFocus=document.activeElement; pkEl.hidden=false; document.body.style.overflow='hidden'; pkSync();
     setTimeout(function(){ $('pk-gps').focus() },60);
   }
-  function pkClose(){ pkEl.hidden=true; document.body.style.overflow=''; $('pk-l').hidden=true; if(pkFocus&&pkFocus.focus) try{ pkFocus.focus() }catch(e){} }
+  function pkClose(){ pkStopW(); pkEl.hidden=true; document.body.style.overflow=''; $('pk-l').hidden=true; if(pkFocus&&pkFocus.focus) try{ pkFocus.focus() }catch(e){} }
   function pkSetArea(id){
     from.value=String(id); $('pk-kel-sel').value=from.value; cbFrom.sync(); from.dispatchEvent(new Event('change'));
     return from.value===String(id);
@@ -1345,24 +1368,41 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     var df=$('det-from'); if(!df.value.trim()||df.value===lastAutoFrom){ df.value=p.name; lastAutoFrom=p.name }
     pkSync();
   }
+  /* teks jemput hasil isian otomatis (nama titik) dibuang saat pindah ke GPS atau kelurahan, supaya tidak bertentangan dengan koordinat */
+  function pkDropAutoFrom(){ var df=$('det-from'); if(lastAutoFrom&&df.value===lastAutoFrom) df.value=''; lastAutoFrom='' }
+  var pkW=null;
+  function pkStopW(){ if(pkW!==null){ try{ navigator.geolocation.clearWatch(pkW) }catch(e){} pkW=null } }
+  function pkGotFix(c){
+    if(!(c.latitude>-11.5&&c.latitude<6.5&&c.longitude>94&&c.longitude<142)){ pkMsg('Lokasi terbaca di luar wilayah layanan. Cari titik jemput atau pilih kelurahan.','bad'); pkKelShow(); return }
+    var g={lat:+c.latitude.toFixed(6),lng:+c.longitude.toFixed(6),acc:Math.round(c.accuracy||0)};
+    if(g.acc>300){ pkMsg('Lokasi terlalu kasar (sekitar '+g.acc+' m), tidak dipakai. Cari titik jemput di bawah, atau coba lagi di tempat terbuka.','bad'); pkKelShow(); return }
+    ptClear(); pkDropAutoFrom(); gps=g; $('gps-chk').checked=true; $('pk-q').value='';
+    pkMsg('Lokasi ditemukan (akurasi sekitar '+g.acc+' m).'+(g.acc>100?' Akurasi rendah, pilih titik terdekat atau tulis patokan yang jelas.':''),g.acc>100?'warn':'ok');
+    sb.rpc('area_at_point',{p_lat:g.lat,p_lng:g.lng}).then(function(r){
+      if(gps!==g) return;
+      var row=r.data&&r.data[0];
+      if(r.error||!row||!row.area_id||!pkSetArea(row.area_id)){ pkMsg('Kelurahan belum terdeteksi dari lokasi Anda. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync(); return }
+      loadPlaces(function(){ pkNear(g); pkSync() }); pkSync();
+    },function(){ pkMsg('Kelurahan belum terdeteksi. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync() });
+  }
   function pkLocate(){
     var b=$('pk-gps');
     if(!navigator.geolocation||!window.isSecureContext){ pkMsg('Lokasi tidak tersedia di perangkat ini. Cari titik jemput atau pilih kelurahan di bawah.','bad'); pkKelShow(); return }
-    b.disabled=true; pkMsg('Mencari lokasi…','');
-    navigator.geolocation.getCurrentPosition(function(p){
-      b.disabled=false; var c=p.coords;
-      if(!(c.latitude>-11.5&&c.latitude<6.5&&c.longitude>94&&c.longitude<142)){ pkMsg('Lokasi terbaca di luar wilayah layanan. Cari titik jemput atau pilih kelurahan.','bad'); return }
-      var g={lat:+c.latitude.toFixed(6),lng:+c.longitude.toFixed(6),acc:Math.round(c.accuracy||0)};
-      ptClear(); gps=g; $('gps-chk').checked=true; $('pk-q').value='';
-      pkMsg('Lokasi ditemukan (akurasi sekitar '+g.acc+' m).'+(g.acc>100?' Akurasi rendah, tulis juga patokan nanti.':''),g.acc>100?'warn':'ok');
-      sb.rpc('area_at_point',{p_lat:g.lat,p_lng:g.lng}).then(function(r){
-        if(gps!==g) return;
-        var row=r.data&&r.data[0];
-        if(r.error||!row||!row.area_id||!pkSetArea(row.area_id)){ pkMsg('Kelurahan belum terdeteksi dari lokasi Anda. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync(); return }
-        loadPlaces(function(){ pkNear(g); pkSync() }); pkSync();
-      },function(){ pkMsg('Kelurahan belum terdeteksi. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync() });
+    pkStopW(); b.disabled=true; pkMsg('Mencari lokasi…','');
+    var best=null, done=false, tm=0;
+    function finish(){
+      if(done) return; done=true; pkStopW(); clearTimeout(tm); clearTimeout(tm2); b.disabled=false;
+      if(!best){ pkMsg('Lokasi belum terdeteksi. Coba lagi di tempat terbuka, atau cari titik jemput di bawah.','bad'); pkKelShow(); return }
+      pkGotFix(best);
+    }
+    tm=setTimeout(finish,12000); var tm2=setTimeout(function(){ if(best&&best.accuracy<=80) finish() },6000);
+    pkW=navigator.geolocation.watchPosition(function(p){
+      var c=p.coords; if(!best||c.accuracy<best.accuracy) best={latitude:c.latitude,longitude:c.longitude,accuracy:c.accuracy};
+      if(!done) pkMsg('Mencari lokasi… akurasi saat ini sekitar '+Math.round(best.accuracy)+' m','');
+      if(best.accuracy<=25) finish();
     },function(e){
-      b.disabled=false; pkKelShow();
+      if(done) return; if(best){ finish(); return }
+      done=true; pkStopW(); clearTimeout(tm); b.disabled=false; pkKelShow();
       pkMsg(e&&e.code===1?'Izin lokasi ditolak. Cari titik jemput atau pilih kelurahan di bawah.':(e&&e.code===3?'Pencarian lokasi terlalu lama. Coba lagi di tempat terbuka, atau pilih di bawah.':'Lokasi belum terdeteksi. Cari titik jemput atau pilih kelurahan di bawah.'),'bad');
     },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
   }
@@ -1381,7 +1421,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   pkL.addEventListener('mousedown',function(e){ e.preventDefault() });
   pkL.addEventListener('click',function(e){ var x=e.target.closest('li[data-i]'); if(x){ var p=pkShown[+x.dataset.i]; if(p) pkPickPlace(p) } });
   $('pk-near').addEventListener('click',function(e){ var b=e.target.closest('button[data-pn]'); if(!b) return; var p=PLACES.filter(function(x){ return x.id===+b.dataset.pn })[0]; if(p) pkPickPlace(p) });
-  $('pk-kel-sel').addEventListener('change',function(){ gps=null; $('gps-chk').checked=false; ptClear(); $('pk-q').value=''; $('pk-near').innerHTML=''; pkMsg('','');
+  $('pk-kel-sel').addEventListener('change',function(){ gps=null; $('gps-chk').checked=false; ptClear(); pkDropAutoFrom(); $('pk-q').value=''; $('pk-near').innerHTML=''; pkMsg('','');
     from.value=this.value; cbFrom.sync(); from.dispatchEvent(new Event('change')); pkSync() });
   $('pk-gps').addEventListener('click',pkLocate);
   $('pk-x').addEventListener('click',pkClose);
