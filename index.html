@@ -476,6 +476,20 @@ body.has-chfab::after{content:"";display:block;height:72px}
 .pt-b{font:inherit;font-size:14px;text-align:left;padding:8px 12px;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;max-width:100%}
 .pt-b small{display:block;font-size:12px;color:var(--muted);font-weight:400}
 .pt-b[aria-pressed="true"]{border-color:var(--gold-ink,#8A6A1F);background:rgba(184,151,90,.18);font-weight:700}
+/* beranda ringkas: hanya Tujuan; jemput lewat pop up */
+.rh-route.simple{row-gap:0}.rh-route.simple .dot.a,.rh-route.simple .line,.rh-route.simple .rh-swap,.rh-route.simple .s1{display:none}
+.rh-route.simple .dot.b{grid-row:1}.rh-route.simple .s2{grid-row:1}.rh-route.simple .cbin{padding-right:0}
+.route-hero.dst-open{overflow:visible;z-index:20}.route-hero.dst-open .watermark{opacity:0}
+.cbl li.cb-head{cursor:default;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B7280;padding:8px 12px 4px}
+.dst-alt{margin:8px 0 0;padding:4px 0;font:inherit;font-size:13px;color:#B9C0CE;background:none;border:0;text-decoration:underline;cursor:pointer}
+:root[data-theme="light"] .dst-alt{color:var(--muted)}
+#f-more .gps,#f-more #pt-wrap{display:none}
+.pk-or{margin:16px 0 6px;font-size:13px;color:var(--muted)}.pk-cb{position:relative}
+.pk-pick{margin:12px 0 0;padding:10px 14px;border:1.5px solid var(--ok,#1B6B3A);border-radius:14px}.pk-pick small{display:block;font-size:12px;color:var(--muted)}.pk-pick b{font-weight:700}
+.pk-near{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+#pk-price{margin-top:12px}#pk-price .price{margin:0}#pk-price .price.empty{display:none}
+#pk-go{width:100%;margin-top:14px}#pk-gps{width:100%}
+.pk-link{margin:12px 0 0;padding:6px 0;font:inherit;font-size:14px;color:var(--muted);background:none;border:0;text-decoration:underline;cursor:pointer}
 
 
 
@@ -545,10 +559,10 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       <section class="route-hero live" id="s-form">
         <svg class="watermark" viewBox="0 0 200 200" aria-hidden="true"><path d="M150 52A68 68 0 1 0 150 148" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/></svg>
         <span class="rh-title">Mau ke mana?</span>
-        <div class="rh-route">
+        <div class="rh-route simple">
           <i class="dot a"></i><i class="line"></i><i class="dot b"></i>
           <div class="s1 cb"><small>Jemput</small><input id="from-t" class="cbin" type="text" placeholder="Ketik kelurahan jemput" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="from-l" aria-autocomplete="list" aria-label="Kelurahan jemput"><select id="from" hidden tabindex="-1" aria-hidden="true"></select><ul class="cbl" id="from-l" role="listbox" hidden></ul></div>
-          <div class="s2 cb"><small>Tujuan</small><input id="to-t" class="cbin" type="text" placeholder="Ketik kelurahan tujuan" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="to-l" aria-autocomplete="list" aria-label="Kelurahan tujuan"><select id="to" hidden tabindex="-1" aria-hidden="true"></select><ul class="cbl" id="to-l" role="listbox" hidden></ul></div>
+          <div class="s2 cb"><small>Tujuan</small><input id="dst-t" class="cbin" type="text" placeholder="Cari tujuan, mis. Mie Gacoan" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="dst-l" aria-autocomplete="list" aria-label="Cari tujuan"><ul class="cbl" id="dst-l" role="listbox" hidden></ul><button type="button" class="dst-alt" id="dst-back" hidden>Cari nama tempat</button><input id="to-t" class="cbin" type="text" placeholder="Ketik kelurahan tujuan" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="to-l" aria-autocomplete="list" aria-label="Kelurahan tujuan"><select id="to" hidden tabindex="-1" aria-hidden="true"></select><ul class="cbl" id="to-l" role="listbox" hidden></ul></div>
           <button type="button" class="rh-swap" id="swap" aria-label="Tukar jemput dan tujuan">&#8645;</button>
         </div>
         <div id="price" class="price empty" aria-live="polite"><div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p></div>
@@ -583,6 +597,22 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
               </div>
 </div></div>
     </form>
+      <div class="dpm" id="pk" hidden role="dialog" aria-modal="true" aria-labelledby="pk-h">
+        <div class="dpm-card"><div class="dpm-box">
+          <div class="dpm-head"><h2 id="pk-h">Dijemput di mana?</h2><button type="button" class="dpm-x" id="pk-x" aria-label="Tutup">&times;</button></div>
+          <div class="dpm-sum" id="pk-dest"></div>
+          <button type="button" class="btn" id="pk-gps">Gunakan lokasi saya</button>
+          <p class="gps-s" id="pk-s" role="status"></p>
+          <div class="pk-near" id="pk-near"></div>
+          <div class="field"><label for="pk-q" class="pk-or" style="margin:14px 0 0">Atau cari titik jemput</label><div class="pk-cb"><input id="pk-q" type="text" placeholder="Nama tempat atau gang" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="pk-l" aria-autocomplete="list"><ul class="cbl" id="pk-l" role="listbox" hidden></ul></div></div>
+          <button type="button" class="pk-link" id="pk-kel-link">Atau pilih kelurahan saja</button>
+          <div class="field" id="pk-kel-f" style="display:none"><label for="pk-kel-sel" class="pk-or" style="margin:0">Pilih kelurahan</label><select id="pk-kel-sel"><option value="">Pilih kelurahan</option></select></div>
+          <div class="pk-pick" id="pk-pick" hidden></div>
+          <div id="pk-price"></div>
+          <button type="button" class="btn" id="pk-go" disabled>Lanjut</button>
+          <p class="err" id="pk-e" role="alert"></p>
+        </div></div>
+      </div>
       <div class="rows">
         <button class="row2" type="button" id="c-sched">
           <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
@@ -951,7 +981,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       if(r.error||!r.data){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Daftar belum termuat</div><p class="note">Muat ulang halaman, atau pesan lewat WhatsApp.</p>'; return }
       r.data.forEach(function(a){byId[a.id]=a});
       areas=r.data.filter(function(a){return a.level==='kelurahan'||a.level==='desa'});
-      loaded=true; fill(from); fill(to); if(typeof cbFrom!=='undefined'){ cbFrom.sync(); cbTo.sync() } calc(); if(order&&viewing){ } loadList();
+      loaded=true; fill(from); fill(to); fill($('pk-kel-sel')); loadPlaces(); if(typeof cbFrom!=='undefined'){ cbFrom.sync(); cbTo.sync() } calc(); if(order&&viewing){ } loadList();
     });
   }
   function fill(sel){
@@ -967,10 +997,11 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   }
   function nm(v){ return v===OTHER?'Lokasi lain':(byId[v]?byId[v].name:'') }
   var cur=null, calcSeq=0;
-  function resetPrice(){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p>' }
+  function resetPrice(){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p>'; pkSync() }
   function showContact(){
     price.className='price contact';
     price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Dikonfirmasi admin</div><p class="note">Rute ini di luar tarif otomatis. Kirim pesanan, admin akan menetapkan tarif sebelum pengemudi berangkat.</p><span class="pill warn">Tarif menyusul</span>';
+    pkSync();
   }
   function calc(){
     var a=from.value,b=to.value; cur=null;
@@ -980,10 +1011,10 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     sb.rpc('fare_quote',{p_pickup:+a,p_dropoff:+b}).then(function(r){
       if(seq!==calcSeq) return;
       var row=r.data&&r.data[0];
-      if(r.error||!row){cur=null; price.className='price contact'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Belum bisa dihitung</div><p class="note">Coba lagi, atau pesan lewat WhatsApp.</p>'; return}
+      if(r.error||!row){cur=null; price.className='price contact'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Belum bisa dihitung</div><p class="note">Coba lagi, atau pesan lewat WhatsApp.</p>'; pkSync(); return}
       if(row.price==null){cur={contact:true,a:a,b:b};showContact();return}
       cur={contact:false,amt:row.price,a:a,b:b}; price.className='price ok';
-      price.innerHTML='<div class="lbl">Tarif flat</div><div class="amt">'+rp(row.price)+'</div><p class="note">'+esc(nm(a))+' ke '+esc(nm(b))+'. Harga pasti, tidak berubah di jalan.</p>';
+      price.innerHTML='<div class="lbl">Tarif flat</div><div class="amt">'+rp(row.price)+'</div><p class="note">'+esc(nm(a))+' ke '+esc(nm(b))+'. Harga pasti, tidak berubah di jalan.</p>'; pkSync();
     },function(){ if(seq===calcSeq){cur=null; resetPrice()} });
   }
   from.addEventListener('change',calc); to.addEventListener('change',calc);
@@ -1059,7 +1090,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     if($('when').value==='now'&&svc&&!svc.open) return svcMsg()+' Atau pilih jemput terjadwal di jam layanan.';
     if(!$('nama').value.trim()) return 'Isi nama pemesan.';
     if($('wa').value.replace(/\D/g,'').length<9) return 'Isi nomor WhatsApp yang valid.';
-    if(!$('det-from').value.trim()) return 'Isi alamat atau patokan jemput.';
+    if(!$('det-from').value.trim()&&!gps&&!(ptSel&&cur&&cur.a!==OTHER&&ptSel.area===+cur.a)) return 'Isi alamat atau patokan jemput.';
     if($('when').value==='later'){ var p=pickupAt(); if(!p) return 'Pilih tanggal dan jam jemput.'; if(p.getTime()<=Date.now()) return 'Pilih waktu jemput di masa depan.' }
     return '';
   }
@@ -1189,9 +1220,190 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       var t=$('gps-s'); t.textContent+=' Lokasi Anda tampak di luar '+nm(aid)+' (sekitar '+Math.round(r.data.jarak_m)+' m dari batasnya). Periksa kelurahan jemput yang dipilih, atau tulis patokan di atas.'; t.className='gps-s warn';
     },function(){});
   }
+
+  /* ---------- beranda ringkas: Tujuan saja, jemput lewat pop up ---------- */
+  var PLACES=[], placesAt=0, dstSel=null, lastAutoTo='', lastAutoFrom='', MISS={};
+  function dist(a,b){ var R=6371000,dl=(b.lat-a.lat)*Math.PI/180,dn=(b.lng-a.lng)*Math.PI/180,x=Math.pow(Math.sin(dl/2),2)+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.pow(Math.sin(dn/2),2); return 2*R*Math.asin(Math.sqrt(x)) }
+  function fmtD(m){ return m<1000?Math.round(m/10)*10+' m':(m/1000).toFixed(1).replace('.',',')+' km' }
+  function loadPlaces(done){
+    if(PLACES.length&&Date.now()-placesAt<300000){ if(done) done(); return }
+    var full='id,area_id,name,kind,lat,lng,access,note,popular,aliases', base='id,area_id,name,kind,lat,lng,access,note';
+    function use(d){ PLACES=d.map(function(p){ p.popular=!!p.popular; return p }); placesAt=Date.now(); if(done) done() }
+    sb.from('pickup_points').select(full).eq('active',true).order('name').then(function(r){
+      if(!r.error&&r.data){ use(r.data); return }
+      sb.from('pickup_points').select(base).eq('active',true).order('name').then(function(r2){ if(!r2.error&&r2.data) use(r2.data); else if(done) done() },function(){ if(done) done() });
+    },function(){ if(done) done() });
+  }
+  function popularPlaces(){
+    var L=PLACES.filter(function(p){ return p.popular });
+    if(!L.length) L=PLACES.filter(function(p){ return p.kind==='tempat_populer'||p.kind==='fasilitas_umum' });
+    return L.slice(0,8);
+  }
+  function placeFind(q,ref){
+    var Q=norm(q), toks=Q.split(' ').filter(Boolean);
+    var res=PLACES.filter(function(p){ var k=norm(p.name+' '+(p.aliases||'')+' '+(p.note||'')+' '+nm(String(p.area_id))); return toks.every(function(t){ return k.indexOf(t)>-1 }) });
+    res.forEach(function(p){ var n=norm(p.name); p._s=n.indexOf(Q)===0?0:(n.indexOf(Q)>-1?1:2); p._d=ref?dist(ref,p):0 });
+    res.sort(function(a,b){ return a._s-b._s||a._d-b._d||(a.name<b.name?-1:1) });
+    return res.slice(0,12);
+  }
+  function logMiss(q){
+    q=String(q||'').trim().replace(/\s+/g,' ').slice(0,80); var k=norm(q); if(q.length<3||MISS[k]) return; MISS[k]=1;
+    try{ sb.from('place_misses').insert({q:q}).then(function(){},function(){}) }catch(e){}
+  }
+  function pkRef(){ return gps?{lat:gps.lat,lng:gps.lng}:(ptSel?{lat:ptSel.lat,lng:ptSel.lng}:null) }
+
+  /* kolom Tujuan: sering dituju saat diketuk, hasil pencarian saat mengetik */
+  var dstT=$('dst-t'), dstL=$('dst-l'), dstShown=[], dstAct=-1, dstEmpty=false;
+  (function(){ var w=document.createElement('div'); w.id='to-kel'; w.style.display='none'; var t=$('to-t'); t.parentNode.insertBefore(w,t); w.appendChild(t); w.appendChild($('to-l')) })();
+  function dstOpen(){ dstL.hidden=false; dstT.setAttribute('aria-expanded','true'); $('s-form').classList.add('dst-open') }
+  function dstClose(){ dstL.hidden=true; dstT.setAttribute('aria-expanded','false'); dstAct=-1; $('s-form').classList.remove('dst-open') }
+  function dstDraw(){
+    var q=dstT.value.trim(), res=q?placeFind(q,pkRef()):popularPlaces();
+    dstShown=res; dstEmpty=!!q&&!res.length; dstL.innerHTML='';
+    function li(cls,i,html){ var e=document.createElement('li'); if(cls) e.className=cls; if(i!==null){ e.dataset.i=i; e.setAttribute('role','option') } e.innerHTML=html; dstL.appendChild(e) }
+    if(!q&&res.length) li('cb-head',null,'Sering dituju');
+    res.forEach(function(p,i){ li('',i,esc(p.name)+'<small>'+esc(nm(String(p.area_id)))+'</small>') });
+    if(dstEmpty) li('cb-none',null,PLACES.length?'Belum ada di daftar kami':'Daftar tempat belum termuat');
+    li('cb-other','kel','Pilih dari daftar kelurahan');
+    if(q) li('cb-other','own','Tulis sendiri: '+esc(q)+' (tarif dikonfirmasi admin)');
+    dstAct=-1; dstOpen();
+  }
+  function dstSetAct(n){ var l=dstL.querySelectorAll('li[data-i]'); if(!l.length) return; dstAct=(n+l.length)%l.length; Array.prototype.forEach.call(l,function(e,i){ e.setAttribute('aria-selected',String(i===dstAct)) }); try{ l[dstAct].scrollIntoView({block:'nearest'}) }catch(e){} }
+  function dstKelMode(on){
+    $('to-kel').style.display=on?'':'none'; dstT.style.display=on?'none':''; $('dst-back').hidden=!on; dstClose();
+    dstSel=null; if(to.value){ to.value=''; $('to-t').dataset.custom=''; cbTo.sync(); to.dispatchEvent(new Event('change')) }
+    if(on){ $('to-t').value=''; setTimeout(function(){ $('to-t').focus() },30) } else { dstT.value=''; setTimeout(function(){ dstT.focus() },30) }
+  }
+  function dstPick(i){
+    if(i==='kel'){ dstKelMode(true); return }
+    if(i==='own'){ var t=dstT.value.trim(); logMiss(t); dstSel=null; $('to-t').dataset.custom=t; $('to-t').value='Lokasi lain'; to.value=OTHER; dstClose(); to.dispatchEvent(new Event('change')); return }
+    var p=dstShown[+i]; if(!p) return;
+    to.value=String(p.area_id);
+    if(to.value!==String(p.area_id)){ dstSel=null; $('rh-hint').textContent='Tujuan itu belum bisa dipilih otomatis. Pilih dari daftar kelurahan.'; dstClose(); return }
+    dstSel=p; dstT.value=p.name; $('to-t').dataset.custom=''; cbTo.sync();
+    var dt=$('det-to'); if(!dt.value.trim()||dt.value===lastAutoTo){ dt.value=p.name; lastAutoTo=p.name }
+    dstClose(); $('rh-hint').textContent=''; to.dispatchEvent(new Event('change'));
+  }
+  dstT.addEventListener('focus',function(){ try{ dstT.select() }catch(e){} dstDraw(); loadPlaces(function(){ if(document.activeElement===dstT) dstDraw() }) });
+  dstT.addEventListener('click',function(){ if(dstL.hidden) dstDraw() });
+  dstT.addEventListener('input',function(){ if(dstSel||to.value){ dstSel=null; to.value=''; $('to-t').dataset.custom=''; to.dispatchEvent(new Event('change')) } dstDraw() });
+  dstT.addEventListener('keydown',function(e){
+    if(e.key==='ArrowDown'){ e.preventDefault(); if(dstL.hidden) dstDraw(); dstSetAct(dstAct+1) }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); dstSetAct(dstAct-1) }
+    else if(e.key==='Enter'){ if(!dstL.hidden){ e.preventDefault(); var l=dstL.querySelectorAll('li[data-i]'); var x=dstAct>-1?l[dstAct]:(dstShown.length===1?l[0]:null); if(x) dstPick(x.dataset.i) } }
+    else if(e.key==='Escape'){ dstClose() }
+  });
+  dstT.addEventListener('blur',function(){ setTimeout(function(){ if(dstEmpty&&!dstSel&&!to.value) logMiss(dstT.value); dstClose() },150) });
+  dstL.addEventListener('mousedown',function(e){ e.preventDefault() });
+  dstL.addEventListener('click',function(e){ var x=e.target.closest('li[data-i]'); if(x) dstPick(x.dataset.i) });
+  $('dst-back').addEventListener('click',function(){ dstKelMode(false) });
+
+  /* pop up lokasi jemput */
+  var pkEl=$('pk'), pkFocus=null;
+  $('pk-price').appendChild(price);   /* kartu tarif pindah ke pop up jemput */
+  function pkKelShow(on){ $('pk-kel-f').style.display=on===false?'none':''; $('pk-kel-link').style.display=on===false?'':'none' }
+  $('pk-kel-link').addEventListener('click',function(){ pkKelShow(); $('pk-kel-sel').focus() });
+  function pkMsg(m,c){ var t=$('pk-s'); t.textContent=m||''; t.className='gps-s'+(c?' '+c:'') }
+  function pkSync(){
+    if(!pkEl||pkEl.hidden) return;
+    var a=from.value, txt='';
+    if(gps) txt='Lokasi Anda'+(a&&a!==OTHER?' · '+nm(a):'');
+    else if(ptSel) txt=ptSel.name+' · '+nm(String(ptSel.area));
+    else if(a&&a!==OTHER) txt='Kelurahan '+nm(a);
+    else if(a===OTHER) txt='Lokasi lain (tarif dikonfirmasi admin)';
+    var pk=$('pk-pick'); pk.hidden=!txt; pk.innerHTML=txt?'<small>Jemput</small><b>'+esc(txt)+'</b>':'';
+    $('pk-go').disabled=!(a&&cur);
+  }
+  function pkDest(){
+    var n=dstSel?dstSel.name+' · '+nm(String(dstSel.area_id)):(to.value===OTHER?($('to-t').dataset.custom||'Lokasi lain'):nm(to.value));
+    $('pk-dest').innerHTML='<span>Tujuan</span><b>'+esc(n)+'</b>';
+  }
+  function pkOpen(){
+    var h=$('rh-hint'); h.textContent='';
+    if(!to.value){ h.textContent='Pilih tujuan dulu.'; dstT.focus(); return }
+    loadPlaces(); pkDest(); $('pk-e').textContent='';
+    pkKelShow(!gps&&!ptSel&&!!from.value); pkFocus=document.activeElement; pkEl.hidden=false; document.body.style.overflow='hidden'; pkSync();
+    setTimeout(function(){ $('pk-gps').focus() },60);
+  }
+  function pkClose(){ pkEl.hidden=true; document.body.style.overflow=''; $('pk-l').hidden=true; if(pkFocus&&pkFocus.focus) try{ pkFocus.focus() }catch(e){} }
+  function pkSetArea(id){
+    from.value=String(id); $('pk-kel-sel').value=from.value; cbFrom.sync(); from.dispatchEvent(new Event('change'));
+    return from.value===String(id);
+  }
+  function pkNear(g){
+    var box=$('pk-near'); box.innerHTML=''; if(!from.value||from.value===OTHER) return;
+    var L=PLACES.filter(function(p){ return p.area_id===+from.value&&p.access!=='tidak' }).map(function(p){ return {p:p,d:dist(g,p)} }).filter(function(x){ return x.d<=500 }).sort(function(a,b){ return a.d-b.d }).slice(0,3);
+    if(!L.length) return;
+    var t=document.createElement('div'); t.className='pk-or'; t.style.width='100%'; t.style.margin='4px 0 0'; t.textContent='Titik terdekat, jemput di sini?'; box.appendChild(t);
+    L.forEach(function(x){ var b=document.createElement('button'); b.type='button'; b.className='pt-b'; b.dataset.pn=x.p.id; b.innerHTML=esc(x.p.name)+'<small>'+fmtD(x.d)+' dari Anda</small>'; box.appendChild(b) });
+  }
+  function pkPickPlace(p){
+    gps=null; $('gps-chk').checked=false; ptClear();
+    ptSel={id:p.id,name:p.name,lat:p.lat,lng:p.lng,area:p.area_id};
+    if(!pkSetArea(p.area_id)){ ptSel=null; pkMsg('Titik itu belum bisa dipilih otomatis. Pilih kelurahannya di bawah.','warn'); return }
+    $('pk-q').value=p.name; $('pk-l').hidden=true; $('pk-near').innerHTML=''; pkMsg('','');
+    var df=$('det-from'); if(!df.value.trim()||df.value===lastAutoFrom){ df.value=p.name; lastAutoFrom=p.name }
+    pkSync();
+  }
+  function pkLocate(){
+    var b=$('pk-gps');
+    if(!navigator.geolocation||!window.isSecureContext){ pkMsg('Lokasi tidak tersedia di perangkat ini. Cari titik jemput atau pilih kelurahan di bawah.','bad'); pkKelShow(); return }
+    b.disabled=true; pkMsg('Mencari lokasi…','');
+    navigator.geolocation.getCurrentPosition(function(p){
+      b.disabled=false; var c=p.coords;
+      if(!(c.latitude>-11.5&&c.latitude<6.5&&c.longitude>94&&c.longitude<142)){ pkMsg('Lokasi terbaca di luar wilayah layanan. Cari titik jemput atau pilih kelurahan.','bad'); return }
+      var g={lat:+c.latitude.toFixed(6),lng:+c.longitude.toFixed(6),acc:Math.round(c.accuracy||0)};
+      ptClear(); gps=g; $('gps-chk').checked=true; $('pk-q').value='';
+      pkMsg('Lokasi ditemukan (akurasi sekitar '+g.acc+' m).'+(g.acc>100?' Akurasi rendah, tulis juga patokan nanti.':''),g.acc>100?'warn':'ok');
+      sb.rpc('area_at_point',{p_lat:g.lat,p_lng:g.lng}).then(function(r){
+        if(gps!==g) return;
+        var row=r.data&&r.data[0];
+        if(r.error||!row||!row.area_id||!pkSetArea(row.area_id)){ pkMsg('Kelurahan belum terdeteksi dari lokasi Anda. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync(); return }
+        loadPlaces(function(){ pkNear(g); pkSync() }); pkSync();
+      },function(){ pkMsg('Kelurahan belum terdeteksi. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync() });
+    },function(e){
+      b.disabled=false; pkKelShow();
+      pkMsg(e&&e.code===1?'Izin lokasi ditolak. Cari titik jemput atau pilih kelurahan di bawah.':(e&&e.code===3?'Pencarian lokasi terlalu lama. Coba lagi di tempat terbuka, atau pilih di bawah.':'Lokasi belum terdeteksi. Cari titik jemput atau pilih kelurahan di bawah.'),'bad');
+    },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+  }
+  var pkQ=$('pk-q'), pkL=$('pk-l'), pkShown=[], pkEmpty=false;
+  function pkDraw(){
+    var q=pkQ.value.trim(); pkL.innerHTML='';
+    if(q.length<1){ pkL.hidden=true; return }
+    var ref=pkRef(); pkShown=placeFind(q,ref); pkEmpty=!pkShown.length;
+    pkShown.forEach(function(p,i){ var e=document.createElement('li'); e.setAttribute('role','option'); e.dataset.i=i; e.innerHTML=esc(p.name)+'<small>'+esc(nm(String(p.area_id)))+(ref?' · '+fmtD(dist(ref,p)):'')+'</small>'; pkL.appendChild(e) });
+    if(pkEmpty){ pkKelShow(); var n=document.createElement('li'); n.className='cb-none'; n.textContent=PLACES.length?'Belum ada di daftar kami. Pilih kelurahan di bawah.':'Daftar tempat belum termuat'; pkL.appendChild(n) }
+    pkL.hidden=false;
+  }
+  pkQ.addEventListener('input',function(){ if(ptSel&&norm(pkQ.value)!==norm(ptSel.name)){ ptSel=null; pkSync() } loadPlaces(pkDraw); pkDraw() });
+  pkQ.addEventListener('focus',function(){ loadPlaces(); if(pkQ.value.trim()) pkDraw() });
+  pkQ.addEventListener('blur',function(){ setTimeout(function(){ if(pkEmpty&&!ptSel) logMiss(pkQ.value); pkL.hidden=true },150) });
+  pkL.addEventListener('mousedown',function(e){ e.preventDefault() });
+  pkL.addEventListener('click',function(e){ var x=e.target.closest('li[data-i]'); if(x){ var p=pkShown[+x.dataset.i]; if(p) pkPickPlace(p) } });
+  $('pk-near').addEventListener('click',function(e){ var b=e.target.closest('button[data-pn]'); if(!b) return; var p=PLACES.filter(function(x){ return x.id===+b.dataset.pn })[0]; if(p) pkPickPlace(p) });
+  $('pk-kel-sel').addEventListener('change',function(){ gps=null; $('gps-chk').checked=false; ptClear(); $('pk-q').value=''; $('pk-near').innerHTML=''; pkMsg('','');
+    from.value=this.value; cbFrom.sync(); from.dispatchEvent(new Event('change')); pkSync() });
+  $('pk-gps').addEventListener('click',pkLocate);
+  $('pk-x').addEventListener('click',pkClose);
+  pkEl.addEventListener('click',function(e){ if(e.target===pkEl) pkClose() });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!pkEl.hidden&&$('f-more').hidden&&ov.hidden) pkClose() });
+  $('pk-go').addEventListener('click',function(){
+    if(!from.value||!cur){ $('pk-e').textContent='Pilih lokasi jemput dulu.'; return }
+    var df=$('det-from'); if(ptSel&&!df.value.trim()){ df.value=ptSel.name; lastAutoFrom=ptSel.name }
+    df.placeholder=(gps||ptSel)?'Patokan tambahan (boleh dikosongkan)':'Nama jalan, perumahan, atau patokan';
+    pkClose(); openMore();
+  });
+  function pkReset(){
+    gpsClear(); ptClear(); dstSel=null; lastAutoTo=''; lastAutoFrom='';
+    from.value=''; to.value=''; $('from-t').dataset.custom=''; $('to-t').dataset.custom=''; cbFrom.sync(); cbTo.sync();
+    dstT.value=''; $('pk-q').value=''; $('pk-near').innerHTML=''; $('pk-kel-sel').value=''; pkMsg('','');
+    if($('to-kel').style.display!=='none') dstKelMode(false);
+    calc();
+  }
   function insertBooking(row){
     var run=function(rw,c){ return sb.from('bookings').insert(rw).select(c).single() };
     return run(row,COLS).then(function(r){
+      if(r.error&&row.dropoff_point_id!=null&&/dropoff_point_id/i.test(r.error.message||'')){ var r3=Object.assign({},row); delete r3.dropoff_point_id; return insertBooking(r3) }
       if(r.error&&row.pickup_lat!=null&&/pickup_(lat|lng|acc|point_id|geo)/i.test(r.error.message||'')){
         var r2=Object.assign({},row); delete r2.pickup_lat; delete r2.pickup_lng; delete r2.pickup_acc; delete r2.pickup_point_id;
         return run(r2,COLS).then(function(q){ return (q.error&&colErr(q.error)&&COLS!==COLS_OLD)?run(r2,COLS_OLD):q });
@@ -1438,6 +1650,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       pickup_text:(cur.a===OTHER?lokasiLain('from-t'):'')+ptxt,dropoff_text:((cur.b===OTHER?lokasiLain('to-t'):'')+dtxt).trim()||null,
       pickup_at:p?p.toISOString():null,terms_version:TERMS_VERSION,terms_accepted_at:new Date().toISOString()};
     if(payPref==='noncash') row.pay_pref='noncash';
+    if(dstSel&&cur.b!==OTHER&&dstSel.area_id===+cur.b) row.dropoff_point_id=dstSel.id;
     if(gps){ row.pickup_lat=gps.lat; row.pickup_lng=gps.lng; row.pickup_acc=gps.acc }
     else if(ptOk){ row.pickup_lat=ptSel.lat; row.pickup_lng=ptSel.lng; row.pickup_point_id=ptSel.id }
     insertBooking(row).then(function(r){
@@ -1445,7 +1658,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       if(r.error&&/layanan_tutup/.test(r.error.message||'')){ loadService(); err.textContent='Waktu jemput itu di luar jam layanan.'+(svc&&svc.shifts?' Jam layanan: '+fmtShifts(svc.shifts)+'.':''); return }
       if(r.error||!r.data){ err.textContent='Pesanan belum tersimpan. Coba lagi, atau pesan lewat WhatsApp.'; return }
       order=fromRow(r.data); lastStatus=null; openTrack(); loadList();
-      $('det-from').value=''; $('det-to').value=''; closeMore();
+      $('det-from').value=''; $('det-to').value=''; closeMore(); pkReset();
     },function(){ err.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.' });
   });
   $('tk-cancel').addEventListener('click',function(){
@@ -1577,12 +1790,12 @@ $('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydo
     $('dp-sum').innerHTML=h;
   }
   var moreFocus=null, dpFx=null;
-  function openMore(){ var m=$('f-more'); if(!m.hidden) return; fillSum(); ptRefresh(); moreFocus=document.activeElement; m.hidden=false; document.body.style.overflow='hidden'; if(dpFx) dpFx.stop(); var cd=$('dp-card'); dpFx=CgF(cd,{period:6500,fire:true}); setTimeout(function(){ if(dpFx) dpFx.burst(18,cd.clientWidth/2,0,170) },250); setTimeout(function(){ var f=$('det-from'); if(f) f.focus() },80) }
-  function closeMore(){ var m=$('f-more'); if(!m.hidden){ gpsClear(); ptClear(); if(dpFx){ dpFx.stop(); dpFx=null } m.hidden=true; document.body.style.overflow=''; if(moreFocus&&moreFocus.focus) try{ moreFocus.focus() }catch(e){} } $('rh-hint').textContent='' }
+  function openMore(){ var m=$('f-more'); if(!m.hidden) return; fillSum(); moreFocus=document.activeElement; m.hidden=false; document.body.style.overflow='hidden'; if(dpFx) dpFx.stop(); var cd=$('dp-card'); dpFx=CgF(cd,{period:6500,fire:true}); setTimeout(function(){ if(dpFx) dpFx.burst(18,cd.clientWidth/2,0,170) },250); setTimeout(function(){ var f=$('det-from'); if(f) f.focus() },80) }
+  function closeMore(){ var m=$('f-more'); if(!m.hidden){ if(dpFx){ dpFx.stop(); dpFx=null } m.hidden=true; document.body.style.overflow=''; if(moreFocus&&moreFocus.focus) try{ moreFocus.focus() }catch(e){} } $('rh-hint').textContent='' }
   $('dp-x').addEventListener('click',closeMore);
   $('f-more').addEventListener('click',function(e){ if(e.target===this) closeMore() });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!$('f-more').hidden&&ov.hidden) closeMore() });
-  $('rh-go').addEventListener('click',function(){ var h=$('rh-hint'); h.textContent=''; if(!$('from').value||!$('to').value){ h.textContent='Ketik lalu pilih kelurahan jemput dan tujuan dari daftar saran.'; return } openMore() });
+  $('rh-go').addEventListener('click',function(){ pkOpen() });
   ['from','to'].forEach(function(id){ $(id).addEventListener('change',function(){ $('rh-hint').textContent='' }) });
   var payPref='cash', cashSet={};
   document.querySelectorAll('#pp [data-pp]').forEach(function(b){ b.addEventListener('click',function(){
