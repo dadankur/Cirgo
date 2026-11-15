@@ -472,6 +472,10 @@ body.has-chfab::after{content:"";display:block;height:72px}
 .gps-x{flex:none;border:0;background:transparent;color:var(--muted);font:600 13.5px var(--f-body);text-decoration:underline;cursor:pointer;min-height:44px;padding:0 6px}
 .gps-s{margin:6px 0 0;font-size:13.5px;color:var(--muted)}
 .gps-s.ok{color:#1B6B3A}.gps-s.warn{color:#8A5A00}.gps-s.bad{color:#B3261E}
+.pt{margin:12px 0 4px}.pt-l{display:block;font-size:14px;font-weight:700;margin:0 0 6px}.pt-list{display:flex;flex-wrap:wrap;gap:8px}
+.pt-b{font:inherit;font-size:14px;text-align:left;padding:8px 12px;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;max-width:100%}
+.pt-b small{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.pt-b[aria-pressed="true"]{border-color:var(--gold-ink,#8A6A1F);background:rgba(184,151,90,.18);font-weight:700}
 
 
 
@@ -560,6 +564,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
             <div class="field" style="display:none"><label for="nama">Nama</label><input id="nama" type="text" autocomplete="name"></div>
             <div class="field" style="display:none"><label for="wa">Nomor WhatsApp</label><input id="wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx"></div>
             <div class="field"><label for="det-from">Alamat atau patokan jemput</label><input id="det-from" type="text" placeholder="Nama jalan, perumahan, atau patokan"><span class="hint">Tulis nama tempat atau jalan seperti yang tampil di Google Maps supaya pengemudi mudah menemukan. Tidak memengaruhi harga.</span>
+              <div class="pt" id="pt-wrap" hidden><span class="pt-l">Atau pilih titik jemput terdekat <span class="hint">(opsional)</span></span><div class="pt-list" id="pt-list" role="group" aria-label="Titik jemput terdaftar"></div><p class="gps-s" id="pt-s" role="status"></p></div>
               <div class="gps"><label class="gps-c" for="gps-chk"><input type="checkbox" id="gps-chk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11A6.5 6.5 0 0 1 18.5 10c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span>Aktifkan ini jika titik jemput sama dengan lokasi saya sekarang</span></label>
               <div class="gps-r"><p class="gps-s" id="gps-s" role="status"></p><button type="button" class="gps-x" id="gps-x" hidden>Perbarui</button></div>
               <p class="hint">Lokasi hanya dikirim ke pengemudi untuk pesanan ini. Alamat yang Anda ketik tetap dipakai sebagai cadangan.</p></div></div>
@@ -1137,19 +1142,58 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       if(!(c.latitude>-11.5&&c.latitude<6.5&&c.longitude>94&&c.longitude<142)){ c0.checked=false; gps=null; gpsUi('Lokasi terbaca di luar wilayah layanan. Tulis alamat atau patokan saja.','bad'); return }
       gps={lat:+c.latitude.toFixed(6),lng:+c.longitude.toFixed(6),acc:Math.round(c.accuracy||0)};
       gpsUi('Titik jemput tersimpan (akurasi sekitar '+gps.acc+' m).'+(gps.acc>100?' Akurasi rendah, tulis juga patokan di atas.':''),gps.acc>100?'warn':'ok');
-      $('gps-x').hidden=false;
+      $('gps-x').hidden=false; gpsCheck();
     },function(e){
       c0.disabled=false; c0.checked=false; gps=null;
       gpsUi(e&&e.code===1?'Izin lokasi ditolak. Aktifkan izin lokasi untuk situs ini, atau tulis alamat saja.':(e&&e.code===3?'Pencarian lokasi terlalu lama. Coba lagi di tempat terbuka.':'Lokasi belum terdeteksi. Coba lagi di tempat terbuka.'),'bad');
     },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
   }
-  $('gps-chk').addEventListener('change',function(){ if(this.checked) gpsGet(); else gpsClear() });
+  $('gps-chk').addEventListener('change',function(){ if(this.checked){ ptClear(); gpsGet() } else gpsClear() });
   $('gps-x').addEventListener('click',gpsGet);
+
+  /* ---------- titik jemput terdaftar (pickup_points) ---------- */
+  var PTS={}, ptSel=null;
+  function ptUi(msg,cls){ var t=$('pt-s'); t.textContent=msg||''; t.className='gps-s'+(cls?' '+cls:'') }
+  function ptClear(){ ptSel=null; Array.prototype.forEach.call($('pt-list').querySelectorAll('button'),function(b){ b.setAttribute('aria-pressed','false') }); ptUi('','') }
+  function ptDraw(aid){
+    var w=$('pt-wrap'), l=$('pt-list'), L=PTS[aid]||[];
+    if(!L.length){ w.hidden=true; l.innerHTML=''; return }
+    l.innerHTML=L.map(function(p){ return '<button type="button" class="pt-b" data-pt="'+p.id+'" aria-pressed="'+(ptSel&&ptSel.id===p.id?'true':'false')+'">'+esc(p.name)+(p.note?'<small>'+esc(p.note)+'</small>':'')+'</button>' }).join('');
+    w.hidden=false;
+  }
+  function ptRefresh(){
+    var aid=(cur&&cur.a&&cur.a!==OTHER)?+cur.a:0;
+    if(ptSel&&ptSel.area!==aid) ptClear();
+    if(!aid){ $('pt-wrap').hidden=true; return }
+    if(PTS[aid]){ ptDraw(aid); return }
+    sb.from('pickup_points').select('id,name,kind,lat,lng,access,note').eq('area_id',aid).eq('active',true).order('name').then(function(r){
+      if(r.error||!r.data){ $('pt-wrap').hidden=true; return }   /* cadangan: alur ketik dan GPS tetap jalan */
+      PTS[aid]=r.data; if(cur&&+cur.a===aid) ptDraw(aid);
+    },function(){ $('pt-wrap').hidden=true });
+  }
+  $('pt-list').addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('button[data-pt]'); if(!b) return;
+    var aid=+cur.a, L=PTS[aid]||[], id=+b.dataset.pt, p=L.filter(function(x){return x.id===id})[0]; if(!p) return;
+    if(ptSel&&ptSel.id===id){ ptClear(); return }
+    gpsClear(); ptClear();
+    ptSel={id:p.id,name:p.name,lat:p.lat,lng:p.lng,area:aid};
+    b.setAttribute('aria-pressed','true');
+    var df=$('det-from'); if(!df.value.trim()) df.value=p.name;
+    ptUi(p.access==='mulut_gang'?'Titik jemput: '+p.name+'. Mobil menunggu di mulut gang, pengemudi akan menghubungi Anda.':'Titik jemput: '+p.name+'.','ok');
+  });
+  /* cek wilayah titik GPS terhadap kelurahan jemput; hanya memberi peringatan, tidak memblokir pesanan */
+  function gpsCheck(){
+    var aid=(cur&&cur.a&&cur.a!==OTHER)?+cur.a:0, g0=gps; if(!aid||!g0) return;
+    sb.rpc('point_in_area',{p_area_id:aid,p_lat:g0.lat,p_lng:g0.lng,p_tolerance_m:25}).then(function(r){
+      if(gps!==g0||r.error||!r.data||r.data.status!=='di_luar') return;
+      var t=$('gps-s'); t.textContent+=' Lokasi Anda tampak di luar '+nm(aid)+' (sekitar '+Math.round(r.data.jarak_m)+' m dari batasnya). Periksa kelurahan jemput yang dipilih, atau tulis patokan di atas.'; t.className='gps-s warn';
+    },function(){});
+  }
   function insertBooking(row){
     var run=function(rw,c){ return sb.from('bookings').insert(rw).select(c).single() };
     return run(row,COLS).then(function(r){
-      if(r.error&&row.pickup_lat!=null&&/pickup_(lat|lng|acc)/i.test(r.error.message||'')){
-        var r2=Object.assign({},row); delete r2.pickup_lat; delete r2.pickup_lng; delete r2.pickup_acc;
+      if(r.error&&row.pickup_lat!=null&&/pickup_(lat|lng|acc|point_id|geo)/i.test(r.error.message||'')){
+        var r2=Object.assign({},row); delete r2.pickup_lat; delete r2.pickup_lng; delete r2.pickup_acc; delete r2.pickup_point_id;
         return run(r2,COLS).then(function(q){ return (q.error&&colErr(q.error)&&COLS!==COLS_OLD)?run(r2,COLS_OLD):q });
       }
       if(r.error&&COLS!==COLS_OLD&&colErr(r.error)) return run(row,COLS_OLD);
@@ -1387,12 +1431,15 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   ok.addEventListener('click',function(){
     closeT(); var p=pickupAt();
     var ptxt=$('det-from').value.trim(), dtxt=$('det-to').value.trim();
+    var ptOk=!!(ptSel&&cur.a!==OTHER&&ptSel.area===+cur.a&&!gps);
+    if(ptOk&&norm(ptxt).indexOf(norm(ptSel.name))<0) ptxt=ptSel.name+(ptxt?' - '+ptxt:'');
     var row={customer_name:$('nama').value.trim(),customer_phone:normWa($('wa').value),
       pickup_area_id:cur.a===OTHER?null:+cur.a,dropoff_area_id:cur.b===OTHER?null:+cur.b,
       pickup_text:(cur.a===OTHER?lokasiLain('from-t'):'')+ptxt,dropoff_text:((cur.b===OTHER?lokasiLain('to-t'):'')+dtxt).trim()||null,
       pickup_at:p?p.toISOString():null,terms_version:TERMS_VERSION,terms_accepted_at:new Date().toISOString()};
     if(payPref==='noncash') row.pay_pref='noncash';
     if(gps){ row.pickup_lat=gps.lat; row.pickup_lng=gps.lng; row.pickup_acc=gps.acc }
+    else if(ptOk){ row.pickup_lat=ptSel.lat; row.pickup_lng=ptSel.lng; row.pickup_point_id=ptSel.id }
     insertBooking(row).then(function(r){
       if(r.error&&payPref==='noncash'&&/pay_pref|column/i.test(r.error.message||'')){ err.textContent='Non-tunai belum tersedia. Pilih tunai atau pesan lewat WhatsApp.'; return }
       if(r.error&&/layanan_tutup/.test(r.error.message||'')){ loadService(); err.textContent='Waktu jemput itu di luar jam layanan.'+(svc&&svc.shifts?' Jam layanan: '+fmtShifts(svc.shifts)+'.':''); return }
@@ -1530,8 +1577,8 @@ $('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydo
     $('dp-sum').innerHTML=h;
   }
   var moreFocus=null, dpFx=null;
-  function openMore(){ var m=$('f-more'); if(!m.hidden) return; fillSum(); moreFocus=document.activeElement; m.hidden=false; document.body.style.overflow='hidden'; if(dpFx) dpFx.stop(); var cd=$('dp-card'); dpFx=CgF(cd,{period:6500,fire:true}); setTimeout(function(){ if(dpFx) dpFx.burst(18,cd.clientWidth/2,0,170) },250); setTimeout(function(){ var f=$('det-from'); if(f) f.focus() },80) }
-  function closeMore(){ var m=$('f-more'); if(!m.hidden){ gpsClear(); if(dpFx){ dpFx.stop(); dpFx=null } m.hidden=true; document.body.style.overflow=''; if(moreFocus&&moreFocus.focus) try{ moreFocus.focus() }catch(e){} } $('rh-hint').textContent='' }
+  function openMore(){ var m=$('f-more'); if(!m.hidden) return; fillSum(); ptRefresh(); moreFocus=document.activeElement; m.hidden=false; document.body.style.overflow='hidden'; if(dpFx) dpFx.stop(); var cd=$('dp-card'); dpFx=CgF(cd,{period:6500,fire:true}); setTimeout(function(){ if(dpFx) dpFx.burst(18,cd.clientWidth/2,0,170) },250); setTimeout(function(){ var f=$('det-from'); if(f) f.focus() },80) }
+  function closeMore(){ var m=$('f-more'); if(!m.hidden){ gpsClear(); ptClear(); if(dpFx){ dpFx.stop(); dpFx=null } m.hidden=true; document.body.style.overflow=''; if(moreFocus&&moreFocus.focus) try{ moreFocus.focus() }catch(e){} } $('rh-hint').textContent='' }
   $('dp-x').addEventListener('click',closeMore);
   $('f-more').addEventListener('click',function(e){ if(e.target===this) closeMore() });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!$('f-more').hidden&&ov.hidden) closeMore() });
