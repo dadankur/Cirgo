@@ -489,6 +489,7 @@ body.has-chfab::after{content:"";display:block;height:72px}
 .pk-near{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
 #pk-price{margin-top:12px}#pk-price .price{margin:0}#pk-price .price.empty{display:none}
 #pk-go{width:100%;margin-top:14px}#pk-gps{width:100%}
+.pk-wa{margin:8px 0 0}.pk-wa a{color:var(--gold-ink,#8A6A1F);font-weight:700}
 .pk-link{margin:12px 0 0;padding:6px 0;font:inherit;font-size:14px;color:var(--muted);background:none;border:0;text-decoration:underline;cursor:pointer}
 
 
@@ -562,7 +563,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
         <div class="rh-route simple">
           <i class="dot a"></i><i class="line"></i><i class="dot b"></i>
           <div class="s1 cb"><small>Jemput</small><input id="from-t" class="cbin" type="text" placeholder="Ketik kelurahan jemput" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="from-l" aria-autocomplete="list" aria-label="Kelurahan jemput"><select id="from" hidden tabindex="-1" aria-hidden="true"></select><ul class="cbl" id="from-l" role="listbox" hidden></ul></div>
-          <div class="s2 cb"><small>Tujuan</small><input id="dst-t" class="cbin" type="text" placeholder="Cari tujuan, mis. Mie Gacoan" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="dst-l" aria-autocomplete="list" aria-label="Cari tujuan"><ul class="cbl" id="dst-l" role="listbox" hidden></ul><button type="button" class="dst-alt" id="dst-back" hidden>Cari nama tempat</button><input id="to-t" class="cbin" type="text" placeholder="Ketik kelurahan tujuan" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="to-l" aria-autocomplete="list" aria-label="Kelurahan tujuan"><select id="to" hidden tabindex="-1" aria-hidden="true"></select><ul class="cbl" id="to-l" role="listbox" hidden></ul></div>
+          <div class="s2 cb"><small>Tujuan</small><input id="dst-t" class="cbin" type="text" placeholder="CSB Mall" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="dst-l" aria-autocomplete="list" aria-label="Cari tujuan"><ul class="cbl" id="dst-l" role="listbox" hidden></ul><button type="button" class="dst-alt" id="dst-back" hidden>Cari nama tempat</button><input id="to-t" class="cbin" type="text" placeholder="Ketik kelurahan tujuan" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="to-l" aria-autocomplete="list" aria-label="Kelurahan tujuan"><select id="to" hidden tabindex="-1" aria-hidden="true"></select><ul class="cbl" id="to-l" role="listbox" hidden></ul></div>
           <button type="button" class="rh-swap" id="swap" aria-label="Tukar jemput dan tujuan">&#8645;</button>
         </div>
         <div id="price" class="price empty" aria-live="polite"><div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p></div>
@@ -603,6 +604,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
           <div class="dpm-sum" id="pk-dest"></div>
           <button type="button" class="btn" id="pk-gps">Gunakan lokasi saya</button>
           <p class="gps-s" id="pk-s" role="status"></p>
+          <p class="pk-wa" id="pk-wa-p" hidden><a id="wa-pk" href="#" target="_blank" rel="noopener">Chat admin lewat WhatsApp</a></p>
           <div class="pk-near" id="pk-near"></div>
           <div class="field"><label for="pk-q" class="pk-or" style="margin:14px 0 0">Atau cari titik jemput</label><div class="pk-cb"><input id="pk-q" type="text" placeholder="Nama tempat atau gang" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="pk-l" aria-autocomplete="list"><ul class="cbl" id="pk-l" role="listbox" hidden></ul></div></div>
           <button type="button" class="pk-link" id="pk-kel-link">Atau pilih kelurahan saja</button>
@@ -878,8 +880,8 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   var user=null;
 
   function setWaLinks(){
-  ['wa-code','wa-auth','forgot','wa-home','wa-order','wa-1','wa-2','wa-3','wa-4'].forEach(function(id){
-    var T={'wa-code':'Halo Cirgo, saya mau daftar. Mohon kirim kode pendaftaran.','wa-auth':'Halo Cirgo, saya belum paham cara pakai aplikasinya. Mohon dibantu.','forgot':'Halo Cirgo, saya lupa kata sandi. Mohon dibantu atur ulang.','wa-home':'Halo Cirgo, saya butuh bantuan.','wa-order':'Halo Cirgo, saya mau pesan antar-jemput tapi bingung mengisinya. Mohon dibantu.','wa-1':'Halo Cirgo, saya mau pesan antar-jemput. Tolong dibantu.','wa-2':'Halo Cirgo, saya mau tanya tarif.','wa-3':'Halo Cirgo, saya ada kendala atau keluhan.','wa-4':'Halo Cirgo, saya mau membatalkan pesanan.'}[id];
+  ['wa-code','wa-auth','forgot','wa-home','wa-order','wa-pk','wa-1','wa-2','wa-3','wa-4'].forEach(function(id){
+    var T={'wa-pk':'Halo Cirgo, lokasi jemput saya di luar tarif otomatis. Mohon dibantu memesan.','wa-code':'Halo Cirgo, saya mau daftar. Mohon kirim kode pendaftaran.','wa-auth':'Halo Cirgo, saya belum paham cara pakai aplikasinya. Mohon dibantu.','forgot':'Halo Cirgo, saya lupa kata sandi. Mohon dibantu atur ulang.','wa-home':'Halo Cirgo, saya butuh bantuan.','wa-order':'Halo Cirgo, saya mau pesan antar-jemput tapi bingung mengisinya. Mohon dibantu.','wa-1':'Halo Cirgo, saya mau pesan antar-jemput. Tolong dibantu.','wa-2':'Halo Cirgo, saya mau tanya tarif.','wa-3':'Halo Cirgo, saya ada kendala atau keluhan.','wa-4':'Halo Cirgo, saya mau membatalkan pesanan.'}[id];
     if($(id)) $(id).href=waLink(T);
   });
   }
@@ -1223,7 +1225,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
 
   /* ---------- beranda ringkas: Tujuan saja, jemput lewat pop up ---------- */
   var PLACES=[], placesAt=0, dstSel=null, lastAutoTo='', lastAutoFrom='', MISS={};
-  function dist(a,b){ var R=6371000,dl=(b.lat-a.lat)*Math.PI/180,dn=(b.lng-a.lng)*Math.PI/180,x=Math.pow(Math.sin(dl/2),2)+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.pow(Math.sin(dn/2),2); return 2*R*Math.asin(Math.sqrt(x)) }
+  function dist(a,b){ if(!a||!b||a.lat==null||a.lng==null||b.lat==null||b.lng==null) return 1e12; var R=6371000,dl=(b.lat-a.lat)*Math.PI/180,dn=(b.lng-a.lng)*Math.PI/180,x=Math.pow(Math.sin(dl/2),2)+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.pow(Math.sin(dn/2),2); return 2*R*Math.asin(Math.sqrt(x)) }
   function fmtD(m){ return m<1000?Math.round(m/10)*10+' m':(m/1000).toFixed(1).replace('.',',')+' km' }
   function loadPlaces(done){
     if(PLACES.length&&Date.now()-placesAt<300000){ if(done) done(); return }
@@ -1250,7 +1252,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     q=String(q||'').trim().replace(/\s+/g,' ').slice(0,80); var k=norm(q); if(q.length<3||MISS[k]) return; MISS[k]=1;
     try{ sb.from('place_misses').insert({q:q}).then(function(){},function(){}) }catch(e){}
   }
-  function pkRef(){ return gps?{lat:gps.lat,lng:gps.lng}:(ptSel?{lat:ptSel.lat,lng:ptSel.lng}:null) }
+  function pkRef(){ return gps?{lat:gps.lat,lng:gps.lng}:((ptSel&&ptSel.lat!=null)?{lat:ptSel.lat,lng:ptSel.lng}:null) }
 
   /* kolom Tujuan: sering dituju saat diketuk, hasil pencarian saat mengetik */
   var dstT=$('dst-t'), dstL=$('dst-l'), dstShown=[], dstAct=-1, dstEmpty=false;
@@ -1300,7 +1302,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
 
   /* contoh yang diketik sendiri di kolom Tujuan (berhenti saat diketuk, ada isi, atau tab tidak terlihat) */
   (function(){
-    var DEF=['CSB Mall','Grage Mall','Grage City','RS Ciremai'], pre='Cari tujuan, mis. ', i=0, j=0, del=false;
+    var DEF=['CSB Mall','Grage Mall','Grage City','RS Ciremai'], pre='', i=0, j=0, del=false;
     var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reduce){ dstT.placeholder=pre+DEF[0]; return }
     function names(){ var L=popularPlaces().map(function(p){ return p.name }); return L.length>=2?L.slice(0,5):DEF }
@@ -1344,7 +1346,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   function pkOpen(){
     var h=$('rh-hint'); h.textContent='';
     if(!to.value){ h.textContent='Pilih tujuan dulu.'; dstT.focus(); return }
-    loadPlaces(); pkDest(); $('pk-e').textContent='';
+    loadPlaces(); pkDest(); $('pk-e').textContent=''; pkWa(false);
     pkKelShow(!gps&&!ptSel&&!!from.value); pkFocus=document.activeElement; pkEl.hidden=false; document.body.style.overflow='hidden'; pkSync();
     setTimeout(function(){ $('pk-gps').focus() },60);
   }
@@ -1353,15 +1355,24 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     from.value=String(id); $('pk-kel-sel').value=from.value; cbFrom.sync(); from.dispatchEvent(new Event('change'));
     return from.value===String(id);
   }
+  function pkNearList(g){
+    if(!from.value||from.value===OTHER) return [];
+    return PLACES.filter(function(p){ return p.area_id===+from.value&&p.access!=='tidak'&&p.lat!=null&&p.lng!=null }).map(function(p){ return {p:p,d:dist(g,p)} }).filter(function(x){ return x.d<=500 }).sort(function(a,b){ return a.d-b.d }).slice(0,3);
+  }
   function pkNear(g){
-    var box=$('pk-near'); box.innerHTML=''; if(!from.value||from.value===OTHER) return;
-    var L=PLACES.filter(function(p){ return p.area_id===+from.value&&p.access!=='tidak' }).map(function(p){ return {p:p,d:dist(g,p)} }).filter(function(x){ return x.d<=500 }).sort(function(a,b){ return a.d-b.d }).slice(0,3);
-    if(!L.length) return;
+    var box=$('pk-near'); box.innerHTML=''; var L=pkNearList(g); if(!L.length) return;
     var t=document.createElement('div'); t.className='pk-or'; t.style.width='100%'; t.style.margin='4px 0 0'; t.textContent='Titik terdekat, jemput di sini?'; box.appendChild(t);
     L.forEach(function(x){ var b=document.createElement('button'); b.type='button'; b.className='pt-b'; b.dataset.pn=x.p.id; b.innerHTML=esc(x.p.name)+'<small>'+fmtD(x.d)+' dari Anda</small>'; box.appendChild(b) });
   }
+  /* patokan jemput terisi otomatis dengan titik terdaftar terdekat (dalam 150 m), bisa diubah penumpang */
+  function pkAutoFrom(g){
+    var L=pkNearList(g), df=$('det-from'); if(!L.length||L[0].d>150||df.value.trim()) return;
+    df.value='Dekat '+L[0].p.name; lastAutoFrom=df.value;
+  }
+  function pkWa(on){ $('pk-wa-p').hidden=!on }
+  function pkSetOther(){ from.value=OTHER; $('pk-kel-sel').value=OTHER; $('from-t').dataset.custom=''; cbFrom.sync(); from.dispatchEvent(new Event('change')) }
   function pkPickPlace(p){
-    gps=null; $('gps-chk').checked=false; ptClear();
+    pkWa(false); gps=null; $('gps-chk').checked=false; ptClear();
     ptSel={id:p.id,name:p.name,lat:p.lat,lng:p.lng,area:p.area_id};
     if(!pkSetArea(p.area_id)){ ptSel=null; pkMsg('Titik itu belum bisa dipilih otomatis. Pilih kelurahannya di bawah.','warn'); return }
     $('pk-q').value=p.name; $('pk-l').hidden=true; $('pk-near').innerHTML=''; pkMsg('','');
@@ -1381,14 +1392,15 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     sb.rpc('area_at_point',{p_lat:g.lat,p_lng:g.lng}).then(function(r){
       if(gps!==g) return;
       var row=r.data&&r.data[0];
-      if(r.error||!row||!row.area_id||!pkSetArea(row.area_id)){ pkMsg('Kelurahan belum terdeteksi dari lokasi Anda. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync(); return }
-      loadPlaces(function(){ pkNear(g); pkSync() }); pkSync();
+      if(!r.error&&(!row||!row.area_id)){ pkSetOther(); pkMsg('Lokasi Anda di luar tarif otomatis. Anda tetap bisa memesan, admin akan menetapkan tarif. Atau chat admin lewat WhatsApp.','warn'); pkWa(true); pkSync(); return }
+      if(r.error||!pkSetArea(row.area_id)){ pkMsg('Kelurahan belum terdeteksi dari lokasi Anda. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync(); return }
+      pkWa(false); loadPlaces(function(){ pkNear(g); pkAutoFrom(g); pkSync() }); pkSync();
     },function(){ pkMsg('Kelurahan belum terdeteksi. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync() });
   }
   function pkLocate(){
     var b=$('pk-gps');
     if(!navigator.geolocation||!window.isSecureContext){ pkMsg('Lokasi tidak tersedia di perangkat ini. Cari titik jemput atau pilih kelurahan di bawah.','bad'); pkKelShow(); return }
-    pkStopW(); b.disabled=true; pkMsg('Mencari lokasi…','');
+    pkStopW(); pkWa(false); b.disabled=true; pkMsg('Mencari lokasi…','');
     var best=null, done=false, tm=0;
     function finish(){
       if(done) return; done=true; pkStopW(); clearTimeout(tm); clearTimeout(tm2); b.disabled=false;
@@ -1411,7 +1423,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     var q=pkQ.value.trim(); pkL.innerHTML='';
     if(q.length<1){ pkL.hidden=true; return }
     var ref=pkRef(); pkShown=placeFind(q,ref); pkEmpty=!pkShown.length;
-    pkShown.forEach(function(p,i){ var e=document.createElement('li'); e.setAttribute('role','option'); e.dataset.i=i; e.innerHTML=esc(p.name)+'<small>'+esc(nm(String(p.area_id)))+(ref?' · '+fmtD(dist(ref,p)):'')+'</small>'; pkL.appendChild(e) });
+    pkShown.forEach(function(p,i){ var e=document.createElement('li'); e.setAttribute('role','option'); e.dataset.i=i; e.innerHTML=esc(p.name)+'<small>'+esc(nm(String(p.area_id)))+(ref&&p.lat!=null?' · '+fmtD(dist(ref,p)):'')+'</small>'; pkL.appendChild(e) });
     if(pkEmpty){ pkKelShow(); var n=document.createElement('li'); n.className='cb-none'; n.textContent=PLACES.length?'Belum ada di daftar kami. Pilih kelurahan di bawah.':'Daftar tempat belum termuat'; pkL.appendChild(n) }
     pkL.hidden=false;
   }
@@ -1421,7 +1433,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   pkL.addEventListener('mousedown',function(e){ e.preventDefault() });
   pkL.addEventListener('click',function(e){ var x=e.target.closest('li[data-i]'); if(x){ var p=pkShown[+x.dataset.i]; if(p) pkPickPlace(p) } });
   $('pk-near').addEventListener('click',function(e){ var b=e.target.closest('button[data-pn]'); if(!b) return; var p=PLACES.filter(function(x){ return x.id===+b.dataset.pn })[0]; if(p) pkPickPlace(p) });
-  $('pk-kel-sel').addEventListener('change',function(){ gps=null; $('gps-chk').checked=false; ptClear(); pkDropAutoFrom(); $('pk-q').value=''; $('pk-near').innerHTML=''; pkMsg('','');
+  $('pk-kel-sel').addEventListener('change',function(){ pkWa(false); gps=null; $('gps-chk').checked=false; ptClear(); pkDropAutoFrom(); $('pk-q').value=''; $('pk-near').innerHTML=''; pkMsg('','');
     from.value=this.value; cbFrom.sync(); from.dispatchEvent(new Event('change')); pkSync() });
   $('pk-gps').addEventListener('click',pkLocate);
   $('pk-x').addEventListener('click',pkClose);
@@ -1692,7 +1704,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     if(payPref==='noncash') row.pay_pref='noncash';
     if(dstSel&&cur.b!==OTHER&&dstSel.area_id===+cur.b) row.dropoff_point_id=dstSel.id;
     if(gps){ row.pickup_lat=gps.lat; row.pickup_lng=gps.lng; row.pickup_acc=gps.acc }
-    else if(ptOk){ row.pickup_lat=ptSel.lat; row.pickup_lng=ptSel.lng; row.pickup_point_id=ptSel.id }
+    else if(ptOk){ if(ptSel.lat!=null){ row.pickup_lat=ptSel.lat; row.pickup_lng=ptSel.lng } row.pickup_point_id=ptSel.id }
     insertBooking(row).then(function(r){
       if(r.error&&payPref==='noncash'&&/pay_pref|column/i.test(r.error.message||'')){ err.textContent='Non-tunai belum tersedia. Pilih tunai atau pesan lewat WhatsApp.'; return }
       if(r.error&&/layanan_tutup/.test(r.error.message||'')){ loadService(); err.textContent='Waktu jemput itu di luar jam layanan.'+(svc&&svc.shifts?' Jam layanan: '+fmtShifts(svc.shifts)+'.':''); return }
