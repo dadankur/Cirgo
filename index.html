@@ -511,6 +511,15 @@ body.has-chfab::after{content:"";display:block;height:72px}
 .rf{margin:14px 0;padding:14px 16px;border:1.5px solid var(--line);border-radius:16px}.rf h3{margin:0 0 6px;font-size:16px}.rf p{margin:0 0 10px;font-size:14px;color:var(--muted)}
 .tk-fb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.tk-fb .btn{flex:1;min-width:150px}
 @media(prefers-reduced-motion:reduce){.cgc-b,.fb-b{animation:none}}
+.svc-tabs{position:relative;display:flex;gap:4px;margin:14px 0 6px;padding:4px;border-radius:14px;background:rgba(128,128,128,.16)}
+.svc-tabs button{flex:1;min-height:42px;border:0;border-radius:11px;background:transparent;color:inherit;font:600 14px var(--f-body);cursor:pointer;transition:background .2s,color .2s,transform .1s}
+.svc-tabs button:active{transform:scale(.96)}
+.svc-tabs button[aria-selected="true"]{background:#B8975A;color:#0F1B2D}
+:root[data-theme="light"] .svc-tabs button[aria-selected="true"]{background:#0F2A55;color:#fff}
+.svc-tabs b{font-weight:700;color:#B8975A}.svc-tabs button[aria-selected="true"] b{color:inherit}
+:root[data-theme="light"] .svc-tabs button[aria-selected="true"] b{color:#E3B955}
+.svc-note{position:relative;margin:0 0 6px;font-size:13px;opacity:.85;min-height:18px}.svc-note:empty{display:none}
+.svc-soon{position:relative;margin:10px 0 4px;padding:22px 16px;border-radius:16px;text-align:center;border:1.5px dashed rgba(184,151,90,.7)}.svc-soon b{display:block;font:500 26px var(--f-display);margin-bottom:6px}.svc-soon span{font-size:14px;opacity:.85}
 .pk-wa{margin:8px 0 0}.pk-wa a{color:var(--gold-ink,#8A6A1F);font-weight:700}
 .pk-link{margin:12px 0 0;padding:6px 0;font:inherit;font-size:14px;color:var(--muted);background:none;border:0;text-decoration:underline;cursor:pointer}
 
@@ -582,6 +591,9 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       <section class="route-hero live" id="s-form">
         <svg class="watermark" viewBox="0 0 200 200" aria-hidden="true"><path d="M150 52A68 68 0 1 0 150 148" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/></svg>
         <span class="rh-title">Mau ke mana?</span>
+        <div class="svc-tabs" id="svc-tabs" role="tablist" aria-label="Pilih layanan"><button type="button" role="tab" data-m="z1" aria-selected="true">Zona 1</button><button type="button" role="tab" data-m="z2" aria-selected="false" tabindex="-1">Zona 2</button><button type="button" role="tab" data-m="z3" aria-selected="false" tabindex="-1">Zona 3</button><button type="button" role="tab" data-m="nego" aria-selected="false" tabindex="-1">Ne<b>go</b></button></div>
+        <p class="svc-note" id="svc-note" role="status"></p>
+        <div class="svc-soon" id="svc-soon" hidden><b>Coming soon</b><span>Fitur Nego segera hadir: kamu bisa menentukan harga tawaran sendiri.</span></div>
         <div class="rh-route simple">
           <i class="dot a"></i><i class="line"></i><i class="dot b"></i>
           <div class="s1 cb"><small>Jemput</small><input id="from-t" class="cbin" type="text" placeholder="Ketik kelurahan jemput" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="from-l" aria-autocomplete="list" aria-label="Kelurahan jemput"><select id="from" hidden tabindex="-1" aria-hidden="true"></select><ul class="cbl" id="from-l" role="listbox" hidden></ul></div>
@@ -1024,21 +1036,38 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       if(r.error||!r.data){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Daftar belum termuat</div><p class="note">Muat ulang halaman, atau pesan lewat WhatsApp.</p>'; return }
       r.data.forEach(function(a){byId[a.id]=a});
       areas=r.data.filter(function(a){return a.level==='kelurahan'||a.level==='desa'});
-      loaded=true; fill(from); fill(to); fill($('pk-kel-sel')); loadPlaces(); if(typeof cbFrom!=='undefined'){ cbFrom.sync(); cbTo.sync() } calc(); if(order&&viewing){ } loadList();
+      loaded=true; svcFill(); loadPlaces(); if(typeof cbFrom!=='undefined'){ cbFrom.sync(); cbTo.sync() } calc(); if(order&&viewing){ } loadList();
     });
   }
-  function fill(sel){
+  function fill(sel,kind){
     sel.innerHTML='';
     var o=document.createElement('option'); o.value=''; o.textContent='Pilih kelurahan'; sel.appendChild(o);
     var groups={};
     areas.forEach(function(a){
+      if(kind){ var z=a.zone==null?null:+a.zone; if(kind==='pick'?!pickZoneOk(z):!destZoneOk(z)) return }
       var p=byId[a.parent_id], key=p?p.name:(a.wilayah==='kota'?'Kota Cirebon':'Kabupaten Cirebon');
       var og=groups[key]; if(!og){og=document.createElement('optgroup'); og.label=key; groups[key]=og; sel.appendChild(og)}
       var op=document.createElement('option'); op.value=a.id; op.textContent=a.name; og.appendChild(op);
     });
-    var last=document.createElement('option'); last.value=OTHER; last.textContent='Lokasi lain di luar daftar (hubungi kami)'; sel.appendChild(last);
+    if(!kind||svcMode==='z3'){ var last=document.createElement('option'); last.value=OTHER; last.textContent='Lokasi lain di luar daftar (hubungi kami)'; sel.appendChild(last) }
   }
   function nm(v){ return v===OTHER?'Lokasi lain':(byId[v]?byId[v].name:'') }
+  /* ---------- mode layanan: Zona 1, Zona 2, Zona 3, Nego ---------- */
+  var svcMode='z1';
+  function zOf(id){ var a=byId[id]; return a&&a.zone!=null?+a.zone:null }
+  function destZoneOk(z){ return svcMode==='z3'?true:(svcMode==='z2'?(z===1||z===2):z===1) }
+  function pickZoneOk(z){
+    if(svcMode==='z3') return true;
+    if(svcMode==='z1') return z===1;
+    var dz=(to.value&&to.value!==OTHER)?zOf(to.value):null;
+    if(dz===1) return z===2; if(dz===2) return z===1; return z===1||z===2;
+  }
+  function modeWhy(){
+    if(svcMode==='z1') return 'Tab Zona 1 hanya untuk jemput dan tujuan di Zona 1. Untuk jarak lebih jauh, pindah ke tab Zona 2 atau Zona 3.';
+    var dz=(to.value&&to.value!==OTHER)?zOf(to.value):null;
+    return dz===1?'Tab Zona 2 khusus Zona 1 ke Zona 2 atau sebaliknya. Tujuan Anda di Zona 1, jadi jemput harus di Zona 2.':(dz===2?'Tab Zona 2 khusus Zona 1 ke Zona 2 atau sebaliknya. Tujuan Anda di Zona 2, jadi jemput harus di Zona 1.':'Tab Zona 2 khusus Zona 1 ke Zona 2 atau sebaliknya.');
+  }
+  function svcFill(){ fill(from,'pick'); fill(to,'dest'); fill($('pk-kel-sel'),'pick') }
   var cur=null, calcSeq=0;
   function resetPrice(){ price.className='price empty'; price.innerHTML='<div class="lbl">Tarif</div><div class="amt">Pilih rute dulu</div><p class="note">Tarif muncul setelah jemput dan tujuan dipilih.</p>'; pkSync() }
   function showContact(){
@@ -1134,6 +1163,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     if(!$('nama').value.trim()) return 'Isi nama pemesan.';
     if($('wa').value.replace(/\D/g,'').length<9) return 'Isi nomor WhatsApp yang valid.';
     if(!$('det-from').value.trim()&&!gps&&!(ptSel&&cur&&cur.a!==OTHER&&ptSel.area===+cur.a)) return 'Isi alamat atau patokan jemput.';
+    if(svcMode==='z3'){ var p3=pickupAt(); if(!p3) return 'Zona 3 harus dijadwalkan. Pilih tanggal dan jam jemput.'; if(p3.getTime()<Date.now()+55*60000) return 'Zona 3 minimal dipesan 1 jam sebelum jemput. Pilih jam yang lebih lama.' }
     if($('when').value==='later'){ var p=pickupAt(); if(!p) return 'Pilih tanggal dan jam jemput.'; if(p.getTime()<=Date.now()) return 'Pilih waktu jemput di masa depan.' }
     return '';
   }
@@ -1278,13 +1308,15 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     },function(){ if(done) done() });
   }
   function popularPlaces(){
-    var L=PLACES.filter(function(p){ return p.popular });
-    if(!L.length) L=PLACES.filter(function(p){ return p.kind==='tempat_populer'||p.kind==='fasilitas_umum' });
+    var P=PLACES.filter(function(p){ return zoneOkPlace(p,'dest') });
+    var L=P.filter(function(p){ return p.popular });
+    if(!L.length) L=P.filter(function(p){ return p.kind==='tempat_populer'||p.kind==='fasilitas_umum' });
     return L.slice(0,8);
   }
-  function placeFind(q,ref){
+  function zoneOkPlace(p,kind){ var z=zOf(p.area_id); return kind==='pick'?pickZoneOk(z):destZoneOk(z) }
+  function placeFind(q,ref,kind){
     var Q=norm(q), toks=Q.split(' ').filter(Boolean);
-    var res=PLACES.filter(function(p){ var k=norm(p.name+' '+(p.aliases||'')+' '+(p.note||'')+' '+nm(String(p.area_id))); return toks.every(function(t){ return k.indexOf(t)>-1 }) });
+    var res=PLACES.filter(function(p){ if(!zoneOkPlace(p,kind||'dest')) return false; var k=norm(p.name+' '+(p.aliases||'')+' '+(p.note||'')+' '+nm(String(p.area_id))); return toks.every(function(t){ return k.indexOf(t)>-1 }) });
     res.forEach(function(p){ var n=norm(p.name); p._s=n.indexOf(Q)===0?0:(n.indexOf(Q)>-1?1:2); p._d=ref?dist(ref,p):0 });
     res.sort(function(a,b){ return a._s-b._s||a._d-b._d||(a.name<b.name?-1:1) });
     return res.slice(0,12);
@@ -1301,14 +1333,14 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   function dstOpen(){ dstL.hidden=false; dstT.setAttribute('aria-expanded','true'); $('s-form').classList.add('dst-open') }
   function dstClose(){ dstL.hidden=true; dstT.setAttribute('aria-expanded','false'); dstAct=-1; $('s-form').classList.remove('dst-open') }
   function dstDraw(){
-    var q=dstT.value.trim(), res=q?placeFind(q,pkRef()):popularPlaces();
+    var q=dstT.value.trim(), res=q?placeFind(q,pkRef(),'dest'):popularPlaces();
     dstShown=res; dstEmpty=!!q&&!res.length; dstL.innerHTML='';
     function li(cls,i,html){ var e=document.createElement('li'); if(cls) e.className=cls; if(i!==null){ e.dataset.i=i; e.setAttribute('role','option') } e.innerHTML=html; dstL.appendChild(e) }
     if(!q&&res.length) li('cb-head',null,'Sering dituju');
     res.forEach(function(p,i){ li('',i,esc(p.name)+'<small>'+esc(nm(String(p.area_id)))+'</small>') });
-    if(dstEmpty) li('cb-none',null,PLACES.length?'Belum ada di daftar kami':'Daftar tempat belum termuat');
+    if(dstEmpty) li('cb-none',null,PLACES.length?(svcMode==='z3'?'Belum ada di daftar kami':'Belum ada di zona ini. Untuk tujuan bebas, pakai tab Zona 3.'):'Daftar tempat belum termuat');
     li('cb-other','kel','Pilih dari daftar kelurahan');
-    if(q) li('cb-other','own','Tulis sendiri: '+esc(q)+' (tarif dikonfirmasi admin)');
+    if(q&&svcMode==='z3') li('cb-other','own','Tulis sendiri: '+esc(q)+' (tarif dikonfirmasi admin)');
     dstAct=-1; dstOpen();
   }
   function dstSetAct(n){ var l=dstL.querySelectorAll('li[data-i]'); if(!l.length) return; dstAct=(n+l.length)%l.length; Array.prototype.forEach.call(l,function(e,i){ e.setAttribute('aria-selected',String(i===dstAct)) }); try{ l[dstAct].scrollIntoView({block:'nearest'}) }catch(e){} }
@@ -1388,13 +1420,26 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     var h=$('rh-hint'); h.textContent='';
     if(!to.value){ h.textContent='Pilih tujuan dulu.'; dstT.focus(); return }
     loadPlaces(); pkDest(); $('pk-e').textContent=''; pkWa(false);
+    var fv=from.value; fill($('pk-kel-sel'),'pick'); $('pk-kel-sel').value=fv;
     pkKelShow(!gps&&!ptSel&&!!from.value); pkFocus=document.activeElement; pkEl.hidden=false; document.body.style.overflow='hidden'; pkSync();
     setTimeout(function(){ $('pk-gps').focus() },60);
   }
   function pkClose(){ pkStopW(); pkEl.hidden=true; document.body.style.overflow=''; $('pk-l').hidden=true; if(pkFocus&&pkFocus.focus) try{ pkFocus.focus() }catch(e){} }
+  var pkBlocked='';
   function pkSetArea(id){
+    pkBlocked='';
+    if(!pickZoneOk(zOf(id))){ pkBlocked=modeWhy(); return false }
     from.value=String(id); $('pk-kel-sel').value=from.value; cbFrom.sync(); from.dispatchEvent(new Event('change'));
     return from.value===String(id);
+  }
+  function pkRejectGps(msg){
+    gps=null; $('gps-chk').checked=false; pkDropAutoFrom(); $('pk-near').innerHTML=''; $('pk-q').value='';
+    if(from.value){ from.value=''; cbFrom.sync(); $('pk-kel-sel').value=''; from.dispatchEvent(new Event('change')) }
+    pkMsg(msg,'warn'); pkKelShow(); pkSync();
+  }
+  function pkClearPick(){
+    gps=null; $('gps-chk').checked=false; ptClear(); pkDropAutoFrom(); $('pk-near').innerHTML=''; $('pk-q').value='';
+    from.value=''; cbFrom.sync(); $('pk-kel-sel').value=''; from.dispatchEvent(new Event('change'));
   }
   function pkNearList(g){
     if(!from.value||from.value===OTHER) return [];
@@ -1415,7 +1460,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   function pkPickPlace(p){
     pkWa(false); gps=null; $('gps-chk').checked=false; ptClear();
     ptSel={id:p.id,name:p.name,lat:p.lat,lng:p.lng,area:p.area_id};
-    if(!pkSetArea(p.area_id)){ ptSel=null; pkMsg('Titik itu belum bisa dipilih otomatis. Pilih kelurahannya di bawah.','warn'); return }
+    if(!pkSetArea(p.area_id)){ ptSel=null; pkMsg(pkBlocked||'Titik itu belum bisa dipilih otomatis. Pilih kelurahannya di bawah.','warn'); return }
     $('pk-q').value=p.name; $('pk-l').hidden=true; $('pk-near').innerHTML=''; pkMsg('','');
     var df=$('det-from'); if(!df.value.trim()||df.value===lastAutoFrom){ df.value=p.name; lastAutoFrom=p.name }
     pkSync();
@@ -1433,8 +1478,12 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     sb.rpc('area_at_point',{p_lat:g.lat,p_lng:g.lng}).then(function(r){
       if(gps!==g) return;
       var row=r.data&&r.data[0];
-      if(!r.error&&(!row||!row.area_id)){ pkSetOther(); pkMsg('Lokasi Anda di luar tarif otomatis. Anda tetap bisa memesan, admin akan menetapkan tarif. Atau chat admin lewat WhatsApp.','warn'); pkWa(true); pkSync(); return }
-      if(r.error||!pkSetArea(row.area_id)){ pkMsg('Kelurahan belum terdeteksi dari lokasi Anda. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync(); return }
+      if(!r.error&&(!row||!row.area_id)){
+        if(svcMode!=='z3'){ pkRejectGps(svcMode==='z1'?'Lokasi Anda di luar Zona 1. Untuk jarak lebih jauh, pindah ke tab Zona 2 atau Zona 3.':'Lokasi Anda di luar Zona 1 dan Zona 2. Gunakan tab Zona 3.'); return }
+        pkSetOther(); pkMsg('Lokasi Anda di luar tarif otomatis. Anda tetap bisa memesan, admin akan menetapkan tarif. Atau chat admin lewat WhatsApp.','warn'); pkWa(true); pkSync(); return }
+      if(r.error||!pkSetArea(row.area_id)){
+        if(pkBlocked){ pkRejectGps(pkBlocked); return }
+        pkMsg('Kelurahan belum terdeteksi dari lokasi Anda. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync(); return }
       pkWa(false); loadPlaces(function(){ pkNear(g); pkAutoFrom(g); pkSync() }); pkSync();
     },function(){ pkMsg('Kelurahan belum terdeteksi. Pilih kelurahan di bawah.','warn'); pkKelShow(); pkSync() });
   }
@@ -1463,7 +1512,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   function pkDraw(){
     var q=pkQ.value.trim(); pkL.innerHTML='';
     if(q.length<1){ pkL.hidden=true; return }
-    var ref=pkRef(); pkShown=placeFind(q,ref); pkEmpty=!pkShown.length;
+    var ref=pkRef(); pkShown=placeFind(q,ref,'pick'); pkEmpty=!pkShown.length;
     pkShown.forEach(function(p,i){ var e=document.createElement('li'); e.setAttribute('role','option'); e.dataset.i=i; e.innerHTML=esc(p.name)+'<small>'+esc(nm(String(p.area_id)))+(ref&&p.lat!=null?' · '+fmtD(dist(ref,p)):'')+'</small>'; pkL.appendChild(e) });
     if(pkEmpty){ pkKelShow(); var n=document.createElement('li'); n.className='cb-none'; n.textContent=PLACES.length?'Belum ada di daftar kami. Pilih kelurahan di bawah.':'Daftar tempat belum termuat'; pkL.appendChild(n) }
     pkL.hidden=false;
@@ -1509,10 +1558,12 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
 
   /* ---------- refund untuk pesanan yang sudah dibayar lalu dibatalkan ---------- */
   function rfRender(o){
-    var box=$('rf'), show=o.status==='cancelled'&&o.ps==='paid'; box.hidden=!show; if(!show) return;
+    var box=$('rf'), show=o.status==='cancelled'&&o.ps==='paid'&&o.pref!=='cash'; box.hidden=!show; if(!show) return;
     var f=$('rf-form'), p=$('rf-p'); $('tk-pay').textContent='';
     if(o.cs==='refunded'){ p.textContent='Refund '+rp(o.amt)+' sudah dikirim'+(o.rto?' ke '+o.rto:'')+'. Terima kasih sudah sabar menunggu.'; f.hidden=true }
+    else if(o.cs==='rejected'){ p.textContent='Pengajuan refund belum bisa diproses. Silakan hubungi admin lewat WhatsApp.'; f.hidden=true }
     else if(o.cs==='requested'&&o.rto){ p.textContent='Pengajuan refund '+rp(o.amt)+' sudah diterima admin dan sedang diproses. Dikirim ke: '+o.rto; f.hidden=true }
+    else if(o.cs==='requested'){ p.textContent='Pesanan dibatalkan dan refund '+rp(o.amt)+' sedang disiapkan admin. Isi tujuan refund agar bisa segera dikirim.'; f.hidden=false }
     else { p.textContent='Pesanan dibatalkan. Pembayaran '+rp(o.amt)+' bisa dikembalikan. Isi tujuan refund agar admin bisa mengirimkannya.'; f.hidden=false }
   }
   $('rf-go').addEventListener('click',function(){
@@ -1522,7 +1573,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     b.disabled=true;
     sb.rpc('customer_request_refund',{p_booking:order.id,p_refund_to:v}).then(function(r){
       b.disabled=false;
-      if(r.error||r.data!=='ok'){ E.textContent=r.data==='sudah_refund'?'Refund ini sudah dikirim.':'Belum bisa mengajukan refund. Hubungi admin lewat WhatsApp.'; return }
+      if(r.error||r.data!=='ok'){ if(rpcMissing(r)){ E.textContent='Fitur refund belum aktif di server. Hubungi admin lewat WhatsApp.'; return } E.textContent=r.data==='sudah_refund'?'Refund ini sudah dikirim.':'Belum bisa mengajukan refund. Hubungi admin lewat WhatsApp.'; return }
       $('rf-to').value=''; refreshOrder();
     },function(){ b.disabled=false; E.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.' });
   });
@@ -1534,6 +1585,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   var FB_POS=['ramah','tepat_waktu','aman','bersih','harga_sesuai'], FB_NEG=['telat','kurang_ramah','kurang_aman','kurang_bersih','rute_kurang_tepat','harga_tidak_sesuai'], FB_ISS=['aplikasi_bug','pembayaran','refund','titik_jemput','pengemudi','tarif','lainnya'];
   var fbAsked={}, fbMode='rating', fbRate=0, fbTags=[], fbFocus=null, fbOrderId=null;
   var STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5l-5.9 3.1 1.2-6.5L2.5 9.5l6.6-.9z"/></svg>';
+  function rpcMissing(r){ return !!(r&&r.error&&/Could not find the function|PGRST202|42883|does not exist/i.test(String(r.error.message||'')+' '+String(r.error.code||''))) }
   function fbKey(id){ return 'cirgo_fb_'+id }
   function fbMark(id){ try{ localStorage.setItem(fbKey(id),'1') }catch(e){} }
   function fbBtns(o){ $('tk-rate').hidden=o.status!=='done'; $('tk-issue').hidden=(o.status==='new'||o.status==='offered') }
@@ -1579,14 +1631,45 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     b.disabled=true;
     sb.rpc('submit_trip_feedback',{p_booking:order.id,p_kind:fbMode,p_rating:fbMode==='rating'?fbRate:null,p_tags:fbTags,p_comment:c||null}).then(function(r){
       b.disabled=false;
-      if(r.error||r.data!=='ok'){ E.textContent=r.data==='terlalu_banyak'?'Laporan untuk pesanan ini sudah cukup banyak. Hubungi admin lewat WhatsApp.':'Belum bisa terkirim. Coba lagi sebentar lagi.'; return }
+      if(r.error||r.data!=='ok'){ if(rpcMissing(r)){ E.textContent='Fitur ini belum aktif di server. Mohon hubungi admin.'; return } E.textContent=r.data==='terlalu_banyak'?'Laporan untuk pesanan ini sudah cukup banyak. Hubungi admin lewat WhatsApp.':'Belum bisa terkirim. Coba lagi sebentar lagi.'; return }
       if(fbMode==='rating') fbMark(order.id);
       $('fb-main').hidden=true; $('fb-done').hidden=false; setTimeout(fbClose,1500);
     },function(){ b.disabled=false; E.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.' });
   });
+
+  var SVC_NOTE={z1:'Jemput dan tujuan di dalam Zona 1.',z2:'Khusus Zona 1 ke Zona 2, atau Zona 2 ke Zona 1.',z3:'Tujuan bebas. Dijadwalkan minimal 1 jam sebelumnya, tarif dikonfirmasi admin.',nego:''};
+  $('svc-note').textContent=SVC_NOTE.z1;
+  function whenRule(){
+    var w=$('when'), z3=svcMode==='z3', opt=w.querySelector('option[value="now"]'), hint=$('when-wrap').querySelector('.hint');
+    opt.disabled=z3; opt.hidden=z3;
+    if(z3){
+      w.value='later'; $('when-wrap').hidden=false;
+      var d=new Date(Date.now()+60*60000); d.setSeconds(0,0); function p2(n){ return String(n).padStart(2,'0') }
+      $('when-at').min=d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+'T'+p2(d.getHours())+':'+p2(d.getMinutes());
+      if(hint) hint.textContent='Zona 3: minimal 1 jam sebelum jemput. Admin akan mengonfirmasi jadwal.';
+    } else { $('when-at').removeAttribute('min'); if(hint) hint.textContent='Admin akan mengonfirmasi jadwal ini.' }
+  }
+  function svcSet(m){
+    if(m===svcMode) return;
+    svcMode=m;
+    Array.prototype.forEach.call($('svc-tabs').querySelectorAll('button'),function(b){ var on=b.dataset.m===m; b.setAttribute('aria-selected',String(on)); b.tabIndex=on?0:-1 });
+    var nego=m==='nego';
+    $('svc-note').textContent=SVC_NOTE[m]||''; $('svc-soon').hidden=!nego;
+    document.querySelector('.rh-route').style.display=nego?'none':''; $('rh-go').style.display=nego?'none':''; $('rh-hint').textContent='';
+    if(!nego){ pkReset(); svcFill(); cbTo.sync(); cbFrom.sync(); whenRule() }
+    dstClose();
+  }
+  $('svc-tabs').addEventListener('click',function(e){ var b=e.target.closest('button[data-m]'); if(b) svcSet(b.dataset.m) });
+  $('svc-tabs').addEventListener('keydown',function(e){
+    if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft') return;
+    var L=Array.prototype.slice.call(this.querySelectorAll('button')), i=L.indexOf(document.activeElement); if(i<0) return;
+    e.preventDefault(); var n=L[(i+(e.key==='ArrowRight'?1:L.length-1))%L.length]; n.focus(); svcSet(n.dataset.m);
+  });
+  to.addEventListener('change',function(){ if(svcMode==='z2'&&from.value&&from.value!==OTHER&&!pickZoneOk(zOf(from.value))) pkClearPick() });
   function insertBooking(row){
     var run=function(rw,c){ return sb.from('bookings').insert(rw).select(c).single() };
     return run(row,COLS).then(function(r){
+      if(r.error&&row.service_mode!=null&&/service_mode/i.test(r.error.message||'')){ var r4=Object.assign({},row); delete r4.service_mode; return insertBooking(r4) }
       if(r.error&&row.dropoff_point_id!=null&&/dropoff_point_id/i.test(r.error.message||'')){ var r3=Object.assign({},row); delete r3.dropoff_point_id; return insertBooking(r3) }
       if(r.error&&row.pickup_lat!=null&&/pickup_(lat|lng|acc|point_id|geo)/i.test(r.error.message||'')){
         var r2=Object.assign({},row); delete r2.pickup_lat; delete r2.pickup_lng; delete r2.pickup_acc; delete r2.pickup_point_id;
@@ -1834,6 +1917,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       pickup_text:(cur.a===OTHER?lokasiLain('from-t'):'')+ptxt,dropoff_text:((cur.b===OTHER?lokasiLain('to-t'):'')+dtxt).trim()||null,
       pickup_at:p?p.toISOString():null,terms_version:TERMS_VERSION,terms_accepted_at:new Date().toISOString()};
     if(payPref==='noncash') row.pay_pref='noncash';
+    row.service_mode=svcMode;
     if(dstSel&&cur.b!==OTHER&&dstSel.area_id===+cur.b) row.dropoff_point_id=dstSel.id;
     if(gps){ row.pickup_lat=gps.lat; row.pickup_lng=gps.lng; row.pickup_acc=gps.acc }
     else if(ptOk){ if(ptSel.lat!=null){ row.pickup_lat=ptSel.lat; row.pickup_lng=ptSel.lng } row.pickup_point_id=ptSel.id }
@@ -1977,7 +2061,7 @@ $('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydo
     $('dp-sum').innerHTML=h;
   }
   var moreFocus=null, dpFx=null;
-  function openMore(){ var m=$('f-more'); if(!m.hidden) return; fillSum(); moreFocus=document.activeElement; m.hidden=false; document.body.style.overflow='hidden'; if(dpFx) dpFx.stop(); var cd=$('dp-card'); dpFx=CgF(cd,{period:6500,fire:true}); setTimeout(function(){ if(dpFx) dpFx.burst(18,cd.clientWidth/2,0,170) },250); setTimeout(function(){ var f=$('det-from'); if(f) f.focus() },80) }
+  function openMore(){ var m=$('f-more'); if(!m.hidden) return; fillSum(); whenRule(); moreFocus=document.activeElement; m.hidden=false; document.body.style.overflow='hidden'; if(dpFx) dpFx.stop(); var cd=$('dp-card'); dpFx=CgF(cd,{period:6500,fire:true}); setTimeout(function(){ if(dpFx) dpFx.burst(18,cd.clientWidth/2,0,170) },250); setTimeout(function(){ var f=$('det-from'); if(f) f.focus() },80) }
   function closeMore(){ var m=$('f-more'); if(!m.hidden){ if(dpFx){ dpFx.stop(); dpFx=null } m.hidden=true; document.body.style.overflow=''; if(moreFocus&&moreFocus.focus) try{ moreFocus.focus() }catch(e){} } $('rh-hint').textContent='' }
   $('dp-x').addEventListener('click',closeMore);
   $('f-more').addEventListener('click',function(e){ if(e.target===this) closeMore() });
