@@ -511,15 +511,17 @@ body.has-chfab::after{content:"";display:block;height:72px}
 .rf{margin:14px 0;padding:14px 16px;border:1.5px solid var(--line);border-radius:16px}.rf h3{margin:0 0 6px;font-size:16px}.rf p{margin:0 0 10px;font-size:14px;color:var(--muted)}
 .tk-fb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.tk-fb .btn{flex:1;min-width:150px}
 @media(prefers-reduced-motion:reduce){.cgc-b,.fb-b{animation:none}}
-.svc-tabs{position:relative;display:flex;gap:4px;margin:14px 0 6px;padding:4px;border-radius:14px;background:rgba(128,128,128,.16)}
-.svc-tabs button{flex:1;min-height:42px;border:0;border-radius:11px;background:transparent;color:inherit;font:600 14px var(--f-body);cursor:pointer;transition:background .2s,color .2s,transform .1s}
-.svc-tabs button:active{transform:scale(.96)}
-.svc-tabs button[aria-selected="true"]{background:#B8975A;color:#0F1B2D}
-:root[data-theme="light"] .svc-tabs button[aria-selected="true"]{background:#0F2A55;color:#fff}
-.svc-tabs b{font-weight:700;color:#B8975A}.svc-tabs button[aria-selected="true"] b{color:inherit}
-:root[data-theme="light"] .svc-tabs button[aria-selected="true"] b{color:#E3B955}
 .svc-note{position:relative;margin:0 0 6px;font-size:13px;opacity:.85;min-height:18px}.svc-note:empty{display:none}
-.svc-soon{position:relative;margin:10px 0 4px;padding:22px 16px;border-radius:16px;text-align:center;border:1.5px dashed rgba(184,151,90,.7)}.svc-soon b{display:block;font:500 26px var(--f-display);margin-bottom:6px}.svc-soon span{font-size:14px;opacity:.85}
+#s-form{scroll-margin-top:92px}
+.svc-mode{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 2px;padding:6px 6px 6px 14px;border-radius:999px;border:1.5px solid #B8975A;font-size:13px}.svc-mode[hidden]{display:none}
+.svc-mode button{width:28px;height:28px;border-radius:50%;border:0;background:rgba(184,151,90,.25);color:inherit;font-size:18px;line-height:1;cursor:pointer}
+.svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.svc-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:136px;padding:16px;border-radius:20px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);text-align:left;font:inherit;cursor:pointer;transition:transform .12s,border-color .2s,box-shadow .2s}
+.svc-card:active{transform:scale(.97)}
+.svc-card svg{width:28px;height:28px;padding:9px;box-sizing:content-box;border-radius:14px;background:rgba(184,151,90,.16);color:var(--gold-ink,#8A6A1F);fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.svc-card b{margin-top:8px;font-size:19px}.svc-card span{font-size:13px;line-height:1.4;color:var(--muted)}
+.svc-card[aria-pressed="true"]{border-color:var(--gold-ink,#B8975A);box-shadow:0 0 0 3px rgba(184,151,90,.25)}
+.svc-card em{position:absolute;top:12px;right:12px;padding:3px 8px;border-radius:999px;background:rgba(184,151,90,.2);font-style:normal;font-size:11px;font-weight:700;color:var(--gold-ink,#8A6A1F)}
 .pk-wa{margin:8px 0 0}.pk-wa a{color:var(--gold-ink,#8A6A1F);font-weight:700}
 .pk-link{margin:12px 0 0;padding:6px 0;font:inherit;font-size:14px;color:var(--muted);background:none;border:0;text-decoration:underline;cursor:pointer}
 
@@ -591,9 +593,8 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       <section class="route-hero live" id="s-form">
         <svg class="watermark" viewBox="0 0 200 200" aria-hidden="true"><path d="M150 52A68 68 0 1 0 150 148" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/></svg>
         <span class="rh-title">Mau ke mana?</span>
-        <div class="svc-tabs" id="svc-tabs" role="tablist" aria-label="Pilih layanan"><button type="button" role="tab" data-m="z1" aria-selected="true">Zona 1</button><button type="button" role="tab" data-m="z2" aria-selected="false" tabindex="-1">Zona 2</button><button type="button" role="tab" data-m="z3" aria-selected="false" tabindex="-1">Zona 3</button><button type="button" role="tab" data-m="nego" aria-selected="false" tabindex="-1">Ne<b>go</b></button></div>
+        <div class="svc-mode" id="svc-mode" hidden><span><b id="svc-mode-t"></b> aktif</span><button type="button" id="svc-mode-x" aria-label="Kembali ke pesan bebas">&times;</button></div>
         <p class="svc-note" id="svc-note" role="status"></p>
-        <div class="svc-soon" id="svc-soon" hidden><b>Coming soon</b><span>Fitur Nego segera hadir: kamu bisa menentukan harga tawaran sendiri.</span></div>
         <div class="rh-route simple">
           <i class="dot a"></i><i class="line"></i><i class="dot b"></i>
           <div class="s1 cb"><small>Jemput</small><input id="from-t" class="cbin" type="text" placeholder="Ketik kelurahan jemput" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="from-l" aria-autocomplete="list" aria-label="Kelurahan jemput"><select id="from" hidden tabindex="-1" aria-hidden="true"></select><ul class="cbl" id="from-l" role="listbox" hidden></ul></div>
@@ -632,6 +633,12 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
               </div>
 </div></div>
     </form>
+      <div class="svc-grid" id="svc-grid">
+        <button type="button" class="svc-card" data-m="z1" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/></svg><b>Zona 1</b><span>Jemput dan tujuan di Zona 1</span></button>
+        <button type="button" class="svc-card" data-m="z2" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><b>Zona 2</b><span>Zona 1 ke Zona 2 atau sebaliknya</span></button>
+        <button type="button" class="svc-card" data-m="z3" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5l6-2.5 6 2.5 6-2.5v13.5l-6 2.5-6-2.5-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg><b>Zona 3</b><span>Tujuan bebas, jadwal minimal 1 jam</span></button>
+        <button type="button" class="svc-card" data-m="nego"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg><em>Coming soon</em><b>Nego</b><span>Tawar harga sendiri</span></button>
+      </div>
       <div class="dpm" id="pk" hidden role="dialog" aria-modal="true" aria-labelledby="pk-h">
         <div class="dpm-card"><div class="dpm-box">
           <div class="dpm-head"><h2 id="pk-h">Dijemput di mana?</h2><button type="button" class="dpm-x" id="pk-x" aria-label="Tutup">&times;</button></div>
@@ -1049,23 +1056,23 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       var og=groups[key]; if(!og){og=document.createElement('optgroup'); og.label=key; groups[key]=og; sel.appendChild(og)}
       var op=document.createElement('option'); op.value=a.id; op.textContent=a.name; og.appendChild(op);
     });
-    if(!kind||svcMode==='z3'){ var last=document.createElement('option'); last.value=OTHER; last.textContent='Lokasi lain di luar daftar (hubungi kami)'; sel.appendChild(last) }
+    if(!kind||svcMode==='free'||svcMode==='z3'){ var last=document.createElement('option'); last.value=OTHER; last.textContent='Lokasi lain di luar daftar (hubungi kami)'; sel.appendChild(last) }
   }
   function nm(v){ return v===OTHER?'Lokasi lain':(byId[v]?byId[v].name:'') }
   /* ---------- mode layanan: Zona 1, Zona 2, Zona 3, Nego ---------- */
-  var svcMode='z1';
+  var svcMode='free';
   function zOf(id){ var a=byId[id]; return a&&a.zone!=null?+a.zone:null }
-  function destZoneOk(z){ return svcMode==='z3'?true:(svcMode==='z2'?(z===1||z===2):z===1) }
+  function destZoneOk(z){ return (svcMode==='free'||svcMode==='z3')?true:(svcMode==='z2'?(z===1||z===2):z===1) }
   function pickZoneOk(z){
-    if(svcMode==='z3') return true;
+    if(svcMode==='free'||svcMode==='z3') return true;
     if(svcMode==='z1') return z===1;
     var dz=(to.value&&to.value!==OTHER)?zOf(to.value):null;
     if(dz===1) return z===2; if(dz===2) return z===1; return z===1||z===2;
   }
   function modeWhy(){
-    if(svcMode==='z1') return 'Tab Zona 1 hanya untuk jemput dan tujuan di Zona 1. Untuk jarak lebih jauh, pindah ke tab Zona 2 atau Zona 3.';
+    if(svcMode==='z1') return 'Mode Zona 1 hanya untuk jemput dan tujuan di Zona 1. Untuk jarak lebih jauh, pakai kotak Zona 2 atau Zona 3.';
     var dz=(to.value&&to.value!==OTHER)?zOf(to.value):null;
-    return dz===1?'Tab Zona 2 khusus Zona 1 ke Zona 2 atau sebaliknya. Tujuan Anda di Zona 1, jadi jemput harus di Zona 2.':(dz===2?'Tab Zona 2 khusus Zona 1 ke Zona 2 atau sebaliknya. Tujuan Anda di Zona 2, jadi jemput harus di Zona 1.':'Tab Zona 2 khusus Zona 1 ke Zona 2 atau sebaliknya.');
+    return dz===1?'Mode Zona 2 khusus Zona 1 ke Zona 2 atau sebaliknya. Tujuan Anda di Zona 1, jadi jemput harus di Zona 2.':(dz===2?'Mode Zona 2 khusus Zona 1 ke Zona 2 atau sebaliknya. Tujuan Anda di Zona 2, jadi jemput harus di Zona 1.':'Mode Zona 2 khusus Zona 1 ke Zona 2 atau sebaliknya.');
   }
   function svcFill(){ fill(from,'pick'); fill(to,'dest'); fill($('pk-kel-sel'),'pick') }
   var cur=null, calcSeq=0;
@@ -1338,9 +1345,9 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     function li(cls,i,html){ var e=document.createElement('li'); if(cls) e.className=cls; if(i!==null){ e.dataset.i=i; e.setAttribute('role','option') } e.innerHTML=html; dstL.appendChild(e) }
     if(!q&&res.length) li('cb-head',null,'Sering dituju');
     res.forEach(function(p,i){ li('',i,esc(p.name)+'<small>'+esc(nm(String(p.area_id)))+'</small>') });
-    if(dstEmpty) li('cb-none',null,PLACES.length?(svcMode==='z3'?'Belum ada di daftar kami':'Belum ada di zona ini. Untuk tujuan bebas, pakai tab Zona 3.'):'Daftar tempat belum termuat');
+    if(dstEmpty) li('cb-none',null,PLACES.length?((svcMode==='free'||svcMode==='z3')?'Belum ada di daftar kami':'Belum ada di zona ini. Untuk tujuan bebas, pakai kotak Zona 3.'):'Daftar tempat belum termuat');
     li('cb-other','kel','Pilih dari daftar kelurahan');
-    if(q&&svcMode==='z3') li('cb-other','own','Tulis sendiri: '+esc(q)+' (tarif dikonfirmasi admin)');
+    if(q&&(svcMode==='free'||svcMode==='z3')) li('cb-other','own','Tulis sendiri: '+esc(q)+' (tarif dikonfirmasi admin)');
     dstAct=-1; dstOpen();
   }
   function dstSetAct(n){ var l=dstL.querySelectorAll('li[data-i]'); if(!l.length) return; dstAct=(n+l.length)%l.length; Array.prototype.forEach.call(l,function(e,i){ e.setAttribute('aria-selected',String(i===dstAct)) }); try{ l[dstAct].scrollIntoView({block:'nearest'}) }catch(e){} }
@@ -1479,7 +1486,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       if(gps!==g) return;
       var row=r.data&&r.data[0];
       if(!r.error&&(!row||!row.area_id)){
-        if(svcMode!=='z3'){ pkRejectGps(svcMode==='z1'?'Lokasi Anda di luar Zona 1. Untuk jarak lebih jauh, pindah ke tab Zona 2 atau Zona 3.':'Lokasi Anda di luar Zona 1 dan Zona 2. Gunakan tab Zona 3.'); return }
+        if(svcMode==='z1'||svcMode==='z2'){ pkRejectGps(svcMode==='z1'?'Lokasi Anda di luar Zona 1. Untuk jarak lebih jauh, pakai kotak Zona 2 atau Zona 3.':'Lokasi Anda di luar Zona 1 dan Zona 2. Pakai kotak Zona 3.'); return }
         pkSetOther(); pkMsg('Lokasi Anda di luar tarif otomatis. Anda tetap bisa memesan, admin akan menetapkan tarif. Atau chat admin lewat WhatsApp.','warn'); pkWa(true); pkSync(); return }
       if(r.error||!pkSetArea(row.area_id)){
         if(pkBlocked){ pkRejectGps(pkBlocked); return }
@@ -1548,11 +1555,11 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   function cgAsk(o){
     return new Promise(function(res){
       var d=$('cgc'); $('cgc-t').textContent=o.title||'Yakin?'; $('cgc-m').textContent=o.msg||''; $('cgc-y').textContent=o.ok||'Ya'; $('cgc-n').textContent=o.cancel||'Tidak';
-      d.classList.toggle('danger',!!o.danger); cgcLast=document.activeElement; d.hidden=false;
+      d.classList.toggle('danger',!!o.danger); $('cgc-n').hidden=!!o.info; cgcLast=document.activeElement; d.hidden=false;
       function done(v){ d.hidden=true; $('cgc-y').onclick=null; $('cgc-n').onclick=null; d.onclick=null; document.removeEventListener('keydown',key,true); if(cgcLast&&cgcLast.focus){ try{ cgcLast.focus() }catch(e){} } res(v) }
-      function key(e){ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); done(false) } else if(e.key==='Tab'){ var a=[$('cgc-y'),$('cgc-n')], i=a.indexOf(document.activeElement); e.preventDefault(); a[(i+(e.shiftKey?-1:1)+a.length)%a.length].focus() } }
+      function key(e){ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); done(false) } else if(e.key==='Tab'){ var a=o.info?[$('cgc-y')]:[$('cgc-y'),$('cgc-n')], i=a.indexOf(document.activeElement); e.preventDefault(); a[(i+(e.shiftKey?-1:1)+a.length)%a.length].focus() } }
       $('cgc-y').onclick=function(){ done(true) }; $('cgc-n').onclick=function(){ done(false) }; d.onclick=function(e){ if(e.target===d) done(false) };
-      document.addEventListener('keydown',key,true); setTimeout(function(){ (o.danger?$('cgc-n'):$('cgc-y')).focus() },30);
+      document.addEventListener('keydown',key,true); setTimeout(function(){ ((o.danger&&!o.info)?$('cgc-n'):$('cgc-y')).focus() },30);
     });
   }
 
@@ -1637,8 +1644,8 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     },function(){ b.disabled=false; E.textContent='Tidak bisa terhubung. Periksa sinyal, lalu coba lagi.' });
   });
 
-  var SVC_NOTE={z1:'Jemput dan tujuan di dalam Zona 1.',z2:'Khusus Zona 1 ke Zona 2, atau Zona 2 ke Zona 1.',z3:'Tujuan bebas. Dijadwalkan minimal 1 jam sebelumnya, tarif dikonfirmasi admin.',nego:''};
-  $('svc-note').textContent=SVC_NOTE.z1;
+  var SVC_NOTE={z1:'Jemput dan tujuan di dalam Zona 1.',z2:'Khusus Zona 1 ke Zona 2, atau Zona 2 ke Zona 1.',z3:'Tujuan bebas. Dijadwalkan minimal 1 jam sebelumnya, tarif dikonfirmasi admin.'};
+  var SVC_NAME={z1:'Zona 1',z2:'Zona 2',z3:'Zona 3'};
   function whenRule(){
     var w=$('when'), z3=svcMode==='z3', opt=w.querySelector('option[value="now"]'), hint=$('when-wrap').querySelector('.hint');
     opt.disabled=z3; opt.hidden=z3;
@@ -1649,22 +1656,21 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       if(hint) hint.textContent='Zona 3: minimal 1 jam sebelum jemput. Admin akan mengonfirmasi jadwal.';
     } else { $('when-at').removeAttribute('min'); if(hint) hint.textContent='Admin akan mengonfirmasi jadwal ini.' }
   }
+  /* mode bawaan "free" = pesan bebas tanpa batasan; kotak Zona 1/2/3 di bawahnya memberi batasan hanya bila diketuk */
   function svcSet(m){
     if(m===svcMode) return;
     svcMode=m;
-    Array.prototype.forEach.call($('svc-tabs').querySelectorAll('button'),function(b){ var on=b.dataset.m===m; b.setAttribute('aria-selected',String(on)); b.tabIndex=on?0:-1 });
-    var nego=m==='nego';
-    $('svc-note').textContent=SVC_NOTE[m]||''; $('svc-soon').hidden=!nego;
-    document.querySelector('.rh-route').style.display=nego?'none':''; $('rh-go').style.display=nego?'none':''; $('rh-hint').textContent='';
-    if(!nego){ pkReset(); svcFill(); cbTo.sync(); cbFrom.sync(); whenRule() }
-    dstClose();
+    Array.prototype.forEach.call($('svc-grid').querySelectorAll('button[data-m]'),function(b){ b.setAttribute('aria-pressed',String(b.dataset.m===m)) });
+    $('svc-mode').hidden=(m==='free'); $('svc-mode-t').textContent=SVC_NAME[m]||''; $('svc-note').textContent=SVC_NOTE[m]||'';
+    pkReset(); svcFill(); cbTo.sync(); cbFrom.sync(); whenRule(); dstClose(); $('rh-hint').textContent='';
   }
-  $('svc-tabs').addEventListener('click',function(e){ var b=e.target.closest('button[data-m]'); if(b) svcSet(b.dataset.m) });
-  $('svc-tabs').addEventListener('keydown',function(e){
-    if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft') return;
-    var L=Array.prototype.slice.call(this.querySelectorAll('button')), i=L.indexOf(document.activeElement); if(i<0) return;
-    e.preventDefault(); var n=L[(i+(e.key==='ArrowRight'?1:L.length-1))%L.length]; n.focus(); svcSet(n.dataset.m);
+  $('svc-grid').addEventListener('click',function(e){
+    var b=e.target.closest('button[data-m]'); if(!b) return; var m=b.dataset.m;
+    if(m==='nego'){ cgAsk({title:'Coming soon',msg:'Fitur Nego segera hadir. Kamu akan bisa menentukan harga tawaran sendiri.',ok:'Mengerti',info:true}); return }
+    svcSet(m===svcMode?'free':m);
+    if(svcMode!=='free'){ var f=$('s-form'); if(f&&f.scrollIntoView){ try{ f.scrollIntoView({behavior:'smooth',block:'start'}) }catch(e2){} } }
   });
+  $('svc-mode-x').addEventListener('click',function(){ svcSet('free') });
   to.addEventListener('change',function(){ if(svcMode==='z2'&&from.value&&from.value!==OTHER&&!pickZoneOk(zOf(from.value))) pkClearPick() });
   function insertBooking(row){
     var run=function(rw,c){ return sb.from('bookings').insert(rw).select(c).single() };
@@ -1917,7 +1923,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
       pickup_text:(cur.a===OTHER?lokasiLain('from-t'):'')+ptxt,dropoff_text:((cur.b===OTHER?lokasiLain('to-t'):'')+dtxt).trim()||null,
       pickup_at:p?p.toISOString():null,terms_version:TERMS_VERSION,terms_accepted_at:new Date().toISOString()};
     if(payPref==='noncash') row.pay_pref='noncash';
-    row.service_mode=svcMode;
+    if(svcMode!=='free') row.service_mode=svcMode;
     if(dstSel&&cur.b!==OTHER&&dstSel.area_id===+cur.b) row.dropoff_point_id=dstSel.id;
     if(gps){ row.pickup_lat=gps.lat; row.pickup_lng=gps.lng; row.pickup_acc=gps.acc }
     else if(ptOk){ if(ptSel.lat!=null){ row.pickup_lat=ptSel.lat; row.pickup_lng=ptSel.lng } row.pickup_point_id=ptSel.id }
