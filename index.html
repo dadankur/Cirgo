@@ -532,6 +532,7 @@ body.has-chfab::after{content:"";display:block;height:72px}
 .zn-chips{display:flex;flex-wrap:wrap;gap:6px;max-height:112px;overflow:auto}.zn-chips span{padding:4px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px}
 .zn-soon{padding:40px 16px;text-align:center;border:1.5px dashed rgba(184,151,90,.7);border-radius:20px}.zn-soon[hidden]{display:none}.zn-soon b{display:block;font:500 28px var(--f-display);margin-bottom:8px}.zn-soon span{font-size:14px;color:var(--muted)}
 .route-hero.in-zone .rh-title{display:none}.route-hero.in-zone{margin-top:0}
+.cbl li.mb small{max-width:52%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pk-wa{margin:8px 0 0}.pk-wa a{color:var(--gold-ink,#8A6A1F);font-weight:700}
 .pk-link{margin:12px 0 0;padding:6px 0;font:inherit;font-size:14px;color:var(--muted);background:none;border:0;text-decoration:underline;cursor:pointer}
 
@@ -1352,6 +1353,57 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
 
   /* kolom Tujuan: sering dituju saat diketuk, hasil pencarian saat mengetik */
   var dstT=$('dst-t'), dstL=$('dst-l'), dstShown=[], dstAct=-1, dstEmpty=false;
+  /* ---------- saran tempat dari peta (Mapbox) untuk tujuan bebas ---------- */
+  /* Hanya nama yang diketik dan titik pusat kota tetap yang dikirim; GPS penumpang tidak pernah dikirim (Cirgo 2, aturan 15 dan 16). */
+  var MB={token:null,loaded:false,tm:0,seq:0,res:[]}, dstGeo=null, dstGeoSeq=0, MB_CENTER='108.5575,-6.7320';
+  function mbLoad(cb){
+    if(MB.loaded){ cb(MB.token); return }
+    sb.from('app_config').select('value').eq('key','mapbox_token').maybeSingle().then(function(r){
+      MB.loaded=true; MB.token=(!r.error&&r.data&&/^pk\./.test(r.data.value||''))?r.data.value:null; cb(MB.token);
+    },function(){ MB.loaded=true; MB.token=null; cb(null) });
+  }
+  function mbUrl(q,permanent){
+    return 'https://api.mapbox.com/search/geocode/v6/forward?q='+encodeURIComponent(q)+'&country=id&language=id&limit='+(permanent?1:5)+'&proximity='+MB_CENTER+(permanent?'&permanent=true':'')+'&access_token='+encodeURIComponent(MB.token);
+  }
+  function mbClear(){ Array.prototype.forEach.call(dstL.querySelectorAll('li.mb'),function(e){ e.parentNode.removeChild(e) }); MB.res=[] }
+  function mbQueue(q){
+    clearTimeout(MB.tm); MB.seq++; mbClear();
+    if(!(svcMode==='free'||svcMode==='z3')||q.length<3) return;
+    MB.tm=setTimeout(function(){
+      mbLoad(function(tok){
+        if(!tok||dstT.value.trim()!==q) return;
+        var my=++MB.seq;
+        fetch(mbUrl(q,false)).then(function(r){ return r.ok?r.json():null }).then(function(j){
+          if(!j||my!==MB.seq||dstT.value.trim()!==q||dstL.hidden) return;
+          MB.res=(j.features||[]).slice(0,4); mbDraw();
+        }).catch(function(){});
+      });
+    },450);
+  }
+  function mbDraw(){
+    Array.prototype.forEach.call(dstL.querySelectorAll('li.mb'),function(e){ e.parentNode.removeChild(e) });
+    if(!MB.res.length) return;
+    var anchor=dstL.querySelector('li[data-i="kel"]');
+    function add(cls,html,idx){ var e=document.createElement('li'); e.className=cls+' mb'; if(idx!==null){ e.dataset.mb=idx; e.setAttribute('role','option') } e.innerHTML=html; dstL.insertBefore(e,anchor) }
+    add('cb-head','Hasil pencarian peta',null);
+    MB.res.forEach(function(f,i){ var p=f.properties||{}; add('','<span>'+esc(p.name||'')+'</span><small>'+esc(p.place_formatted||'')+'</small>',i) });
+  }
+  function mbPick(idx){
+    var f=MB.res[+idx]; if(!f||!f.properties) return;
+    var p=f.properties, name=p.name||dstT.value.trim(), addr=p.place_formatted||'', c=f.geometry&&f.geometry.coordinates, full=name+(addr?', '+addr:'');
+    dstSel=null; dstGeo=null; $('to-t').dataset.custom=full; $('to-t').value='Lokasi lain'; to.value=OTHER; dstT.value=name;
+    var dt=$('det-to'); if(!dt.value.trim()||dt.value===lastAutoTo){ dt.value=full; lastAutoTo=full }
+    dstClose(); $('rh-hint').textContent=''; to.dispatchEvent(new Event('change'));
+    /* koordinat yang disimpan diambil lewat permintaan permanen untuk pilihan akhir saja (hasil sementara tidak disimpan) */
+    var my=++dstGeoSeq;
+    if(MB.token&&c) fetch(mbUrl(full,true)).then(function(r){ return r.ok?r.json():null }).then(function(j){
+      var g=j&&j.features&&j.features[0]&&j.features[0].geometry&&j.features[0].geometry.coordinates;
+      if(!g||my!==dstGeoSeq) return;
+      if(dist({lat:c[1],lng:c[0]},{lat:g[1],lng:g[0]})>500) return;
+      dstGeo={lat:+g[1].toFixed(6),lng:+g[0].toFixed(6)};
+    }).catch(function(){});
+  }
+
   (function(){ var w=document.createElement('div'); w.id='to-kel'; w.style.display='none'; var t=$('to-t'); t.parentNode.insertBefore(w,t); w.appendChild(t); w.appendChild($('to-l')) })();
   function dstOpen(){ dstL.hidden=false; dstT.setAttribute('aria-expanded','true'); $('s-form').classList.add('dst-open') }
   function dstClose(){ dstL.hidden=true; dstT.setAttribute('aria-expanded','false'); dstAct=-1; $('s-form').classList.remove('dst-open') }
@@ -1364,7 +1416,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     if(dstEmpty) li('cb-none',null,PLACES.length?((svcMode==='free'||svcMode==='z3')?'Belum ada di daftar kami':'Belum ada di zona ini. Untuk tujuan bebas, pakai kotak Zona 3.'):'Daftar tempat belum termuat');
     li('cb-other','kel','Pilih dari daftar kelurahan');
     if(q&&(svcMode==='free'||svcMode==='z3')) li('cb-other','own','Tulis sendiri: '+esc(q)+' (tarif dikonfirmasi admin)');
-    dstAct=-1; dstOpen();
+    dstAct=-1; dstOpen(); mbQueue(q);
   }
   function dstSetAct(n){ var l=dstL.querySelectorAll('li[data-i]'); if(!l.length) return; dstAct=(n+l.length)%l.length; Array.prototype.forEach.call(l,function(e,i){ e.setAttribute('aria-selected',String(i===dstAct)) }); try{ l[dstAct].scrollIntoView({block:'nearest'}) }catch(e){} }
   function dstKelMode(on){
@@ -1373,6 +1425,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     if(on){ $('to-t').value=''; setTimeout(function(){ $('to-t').focus() },30) } else { dstT.value=''; setTimeout(function(){ dstT.focus() },30) }
   }
   function dstPick(i){
+    dstGeo=null; dstGeoSeq++;
     if(i==='kel'){ dstKelMode(true); return }
     if(i==='own'){ var t=dstT.value.trim(); logMiss(t); dstSel=null; $('to-t').dataset.custom=t; $('to-t').value='Lokasi lain'; to.value=OTHER; dstClose(); to.dispatchEvent(new Event('change')); return }
     var p=dstShown[+i]; if(!p) return;
@@ -1384,7 +1437,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   }
   dstT.addEventListener('focus',function(){ try{ dstT.select() }catch(e){} dstDraw(); loadPlaces(function(){ if(document.activeElement===dstT) dstDraw() }) });
   dstT.addEventListener('click',function(){ if(dstL.hidden) dstDraw() });
-  dstT.addEventListener('input',function(){ if(dstSel||to.value){ dstSel=null; to.value=''; $('to-t').dataset.custom=''; to.dispatchEvent(new Event('change')) } dstDraw() });
+  dstT.addEventListener('input',function(){ dstGeo=null; dstGeoSeq++; if(dstSel||to.value){ dstSel=null; to.value=''; $('to-t').dataset.custom=''; to.dispatchEvent(new Event('change')) } dstDraw() });
   dstT.addEventListener('keydown',function(e){
     if(e.key==='ArrowDown'){ e.preventDefault(); if(dstL.hidden) dstDraw(); dstSetAct(dstAct+1) }
     else if(e.key==='ArrowUp'){ e.preventDefault(); dstSetAct(dstAct-1) }
@@ -1393,7 +1446,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   });
   dstT.addEventListener('blur',function(){ setTimeout(function(){ if(dstEmpty&&!dstSel&&!to.value) logMiss(dstT.value); dstClose() },150) });
   dstL.addEventListener('mousedown',function(e){ e.preventDefault() });
-  dstL.addEventListener('click',function(e){ var x=e.target.closest('li[data-i]'); if(x) dstPick(x.dataset.i) });
+  dstL.addEventListener('click',function(e){ var m=e.target.closest('li[data-mb]'); if(m){ mbPick(m.dataset.mb); return } var x=e.target.closest('li[data-i]'); if(x) dstPick(x.dataset.i) });
   $('dst-back').addEventListener('click',function(){ dstKelMode(false) });
 
   /* contoh yang diketik sendiri di kolom Tujuan (berhenti saat diketuk, ada isi, atau tab tidak terlihat) */
@@ -1559,7 +1612,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     pkClose(); openMore();
   });
   function pkReset(){
-    gpsClear(); ptClear(); dstSel=null; lastAutoTo=''; lastAutoFrom='';
+    gpsClear(); ptClear(); dstSel=null; dstGeo=null; dstGeoSeq++; lastAutoTo=''; lastAutoFrom='';
     from.value=''; to.value=''; $('from-t').dataset.custom=''; $('to-t').dataset.custom=''; cbFrom.sync(); cbTo.sync();
     dstT.value=''; $('pk-q').value=''; $('pk-near').innerHTML=''; $('pk-kel-sel').value=''; pkMsg('','');
     if($('to-kel').style.display!=='none') dstKelMode(false);
@@ -1710,6 +1763,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   function insertBooking(row){
     var run=function(rw,c){ return sb.from('bookings').insert(rw).select(c).single() };
     return run(row,COLS).then(function(r){
+      if(r.error&&row.dropoff_lat!=null&&/dropoff_(lat|lng|geo)/i.test(r.error.message||'')){ var r5=Object.assign({},row); delete r5.dropoff_lat; delete r5.dropoff_lng; return insertBooking(r5) }
       if(r.error&&row.service_mode!=null&&/service_mode/i.test(r.error.message||'')){ var r4=Object.assign({},row); delete r4.service_mode; return insertBooking(r4) }
       if(r.error&&row.dropoff_point_id!=null&&/dropoff_point_id/i.test(r.error.message||'')){ var r3=Object.assign({},row); delete r3.dropoff_point_id; return insertBooking(r3) }
       if(r.error&&row.pickup_lat!=null&&/pickup_(lat|lng|acc|point_id|geo)/i.test(r.error.message||'')){
@@ -1960,6 +2014,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
     if(payPref==='noncash') row.pay_pref='noncash';
     if(svcMode!=='free') row.service_mode=svcMode;
     if(dstSel&&cur.b!==OTHER&&dstSel.area_id===+cur.b) row.dropoff_point_id=dstSel.id;
+    if(!dstSel&&cur.b===OTHER&&dstGeo){ row.dropoff_lat=dstGeo.lat; row.dropoff_lng=dstGeo.lng }
     if(gps){ row.pickup_lat=gps.lat; row.pickup_lng=gps.lng; row.pickup_acc=gps.acc }
     else if(ptOk){ if(ptSel.lat!=null){ row.pickup_lat=ptSel.lat; row.pickup_lng=ptSel.lng } row.pickup_point_id=ptSel.id }
     insertBooking(row).then(function(r){
