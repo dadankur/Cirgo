@@ -534,7 +534,8 @@ body.has-chfab::after{content:"";display:block;height:72px}
 .route-hero.in-zone .rh-title{display:none}.route-hero.in-zone{margin-top:0}
 .cbl li.mb small{max-width:52%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mp{position:fixed;inset:0;z-index:70;background:#dfe6ee}.mp[hidden]{display:none}
-.mp-map{position:absolute;inset:0}
+#mp .mp-map{position:absolute;inset:0;width:100%;height:100%}
+#mp .mapboxgl-ctrl-bottom-left,#mp .mapboxgl-ctrl-bottom-right{bottom:var(--mpbarh,150px)}
 .mp-top{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;gap:8px;align-items:flex-start;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 8px}
 .mp-top button{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--surface,#fff);color:var(--ink,#0F1B33);font-size:20px;box-shadow:0 2px 10px rgba(0,0,0,.25);cursor:pointer}
 .mp-sw{position:relative;flex:1}.mp-sw input{width:100%;box-sizing:border-box;height:44px;border:0;border-radius:22px;padding:0 16px;font:inherit;background:var(--surface,#fff);color:var(--ink,#0F1B33);box-shadow:0 2px 10px rgba(0,0,0,.25)}
@@ -943,7 +944,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   <div class="mp-map" id="mp-map"></div>
   <div class="mp-pin" aria-hidden="true"><svg viewBox="0 0 24 32" width="36" height="48"><path d="M12 0C5.4 0 0 5.2 0 11.6 0 20 12 32 12 32s12-12 12-20.4C24 5.2 18.6 0 12 0z" fill="#B3261E"/><circle cx="12" cy="11.5" r="4.5" fill="#fff"/></svg></div>
   <div class="mp-top"><button type="button" id="mp-back" aria-label="Kembali">&#8592;</button><div class="mp-sw"><input id="mp-q" type="search" placeholder="Cari nama tempat atau alamat" autocomplete="off" spellcheck="false" aria-label="Cari tempat"><ul class="mp-l" id="mp-l" hidden></ul></div></div>
-  <div class="mp-bar"><p id="mp-lab" role="status">Geser peta sampai pin tepat di titiknya.</p><p id="mp-err" role="alert"></p><div class="mp-row"><button type="button" class="mp-g" id="mp-gps">Lokasi saya</button><button type="button" class="mp-y" id="mp-ok">Pakai titik ini</button></div></div>
+  <div class="mp-bar" id="mp-bar"><p id="mp-lab" role="status">Geser peta sampai pin tepat di titiknya.</p><p id="mp-err" role="alert"></p><div class="mp-row"><button type="button" class="mp-g" id="mp-gps">Lokasi saya</button><button type="button" class="mp-y" id="mp-ok">Pakai titik ini</button></div></div>
 </div>
 <div class="cgc" id="cgc" hidden role="alertdialog" aria-modal="true" aria-labelledby="cgc-t" aria-describedby="cgc-m"><div class="cgc-b"><div class="cgc-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div><h2 id="cgc-t"></h2><p id="cgc-m"></p><div class="cgc-a"><button type="button" class="cgc-y" id="cgc-y">Ya</button><button type="button" class="cgc-n" id="cgc-n">Tidak</button></div></div></div>
 <div class="fb" id="fb" hidden role="dialog" aria-modal="true" aria-labelledby="fb-t"><div class="fb-b">
@@ -1387,7 +1388,7 @@ function mpLib(ok,fail){
   sc.onload=function(){end(!!(window.mapboxgl&&window.mapboxgl.Map))};sc.onerror=function(){end(false)};document.head.appendChild(sc);
 }
 function mpClose(){$('mp').hidden=true;document.body.style.overflow=MPS.ov||'';$('mp-l').hidden=true}
-function mpLabel(t){$('mp-lab').textContent=t}
+function mpLabel(t){$('mp-lab').textContent=t;try{$('mp').style.setProperty('--mpbarh',($('mp-bar').offsetHeight+6)+'px')}catch(e){}}
 function mpMoved(){
   var o=MPS.o;if(!o||!MPS.map)return;var c=MPS.map.getCenter(),cc=[c.lng,c.lat];
   clearTimeout(MPS.ltm);var my=++MPS.labSeq;
@@ -1408,8 +1409,14 @@ function cgMapPick(o){
   mpLib(function(){
     try{
       var ctr=o.center||[108.5575,-6.7320];mapboxgl.accessToken=o.token;
-      if(!MPS.map){MPS.map=new mapboxgl.Map({container:'mp-map',accessToken:o.token,style:'mapbox://styles/mapbox/streets-v12',center:ctr,zoom:o.zoom||13});MPS.map.on('moveend',mpMoved)}
-      else{MPS.map.resize();MPS.map.jumpTo({center:ctr,zoom:o.zoom||13})}
+      if(!MPS.map){
+        MPS.map=new mapboxgl.Map({container:'mp-map',accessToken:o.token,style:'mapbox://styles/mapbox/streets-v12',center:ctr,zoom:o.zoom||13,dragRotate:false,pitchWithRotate:false,logoPosition:'bottom-left'});
+        try{MPS.map.touchZoomRotate.disableRotation()}catch(e){}
+        MPS.map.on('moveend',mpMoved);MPS.map.on('load',function(){MPS.map.resize()});
+        MPS.map.on('error',function(ev){var m=String((ev&&ev.error&&(ev.error.message||ev.error.status))||'');if(/401|403|token|forbidden|unauthori/i.test(m))$('mp-err').textContent='Peta ditolak Mapbox (token atau pembatasan alamat). Hubungi admin.'})
+      }else{MPS.map.resize();MPS.map.jumpTo({center:ctr,zoom:o.zoom||13})}
+      setTimeout(function(){if(MPS.map)MPS.map.resize()},250);
+      setTimeout(function(){if(!$('mp').hidden&&MPS.map&&MPS.map.getContainer&&MPS.map.getContainer().clientHeight<80)$('mp-err').textContent='Peta tidak tampil. Tutup lalu coba lagi, atau pakai pencarian.'},1800);
       mpMoved()
     }catch(e){MPS.map=null;mpFail(o)}
   },function(){mpFail(o)})
