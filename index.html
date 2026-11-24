@@ -547,6 +547,19 @@ body.has-chfab::after{content:"";display:block;height:72px}
 .mp-row{display:flex;gap:10px}.mp-row button{min-height:48px;border-radius:14px;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
 .mp-g{flex:1;background:transparent;color:inherit;border:1.5px solid var(--line,#D8DEEA)}.mp-y{flex:2;background:#0F1B33;color:#fff;border:0}
 .mp-row button:active{transform:scale(.97)}
+.of-tag{display:block;width:fit-content;margin:0 auto 6px;padding:4px 12px;border-radius:999px;background:rgba(184,151,90,.2);color:var(--gold-ink,#8A6A1F);font:700 11px var(--f-body);letter-spacing:.08em;text-transform:uppercase}
+.of-eta{margin:10px 0;padding:12px 14px;border-radius:16px;background:rgba(184,151,90,.13);text-align:center}.of-eta span{display:block}
+.of-t{font:600 34px var(--f-display);line-height:1.1;color:var(--ink)}.of-t.of-sm{font-size:19px}.of-s{font-size:13px;color:var(--muted)}
+.of-card{margin:10px 0;padding:2px 14px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface);text-align:left}.of-card b{font-size:18px}
+.of-cd{margin:14px 0 8px;text-align:center}.of-cd small{display:block;font-size:12px;letter-spacing:.04em;color:var(--muted)}
+.of-cd b{display:block;font:700 32px var(--f-display);font-variant-numeric:tabular-nums;color:#B8860B}.of-cd.low b{color:#C0392B}
+.of-bar{display:block;height:5px;margin:6px 0 2px;border-radius:99px;background:var(--line);overflow:hidden}.of-bar i{display:block;height:100%;background:#B8975A;transition:width 1s linear}.of-cd.low .of-bar i{background:#C0392B}
+.of-note{margin:10px 0 0;font-size:12px;color:var(--muted)}
+.chfab{width:auto;min-width:54px;height:54px;padding:0 5px 0 16px;border-radius:30px;display:flex;align-items:center;gap:10px}
+.chfab .chl{font:600 14px var(--f-body);white-space:nowrap}
+.chfab .chi{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:rgba(246,243,236,.12)}
+.chfab .chi svg{width:34px;height:34px;fill:none;stroke:none}
+.chfab.compact{padding:0;gap:0;width:54px;justify-content:center}.chfab.compact .chl{display:none}
 .pk-wa{margin:8px 0 0}.pk-wa a{color:var(--gold-ink,#8A6A1F);font-weight:700}
 .pk-link{margin:12px 0 0;padding:6px 0;font:inherit;font-size:14px;color:var(--muted);background:none;border:0;text-decoration:underline;cursor:pointer}
 
@@ -922,7 +935,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
 </div>
 
 <div id="ch-lb" hidden><img alt="Foto"></div>
-<button type="button" class="chfab" id="ch-fab" hidden aria-label="Buka chat dengan driver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/></svg><b class="chb" id="ch-badge" hidden></b></button>
+<button type="button" class="chfab" id="ch-fab" hidden aria-label="Buka chat dengan driver"><span class="chl">Chat driver</span><span class="chi"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="15" r="6" fill="#F6F3EC"/><path d="M10.6 13.2C11.4 8.6 14.3 6 18 6s6.6 2.6 7.4 7.2z" fill="#B8975A"/><rect x="9.4" y="12.4" width="17.2" height="2.6" rx="1.3" fill="#B8975A"/><path d="M7 33c.8-6.4 5.6-9.6 11-9.6s10.2 3.2 11 9.6z" fill="#F6F3EC"/><path d="M16 25.6l2 2.4 2-2.4" fill="none" stroke="#B8975A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="29" cy="9" r="5" fill="#B8975A"/><path d="M26.8 8.6h4.4M26.8 10.6h2.6" stroke="#0F1B2D" stroke-width="1.2" stroke-linecap="round"/></svg></span><b class="chb" id="ch-badge" hidden></b></button>
 <div class="dpm" id="ch-pop" hidden role="dialog" aria-modal="true" aria-labelledby="ch-t"><div class="dpm-card" id="ch-card"><div class="dpm-box">
   <div class="dpm-head"><h2 id="ch-t">Chat dengan driver</h2><button type="button" class="dpm-x" id="ch-x" aria-label="Tutup">&times;</button></div>
   <p class="ch-note" id="ch-note"></p>
@@ -1190,6 +1203,7 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   }
   var cbFrom=makeCombo(from,$('from-t'),$('from-l')), cbTo=makeCombo(to,$('to-t'),$('to-l'));
   function lokasiLain(id){ var c=($(id).dataset.custom||'').trim(); return c?'[Lokasi lain: '+c+'] ':'[Lokasi lain] ' }
+  function joinOther(id,txt){ var c=($(id).dataset.custom||'').trim(), t=String(txt||'').trim(); if(!c) return '[Lokasi lain] '+t; var nt=norm(t), nc=norm(c), dup=!nt||nc.indexOf(nt)>-1||nt.indexOf(nc)>-1; return '[Lokasi lain: '+c+'] '+(dup?'':t) }
   $('when').addEventListener('change',function(){ $('when-wrap').hidden = this.value!=='later' });
 
   /* ---------- validasi + ketentuan ---------- */
@@ -1270,8 +1284,17 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
   function shortCode(id){ return 'CG-'+String(id).replace(/-/g,'').slice(0,6).toUpperCase() }
   function kv(a,b){return '<div class="kv"><span>'+a+'</span><span>'+b+'</span></div>'}
   function nm2(id){ return byId[id]?byId[id].name:'Lokasi lain' }
+  function pLabel(area,txt){
+    var t=String(txt||'').trim(), m=/^\[Lokasi lain(?::\s*([^\]]*))?\]\s*(.*)$/.exec(t);
+    if(area==='Lokasi lain'||m){
+      var c=m?String(m[1]||'').trim():'', rest=m?String(m[2]||'').trim():t, x;
+      if(c&&rest){ var nc=norm(c), nr=norm(rest); x=(nc.indexOf(nr)>-1)?c:((nr.indexOf(nc)>-1)?rest:c+' - '+rest) } else x=c||rest;
+      x=mpClean(x); return x||'Lokasi lain';
+    }
+    return area+(t?' - '+t:'');
+  }
   function fromRow(d){
-    return {id:d.id,code:shortCode(d.id),status:d.status,amt:d.quoted_price,eta:d.eta_note,a:nm2(d.pickup_area_id),b:nm2(d.dropoff_area_id),
+    return {id:d.id,code:shortCode(d.id),status:d.status,amt:d.quoted_price,eta:d.eta_note,a:nm2(d.pickup_area_id),b:nm2(d.dropoff_area_id),pa:pLabel(nm2(d.pickup_area_id),d.pickup_text),pb:pLabel(nm2(d.dropoff_area_id),d.dropoff_text),
       dfrom:d.pickup_text||'',dto:d.dropoff_text||'',pickup:d.pickup_at,created:d.created_at,pm:d.payment_method,paid:d.payment_status==='paid',ps:d.payment_status,pref:(d.pay_pref===undefined?null:(d.pay_pref||'cash')),
       etaAt:d.eta_at||null,offerExp:d.offer_expires_at||null,payExp:d.pay_expires_at||null,cby:d.cancelled_by||null,creason:d.cancel_reason||null,cs:d.cancel_status||null,rto:d.refund_to||null}
   }
@@ -1378,6 +1401,9 @@ button.rh-go{border:0;width:100%;cursor:pointer;text-align:left}
 var MPS={map:null,loading:false,waiters:[],o:null,sess:null,tm:0,ltm:0,labSeq:0,lab:'',keep:'',anchor:null,res:[],ov:''};
 function mpUuid(){try{return crypto.randomUUID()}catch(e){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16)})}}
 function mpEnc(s){return encodeURIComponent(s)}
+function mpClean(s){var seen={},out=[];String(s||'').split(',').forEach(function(p){p=p.trim();if(!p||/^\d{5}$/.test(p)||/^indonesia$/i.test(p))return;var k=p.toLowerCase();if(seen[k])return;seen[k]=1;out.push(p)});return out.join(', ')}
+function mpKm(m){return m<1000?(Math.round(m/10)*10)+' m':(m/1000).toFixed(m<10000?1:0).replace('.',',')+' km'}
+function mpRank(a){return a.slice().sort(function(x,y){return(x.distance!=null?x.distance:1e12)-(y.distance!=null?y.distance:1e12)})}
 function mpDist(a,b){var R=6371000,dl=(b[1]-a[1])*Math.PI/180,dn=(b[0]-a[0])*Math.PI/180,x=Math.pow(Math.sin(dl/2),2)+Math.cos(a[1]*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.pow(Math.sin(dn/2),2);return 2*R*Math.asin(Math.sqrt(x))}
 function mpLib(ok,fail){
   if(window.mapboxgl&&window.mapboxgl.Map){ok();return}
@@ -1397,7 +1423,7 @@ function mpMoved(){
   MPS.ltm=setTimeout(function(){
     fetch('https://api.mapbox.com/search/geocode/v6/reverse?longitude='+c.lng.toFixed(6)+'&latitude='+c.lat.toFixed(6)+'&language=id&limit=1&access_token='+mpEnc(o.token)).then(function(r){return r.ok?r.json():null}).then(function(j){
       var p=j&&j.features&&j.features[0]&&j.features[0].properties;if(!p||my!==MPS.labSeq)return;
-      MPS.lab=(p.name||'')+(p.place_formatted?', '+p.place_formatted:'');if(MPS.lab)mpLabel(MPS.lab)
+      MPS.lab=mpClean((p.name||'')+(p.place_formatted?', '+p.place_formatted:''));if(MPS.lab)mpLabel(MPS.lab)
     }).catch(function(){})
   },700)
 }
@@ -1432,15 +1458,15 @@ $('mp-q').addEventListener('input',function(){
   clearTimeout(MPS.tm);var q=this.value.trim(),L=$('mp-l');if(q.length<3){L.hidden=true;return}
   MPS.tm=setTimeout(function(){
     var o=MPS.o;if(!o)return;if(!MPS.sess)MPS.sess=mpUuid();
-    fetch('https://api.mapbox.com/search/searchbox/v1/suggest?q='+mpEnc(q)+'&session_token='+MPS.sess+'&language=id&country=id&limit=5&proximity=108.5575,-6.7320&types=poi,address,street,neighborhood,locality,place&access_token='+mpEnc(o.token)).then(function(r){return r.ok?r.json():null}).then(function(j){
-      MPS.res=((j&&j.suggestions)||[]).slice(0,5);
-      L.innerHTML=MPS.res.map(function(s,i){return '<li data-i="'+i+'">'+esc(s.name||'')+'<small>'+esc(s.place_formatted||'')+'</small></li>'}).join('');L.hidden=!MPS.res.length
+    fetch('https://api.mapbox.com/search/searchbox/v1/suggest?q='+mpEnc(q)+'&session_token='+MPS.sess+'&language=id&country=id&limit=10&proximity='+(o.prox||'108.5575,-6.7320')+'&types=poi,address,street,neighborhood,locality,place&access_token='+mpEnc(o.token)).then(function(r){return r.ok?r.json():null}).then(function(j){
+      MPS.res=mpRank((j&&j.suggestions)||[]).slice(0,6);
+      L.innerHTML=MPS.res.map(function(s,i){return '<li data-i="'+i+'">'+esc(s.name||'')+'<small>'+(s.distance!=null?esc(mpKm(s.distance))+' · ':'')+esc(s.place_formatted||'')+'</small></li>'}).join('');L.hidden=!MPS.res.length
     }).catch(function(){})
   },450)
 });
 $('mp-l').addEventListener('click',function(e){
   var li=e.target.closest('li[data-i]');if(!li)return;var s=MPS.res[+li.dataset.i];if(!s||!s.mapbox_id||!MPS.o)return;
-  var o=MPS.o,label=(s.name||'')+(s.place_formatted?', '+s.place_formatted:'');
+  var o=MPS.o,label=mpClean((s.name||'')+(s.place_formatted?', '+s.place_formatted:''));
   fetch('https://api.mapbox.com/search/searchbox/v1/retrieve/'+mpEnc(s.mapbox_id)+'?session_token='+(MPS.sess||mpUuid())+'&access_token='+mpEnc(o.token)).then(function(r){return r.ok?r.json():null}).then(function(j){
     MPS.sess=null;var g=j&&j.features&&j.features[0]&&j.features[0].geometry&&j.features[0].geometry.coordinates;if(!g||!MPS.map)return;
     MPS.keep=label;MPS.anchor=[g[0],g[1]];$('mp-l').hidden=true;$('mp-q').value='';MPS.map.jumpTo({center:[g[0],g[1]],zoom:17});mpMoved()
@@ -1451,7 +1477,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mp').hi
   /* ---------- saran tempat dan pilih di peta (Mapbox) untuk tujuan dan jemput bebas ---------- */
   /* Yang dikirim ke Mapbox hanya teks yang diketik dan titik pusat kota tetap; GPS penumpang tidak dikirim (Cirgo 2, aturan 15 dan 16).
      Koordinat yang disimpan berasal dari pin yang dikonfirmasi penumpang sendiri, bukan dari hasil pencarian. */
-  var MB={token:null,loaded:false,tm:0,seq:0,res:[],sess:null}, dstGeo=null, dstGeoSeq=0, MB_CENTER='108.5575,-6.7320';
+  var MB={token:null,loaded:false,tm:0,seq:0,res:[],sess:null,prox:null}, dstGeo=null, dstGeoSeq=0, MB_CENTER='108.5575,-6.7320';
   function mbLoad(cb){
     if(MB.loaded){ cb(MB.token); return }
     sb.from('app_config').select('value').eq('key','mapbox_token').maybeSingle().then(function(r){
@@ -1467,9 +1493,9 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mp').hi
         if(!tok||dstT.value.trim()!==q) return;
         if(!MB.sess) MB.sess=mpUuid();
         var my=++MB.seq;
-        fetch('https://api.mapbox.com/search/searchbox/v1/suggest?q='+mpEnc(q)+'&session_token='+MB.sess+'&language=id&country=id&limit=5&proximity='+MB_CENTER+'&types=poi,address,street,neighborhood,locality,place&access_token='+mpEnc(tok)).then(function(r){ return r.ok?r.json():null }).then(function(j){
+        fetch('https://api.mapbox.com/search/searchbox/v1/suggest?q='+mpEnc(q)+'&session_token='+MB.sess+'&language=id&country=id&limit=10&proximity='+(MB.prox||MB_CENTER)+'&types=poi,address,street,neighborhood,locality,place&access_token='+mpEnc(tok)).then(function(r){ return r.ok?r.json():null }).then(function(j){
           if(!j||my!==MB.seq||dstT.value.trim()!==q||dstL.hidden) return;
-          MB.res=(j.suggestions||[]).slice(0,4); mbDraw();
+          MB.res=mpRank(j.suggestions||[]).slice(0,4); mbDraw();
         }).catch(function(){});
       });
     },450);
@@ -1480,23 +1506,23 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mp').hi
     var anchor=dstL.querySelector('li[data-i="map"]')||dstL.querySelector('li[data-i="kel"]');
     function add(cls,html,idx){ var e=document.createElement('li'); e.className=cls+' mb'; if(idx!==null){ e.dataset.mb=idx; e.setAttribute('role','option') } e.innerHTML=html; dstL.insertBefore(e,anchor) }
     add('cb-head','Hasil pencarian peta',null);
-    MB.res.forEach(function(sg,i){ add('','<span>'+esc(sg.name||'')+'</span><small>'+esc(sg.place_formatted||'')+'</small>',i) });
+    MB.res.forEach(function(sg,i){ add('','<span>'+esc(sg.name||'')+'</span><small>'+(sg.distance!=null?esc(mpKm(sg.distance))+' · ':'')+esc(sg.place_formatted||'')+'</small>',i) });
   }
   function mbSetDest(lat,lng,label,withGeo){
-    dstSel=null; dstGeoSeq++; dstGeo=withGeo?{lat:+lat.toFixed(6),lng:+lng.toFixed(6)}:null;
+    label=mpClean(label)||label; dstSel=null; dstGeoSeq++; dstGeo=withGeo?{lat:+lat.toFixed(6),lng:+lng.toFixed(6)}:null;
     $('to-t').dataset.custom=label; $('to-t').value='Lokasi lain'; to.value=OTHER; dstT.value=String(label).split(',')[0];
     var dt=$('det-to'); if(!dt.value.trim()||dt.value===lastAutoTo){ dt.value=label; lastAutoTo=label }
     dstClose(); $('rh-hint').textContent=''; to.dispatchEvent(new Event('change'));
   }
   function mbOpenDest(center,label){
     if(!MB.token) return;
-    cgMapPick({token:MB.token,center:center,zoom:center?17:13,label:label||'',
+    cgMapPick({token:MB.token,center:center,zoom:center?17:13,label:label||'',prox:MB.prox||MB_CENTER,
       onPick:function(lat,lng,lb){ mbSetDest(lat,lng,lb||'Titik di peta',true) },
       onFail:function(){ if(label) mbSetDest(0,0,label,false) }});
   }
   function mbPick(idx){
     var sg=MB.res[+idx]; if(!sg||!sg.mapbox_id) return;
-    var label=(sg.name||dstT.value.trim())+(sg.place_formatted?', '+sg.place_formatted:'');
+    var label=mpClean((sg.name||dstT.value.trim())+(sg.place_formatted?', '+sg.place_formatted:''));
     dstClose();
     fetch('https://api.mapbox.com/search/searchbox/v1/retrieve/'+mpEnc(sg.mapbox_id)+'?session_token='+(MB.sess||mpUuid())+'&access_token='+mpEnc(MB.token)).then(function(r){ return r.ok?r.json():null }).then(function(j){
       MB.sess=null; var g=j&&j.features&&j.features[0]&&j.features[0].geometry&&j.features[0].geometry.coordinates;
@@ -1504,6 +1530,21 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mp').hi
     }).catch(function(){ MB.sess=null; mbSetDest(0,0,label,false) });
   }
   mbLoad(function(){});
+  /* Bila izin lokasi SUDAH diberikan, saran diurutkan dari titik terdekat penumpang. Hanya koordinat yang dibulatkan (sekitar 1 km) yang dikirim,
+     dan hanya bila penumpang berada di Cirebon dan sekitarnya (radius 80 km); selain itu dipakai pusat kota. Tanpa izin, tidak ada permintaan lokasi baru. */
+  function mbProxInit(){
+    try{
+      if(!navigator.permissions||!navigator.geolocation) return;
+      navigator.permissions.query({name:'geolocation'}).then(function(p){
+        if(p.state!=='granted') return;
+        navigator.geolocation.getCurrentPosition(function(pos){
+          var la=pos.coords.latitude, ln=pos.coords.longitude;
+          if(mpDist([ln,la],[108.5575,-6.7320])<80000) MB.prox=ln.toFixed(2)+','+la.toFixed(2);
+        },function(){},{maximumAge:900000,timeout:4000});
+      }).catch(function(){});
+    }catch(e){}
+  }
+  mbProxInit();
   (function(){ var w=document.createElement('div'); w.id='to-kel'; w.style.display='none'; var t=$('to-t'); t.parentNode.insertBefore(w,t); w.appendChild(t); w.appendChild($('to-l')) })();
   function dstOpen(){ dstL.hidden=false; dstT.setAttribute('aria-expanded','true'); $('s-form').classList.add('dst-open') }
   function dstClose(){ dstL.hidden=true; dstT.setAttribute('aria-expanded','false'); dstAct=-1; $('s-form').classList.remove('dst-open') }
@@ -1709,7 +1750,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mp').hi
   $('pk-gps').addEventListener('click',pkLocate);
   $('pk-map').addEventListener('click',function(){
     if(!MB.token) return; var c=gps?[gps.lng,gps.lat]:((ptSel&&ptSel.lat!=null)?[ptSel.lng,ptSel.lat]:null);
-    cgMapPick({token:MB.token,center:c,zoom:c?17:13,label:'',
+    cgMapPick({token:MB.token,center:c,zoom:c?17:13,label:'',prox:MB.prox||MB_CENTER,
       onPick:function(lat,lng){ pkUseGeo({lat:+lat.toFixed(6),lng:+lng.toFixed(6),acc:0},'Titik jemput diatur di peta.') },
       onFail:function(){ pkMsg('Peta tidak bisa dimuat. Cari titik jemput atau pilih kelurahan di bawah.','bad'); pkKelShow() }});
   });
@@ -1894,6 +1935,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mp').hi
     for(id in chatAct) if(DRV_OPEN.indexOf(chatAct[id])>-1) drv=true;
     f.hidden=!(drv||n>0)||!$('ch-pop').hidden;
     document.body.classList.toggle('has-chfab',!f.hidden);
+    if(f.hidden){ delete f.dataset.shown } else if(!f.dataset.shown){ f.dataset.shown='1'; f.classList.remove('compact'); setTimeout(function(){ if(!f.classList.contains('new')) f.classList.add('compact') },9000) }
+    if(n>0) f.classList.remove('compact');
     b.hidden=!n; b.textContent=n||''; f.classList.toggle('new',n>0);
     var w=$('tk-chatw'), o=order;
     if(w){ w.hidden=!(o&&ADM_OPEN.indexOf(o.status)>-1); var u=o?(chUn[o.id+':admin']||0):0; $('tk-chat-b').hidden=!u; $('tk-chat-b').textContent=u||''; $('tk-chat').classList.toggle('new',u>0) }
@@ -2058,7 +2101,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mp').hi
     $('bk').textContent=o.code; $('steps').innerHTML=st;
     $('scene').className='scene s-'+o.status; $('scene').hidden=(o.status==='cancelled');
     if(lastStatus!==o.status){ lastStatus=o.status; var t=$('tk-title'); t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop') }
-    $('summary').innerHTML=kv('Jemput',esc(o.a)+(o.dfrom?' - '+esc(o.dfrom):''))+kv('Tujuan',esc(o.b)+(o.dto?' - '+esc(o.dto):''))
+    $('summary').innerHTML=kv('Jemput',esc(o.pa))+kv('Tujuan',esc(o.pb))
       +kv('Waktu',o.pickup?esc(new Date(o.pickup).toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})):'Secepatnya')
       +kv('Tarif',o.amt!=null?rp(o.amt):'Dikonfirmasi admin');
     var showPay=(o.status!=='new'&&o.status!=='offered'&&o.status!=='cancelled'&&o.amt!=null&&o.pref==='cash'); renderPay2(o);
@@ -2070,7 +2113,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mp').hi
       if(o.paid){ $('pm-cash').hidden=true; $('pm-qris').hidden=true }
     }
     $('tk-pay').textContent=payText(o); rfRender(o); fbBtns(o);
-    $('wa-done').href=waLink('Halo Cirgo, soal pesanan '+o.code+' ('+o.a+' ke '+o.b+').');
+    $('wa-done').href=waLink('Halo Cirgo, soal pesanan '+o.code+' ('+o.pa+' ke '+o.pb+').');
     var canCancel=(o.status==='new'||o.status==='offered'||o.status==='confirmed')&&o.ps!=='claimed', fin=(o.status==='done'||o.status==='cancelled');
     $('tk-cancel').hidden=!canCancel; $('tk-new').hidden=!fin; $('wa-done').hidden=fin;
     if(fin) stopTimer(); if(o.status==='done') fbMaybe(o);
@@ -2120,7 +2163,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mp').hi
     if(ptOk&&norm(ptxt).indexOf(norm(ptSel.name))<0) ptxt=ptSel.name+(ptxt?' - '+ptxt:'');
     var row={customer_name:$('nama').value.trim(),customer_phone:normWa($('wa').value),
       pickup_area_id:cur.a===OTHER?null:+cur.a,dropoff_area_id:cur.b===OTHER?null:+cur.b,
-      pickup_text:(cur.a===OTHER?lokasiLain('from-t'):'')+ptxt,dropoff_text:((cur.b===OTHER?lokasiLain('to-t'):'')+dtxt).trim()||null,
+      pickup_text:(cur.a===OTHER?joinOther('from-t',ptxt):ptxt),dropoff_text:(cur.b===OTHER?joinOther('to-t',dtxt):dtxt).trim()||null,
       pickup_at:p?p.toISOString():null,terms_version:TERMS_VERSION,terms_accepted_at:new Date().toISOString()};
     if(payPref==='noncash') row.pay_pref='noncash';
     if(svcMode!=='free') row.service_mode=svcMode;
@@ -2352,15 +2395,17 @@ $('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydo
     var when='';
     if(o.etaAt){
       var d=new Date(o.etaAt), mins=Math.round((d.getTime()-Date.now())/60000);
-      when=o.pickup?'Admin mengusulkan jadwal jemput:<br><b>'+esc(d.toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}))+'</b>'
-        :'Perkiraan jemput <b>pukul '+fmtClock(d)+'</b>'+(mins>0?' (sekitar '+mins+' menit lagi)':'');
-    } else if(o.eta){ when='Perkiraan jemput: <b>'+esc(o.eta)+'</b>' }
+      when=o.pickup?'<span class="of-s">Jadwal jemput usulan admin</span><span class="of-t of-sm">'+esc(d.toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}))+'</span>'
+        :'<span class="of-s">Perkiraan jemput</span><span class="of-t">'+fmtClock(d)+'</span>'+(mins>0?'<span class="of-s">sekitar '+mins+' menit lagi</span>':'');
+    } else if(o.eta){ when='<span class="of-s">Perkiraan jemput</span><span class="of-t of-sm">'+esc(o.eta)+'</span>' }
     var how=o.pref==='noncash'?'Non-tunai. Setelah kamu setuju, pilih QRIS, transfer bank, atau e-wallet.':(o.pref==='cash'?'Tunai ke pengemudi saat perjalanan selesai.':'');
-    offerPop=popup('<h2>Ada tawaran jemputan</h2><p>'+when+'</p>'
-      +'<div class="list">'+kv('Jemput',esc(o.a))+kv('Tujuan',esc(o.b))+kv('Tarif',o.amt!=null?rp(o.amt):'-')+'</div>'
-      +'<p class="hint">'+how+'</p><div class="cdn" id="of-cd"></div>'
+    offerPop=popup('<span class="of-tag">Tawaran baru</span><h2>Tawaran Driver</h2>'
+      +(when?'<div class="of-eta">'+when+'</div>':'')
+      +'<div class="of-card">'+kv('Jemput',esc(o.pa))+kv('Tujuan',esc(o.pb))+kv('Tarif','<b>'+(o.amt!=null?rp(o.amt):'-')+'</b>')+'</div>'
+      +'<p class="hint">'+how+'</p><div class="of-cd" id="of-cd"></div>'
       +'<button type="button" class="btn" id="of-yes">Setuju, lanjutkan</button>'
-      +'<button type="button" class="btn ghost" id="of-no">Tidak, batalkan</button><p class="pmsg" id="of-msg" role="alert"></p>',
+      +'<button type="button" class="btn ghost" id="of-no">Tidak, batalkan</button>'
+      +'<p class="of-note">Jika tidak dijawab sampai waktunya habis, tawaran dibatalkan otomatis.</p><p class="pmsg" id="of-msg" role="alert"></p>',
       function(api,ov){
         function answer(acc){
           var y=ov.querySelector('#of-yes'), n=ov.querySelector('#of-no'); y.disabled=n.disabled=true; ov.querySelector('#of-msg').textContent='';
@@ -2374,11 +2419,12 @@ $('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydo
         ov.querySelector('#of-yes').addEventListener('click',function(){ answer(true) });
         ov.querySelector('#of-no').addEventListener('click',function(){ answer(false) });
         var cd=ov.querySelector('#of-cd');
+        var tot=0;
         function tk(){
-          if(!o.offerExp){ cd.textContent=''; return }
-          var left=new Date(o.offerExp).getTime()-Date.now();
-          if(left<=0){ cd.textContent='Waktu menjawab habis'; cd.classList.add('low'); clearInterval(offerTimer); offerTimer=null; setTimeout(monitor,1500) }
-          else { cd.textContent='Jawab dalam '+mmss(left); cd.classList.toggle('low',left<30000) }
+          if(!o.offerExp){ cd.innerHTML=''; return }
+          var left=new Date(o.offerExp).getTime()-Date.now(); if(left>tot) tot=left;
+          if(left<=0){ cd.innerHTML='<small>Waktu menjawab habis</small>'; cd.classList.add('low'); clearInterval(offerTimer); offerTimer=null; setTimeout(monitor,1500) }
+          else { cd.innerHTML='<small>Tawaran berakhir dalam</small><b>'+mmss(left)+'</b><span class="of-bar"><i style="width:'+Math.max(0,Math.min(100,Math.round(left/tot*100)))+'%"></i></span>'; cd.classList.toggle('low',left<30000) }
         }
         tk(); offerTimer=setInterval(tk,1000);
       });
@@ -2406,7 +2452,7 @@ $('pf-wa').addEventListener('click',pfReveal);$('pf-wa').addEventListener('keydo
     else if(o.creason==='offer_expired') msg='Tawaran jemputan belum dijawab sampai batas waktu, jadi pesanan kami tutup. Kamu bisa memesan lagi kapan saja.';
     else msg='Pesananmu dibatalkan. Kamu bisa memesan lagi kapan saja, atau hubungi admin.';
     markCx([o.id]);
-    cxPop=popup(MASCOT+'<h2>Maaf, pesananmu belum bisa kami proses</h2><p>'+msg+'</p><p class="hint">'+esc(o.code)+' &middot; '+esc(o.a)+' &rarr; '+esc(o.b)+'</p>'
+    cxPop=popup(MASCOT+'<h2>Maaf, pesananmu belum bisa kami proses</h2><p>'+msg+'</p><p class="hint">'+esc(o.code)+' &middot; '+esc(o.pa)+' &rarr; '+esc(o.pb)+'</p>'
       +'<a class="btn wa" id="cx-wa" href="'+esc(waLink('Halo Cirgo, soal pesanan '+o.code+' yang dibatalkan.'))+'" target="_blank" rel="noopener">Hubungi admin</a>'
       +'<button type="button" class="btn" id="cx-new">Pesan di jam lain</button><button type="button" class="btn ghost" id="cx-x">Tutup</button>',
       function(api,ov){
